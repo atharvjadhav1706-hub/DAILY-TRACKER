@@ -1,0 +1,1674 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no,viewport-fit=cover">
+<title>AIIMS DELHI - 40 Day Blitz</title>
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Serif+Display:ital@0;1&family=JetBrains+Mono:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  /* Core Theme Colors */
+  --bg: #f4f5f7;
+  --tx: #111111;
+  --mu: #8888aa;
+  --mu2: #666666;
+  
+  /* Glass & Cards */
+  --glass-bg: rgba(255, 255, 255, 0.65);
+  --glass-border: rgba(255, 255, 255, 0.9);
+  --panel: rgba(255, 255, 255, 0.85);
+  --tb: rgba(0, 0, 0, 0.06);
+  --tr: rgba(255, 255, 255, 0.5);
+  --ta: rgba(248, 248, 248, 0.5);
+  --shadow-sm: 0 4px 15px rgba(0, 0, 0, 0.03);
+  --shadow-md: 0 8px 32px rgba(0, 0, 0, 0.05);
+
+  /* Accents */
+  --gold: #f8d42d;
+  --pink: #f43962;
+  --cyan: #34d4f0;
+  --green: #55ca76;
+  --pu: #b058e8;
+  --or: #ff9300;
+  --teal: #1ec8b4;
+
+  /* Specific Elements */
+  --pom-run-color: #d68100;
+  --card-title: #111111;
+  --card-desc: #555566;
+  --sticky-head: #e5e5eb;
+  --sticky-odd: #f0f0f5;
+  --sticky-even: #eaeaef;
+  --safe: env(safe-area-inset-bottom);
+}
+
+body.dark {
+  --bg: #0a0a0f;
+  --tx: #eeeef8;
+  --mu: #888898;
+  --mu2: #a0a0b8;
+  
+  --glass-bg: rgba(20, 20, 30, 0.5);
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --panel: rgba(15, 15, 22, 0.85);
+  --tb: rgba(255, 255, 255, 0.06);
+  --tr: rgba(255, 255, 255, 0.02);
+  --ta: rgba(255, 255, 255, 0.04);
+  --shadow-sm: 0 4px 15px rgba(0, 0, 0, 0.2);
+  --shadow-md: 0 8px 32px rgba(0, 0, 0, 0.3);
+
+  --pom-run-color: #f8d42d;
+  --card-title: #ffffff;
+  --card-desc: #a0a0b8;
+  --sticky-head: #16161a;
+  --sticky-odd: #0e0e18;
+  --sticky-even: #111120;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+html, body { width: 100vw; height: 100dvh; overflow: hidden; font-family: 'Syne', sans-serif; -webkit-font-smoothing: antialiased; background-color: var(--bg); color: var(--tx); transition: background-color 0.4s ease; user-select: none; }
+::-webkit-scrollbar { display: none; } * { scrollbar-width: none; }
+
+/* Background Blobs */
+.bg { position: fixed; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; }
+.bg::before, .bg::after, .bg-blob-3 { content: ''; position: absolute; border-radius: 50%; filter: blur(90px); opacity: 0.5; animation: floatBg 25s infinite alternate cubic-bezier(0.4, 0, 0.2, 1); }
+.bg::before { width: 75vw; height: 75vw; background: var(--cyan); top: -10%; left: -20%; }
+.bg::after { width: 80vw; height: 80vw; background: var(--or); bottom: -10%; right: -20%; animation-delay: -5s; }
+.bg-blob-3 { width: 60vw; height: 60vw; background: var(--pink); top: 30%; left: 20%; animation-duration: 30s; }
+body.dark .bg::before { opacity: 0.2; } body.dark .bg::after { opacity: 0.15; } body.dark .bg-blob-3 { opacity: 0.15; }
+@keyframes floatBg { 0% { transform: translate(0, 0) scale(1); } 100% { transform: translate(15vw, 15vh) scale(1.2); } }
+
+/* Layout & Navigation */
+.app { position: relative; z-index: 1; width: 100%; max-width: 440px; height: 100dvh; margin: 0 auto; display: flex; flex-direction: column; overflow: hidden; }
+.hdr { flex-shrink: 0; display: flex; align-items: center; justify-content: space-between; padding: calc(16px + env(safe-area-inset-top)) 16px 16px; background: var(--panel); backdrop-filter: blur(30px); border-bottom: 1px solid var(--tb); z-index: 100; }
+.hbtn { width: 38px; height: 38px; border-radius: 12px; background: var(--tb); border: none; color: var(--tx); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; }
+.hbtn:active { transform: scale(0.9); }
+#btnBack { opacity: 0; pointer-events: none; transform: translateX(-8px); }
+#btnBack.on { opacity: 1; pointer-events: auto; transform: none; }
+
+.hdr-c { display: flex; flex-direction: column; align-items: center; }
+.hdr-eye { font-size: 0.55rem; font-weight: 800; letter-spacing: 2px; color: var(--mu); text-transform: uppercase; font-family: 'JetBrains Mono', monospace; }
+.hdr-ttl { font-size: 1.3rem; font-weight: 800; background: linear-gradient(90deg, var(--cyan), var(--teal), var(--green), var(--cyan)); background-size: 200% auto; -webkit-background-clip: text; color: transparent; animation: waterWave 4s linear infinite; }
+@keyframes waterWave { to { background-position: 200% center; } }
+
+.vc { flex: 1; overflow-y: auto; overflow-x: hidden; padding: 16px 14px calc(110px + var(--safe)); scroll-behavior: smooth; }
+.view { display: none; animation: vIn 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+.view.active { display: block; }
+#vPl { padding: 0; }
+@keyframes vIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: none; } }
+
+/* Shared Glass Elements */
+.glass-card { background: var(--glass-bg); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid var(--glass-border); border-radius: 20px; box-shadow: var(--shadow-md); padding: 20px; margin-bottom: 16px; }
+
+/* Today View */
+.wstrip { display: flex; justify-content: space-between; padding: 14px 10px; border-radius: 20px; }
+.wd { display: flex; flex-direction: column; align-items: center; gap: 6px; flex: 1; opacity: 0.4; transition: 0.3s; }
+.wd.on, .wd.dn { opacity: 1; }
+.wl { font-size: 0.5rem; font-weight: 800; text-transform: uppercase; color: var(--mu); }
+.wn { font-size: 0.85rem; font-family: 'JetBrains Mono', monospace; font-weight: 800; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; border-radius: 50%; transition: 0.3s; }
+.wd.on .wn { background: var(--tx); color: var(--bg); box-shadow: 0 4px 10px rgba(0,0,0,0.15); }
+.wd.dn .wn { background: var(--green); color: #fff; box-shadow: 0 4px 10px rgba(85,201,118,0.3); }
+
+.hs { display: flex; justify-content: space-between; margin-bottom: 18px; }
+.hst { display: flex; flex-direction: column; gap: 4px; }
+.hv { font-family: 'JetBrains Mono', monospace; font-size: 1.8rem; font-weight: 800; line-height: 1; }
+.hl { font-size: 0.55rem; font-weight: 800; letter-spacing: 1px; color: var(--mu); text-transform: uppercase; }
+.pw { height: 6px; background: var(--tb); border-radius: 6px; overflow: hidden; }
+.pf { height: 100%; border-radius: 6px; background: var(--tx); transition: width 0.9s ease; }
+
+/* Streak Container */
+.streak-container { display: inline-flex; align-items: center; gap: 14px; padding: 10px 20px 10px 10px; border-radius: 100px; border: 1px solid var(--gold); background: rgba(248, 212, 45, 0.1); margin-top: 16px; box-shadow: var(--shadow-sm); transition: 0.2s; }
+.streak-icon-wrap { width: 40px; height: 40px; background: var(--gold); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; color: #111; }
+.streak-n { font-family: 'JetBrains Mono', monospace; font-size: 1.4rem; font-weight: 800; line-height: 1; }
+.streak-lbl { font-size: 0.6rem; font-weight: 800; color: var(--gold); text-transform: uppercase; letter-spacing: 1px; margin-top: 2px; }
+.streak-glow { animation: superGlow 2s infinite !important; }
+@keyframes superGlow { 0%, 100% { box-shadow: 0 0 10px rgba(248, 212, 45, 0.2); } 50% { box-shadow: 0 0 25px rgba(248, 212, 45, 0.6); } }
+
+/* -------------------------------------- */
+/* HIGH-END PRO WORKOUT CARDS             */
+/* -------------------------------------- */
+.sh { font-size: 0.65rem; font-weight: 800; color: var(--mu); margin-bottom: 12px; letter-spacing: 1.5px; text-transform: uppercase; padding-left: 4px; }
+.workout-card { 
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  border-radius: 20px; 
+  padding: 20px; 
+  margin-bottom: 16px; 
+  position: relative; 
+  transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1); 
+  cursor: pointer; 
+  border-left: 6px solid transparent; 
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.4), var(--shadow-sm);
+}
+.workout-card:hover { transform: translateY(-2px); box-shadow: inset 0 1px 0 rgba(255,255,255,0.4), var(--shadow-md); }
+.workout-card:active { transform: scale(0.98); }
+
+/* Persistent colored left strips based on theme */
+.workout-card.theme-0 { border-left-color: var(--pink); }
+.workout-card.theme-1 { border-left-color: var(--or); }
+.workout-card.theme-2 { border-left-color: var(--teal); }
+.workout-card.theme-3 { border-left-color: var(--pu); }
+
+/* Done State */
+.workout-card.done { 
+  opacity: 0.65; 
+  filter: grayscale(40%); 
+  border-left-color: var(--green) !important; 
+  box-shadow: none;
+}
+
+/* Next Focus State */
+.workout-card.next-focus { border-left-width: 8px; }
+.theme-0.next-focus { box-shadow: 0 0 20px rgba(244, 57, 98, 0.2); }
+.theme-1.next-focus { box-shadow: 0 0 20px rgba(255, 147, 0, 0.2); }
+.theme-2.next-focus { box-shadow: 0 0 20px rgba(30, 200, 180, 0.2); }
+.theme-3.next-focus { box-shadow: 0 0 20px rgba(176, 88, 232, 0.2); }
+
+.wc-info { flex: 1; min-width: 0; display: flex; flex-direction: column; align-items: flex-start; }
+.wc-header-top { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+.wc-tag-badge { font-size: 0.58rem; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; background: var(--tb); color: var(--tx); padding: 4px 8px; border-radius: 6px; }
+.wc-icon { font-size: 1.2rem; }
+
+.wc-val-text { font-size: 1.25rem; font-weight: 800; letter-spacing: -0.3px; color: var(--card-title); line-height: 1.3; margin-bottom: 6px; width: 100%; white-space: normal; }
+.wc-desc { font-size: 0.8rem; color: var(--card-desc); line-height: 1.5; font-weight: 600; margin-bottom: 0; }
+
+/* Pro Checkbox Interaction */
+.pro-checkbox {
+  flex-shrink: 0;
+  width: 28px; height: 28px; 
+  border-radius: 50%;
+  border: 2px solid var(--mu);
+  background: transparent;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  opacity: 0.5;
+  position: relative;
+}
+
+.pro-checkbox::after {
+  content: '';
+  position: absolute;
+  inset: -6px; 
+  border-radius: 50%;
+  border: 2px solid transparent;
+  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transform: scale(0.8);
+  opacity: 0;
+}
+
+.pro-checkbox svg { 
+  width: 16px; height: 16px; 
+  stroke-width: 3.5; stroke: #fff; 
+  transform: scale(0); 
+  transition: 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); 
+}
+
+.workout-card.done .pro-checkbox { 
+  background: var(--green); 
+  border-color: var(--green); 
+  opacity: 1; 
+}
+
+.workout-card.done .pro-checkbox::after {
+  border-color: rgba(85, 201, 118, 0.4); 
+  box-shadow: 0 0 12px rgba(85, 201, 118, 0.25); 
+  transform: scale(1);
+  opacity: 1;
+}
+
+.workout-card.done .pro-checkbox svg { transform: scale(1); }
+
+/* Dark Mode Overrides for Cards */
+body.dark .workout-card.theme-0 { background: linear-gradient(145deg, rgba(244, 57, 98, 0.05), rgba(20, 20, 30, 0.6)); border-color: rgba(244, 57, 98, 0.1); border-left-color: var(--pink); box-shadow: inset 0 1px 0 rgba(255,255,255,0.05), var(--shadow-sm); }
+body.dark .workout-card.theme-1 { background: linear-gradient(145deg, rgba(255, 147, 0, 0.05), rgba(20, 20, 30, 0.6)); border-color: rgba(255, 147, 0, 0.1); border-left-color: var(--or); box-shadow: inset 0 1px 0 rgba(255,255,255,0.05), var(--shadow-sm); }
+body.dark .workout-card.theme-2 { background: linear-gradient(145deg, rgba(30, 200, 180, 0.05), rgba(20, 20, 30, 0.6)); border-color: rgba(30, 200, 180, 0.1); border-left-color: var(--teal); box-shadow: inset 0 1px 0 rgba(255,255,255,0.05), var(--shadow-sm); }
+body.dark .workout-card.theme-3 { background: linear-gradient(145deg, rgba(176, 88, 232, 0.05), rgba(20, 20, 30, 0.6)); border-color: rgba(176, 88, 232, 0.1); border-left-color: var(--pu); box-shadow: inset 0 1px 0 rgba(255,255,255,0.05), var(--shadow-sm); }
+
+/* High-Visibility Next Focus Pulse for Dark Mode */
+body.dark .theme-0.next-focus { border-left-color: var(--pink); animation: pulseGlowDark0 2s infinite; }
+@keyframes pulseGlowDark0 { 0%, 100% { box-shadow: 0 0 15px rgba(244, 57, 98, 0.15); } 50% { box-shadow: 0 0 30px rgba(244, 57, 98, 0.45), inset 0 0 10px rgba(244, 57, 98, 0.1); } }
+body.dark .theme-1.next-focus { border-left-color: var(--or); animation: pulseGlowDark1 2s infinite; }
+@keyframes pulseGlowDark1 { 0%, 100% { box-shadow: 0 0 15px rgba(255, 147, 0, 0.15); } 50% { box-shadow: 0 0 30px rgba(255, 147, 0, 0.45), inset 0 0 10px rgba(255, 147, 0, 0.1); } }
+body.dark .theme-2.next-focus { border-left-color: var(--teal); animation: pulseGlowDark2 2s infinite; }
+@keyframes pulseGlowDark2 { 0%, 100% { box-shadow: 0 0 15px rgba(30, 200, 180, 0.15); } 50% { box-shadow: 0 0 30px rgba(30, 200, 180, 0.45), inset 0 0 10px rgba(30, 200, 180, 0.1); } }
+body.dark .theme-3.next-focus { border-left-color: var(--pu); animation: pulseGlowDark3 2s infinite; }
+@keyframes pulseGlowDark3 { 0%, 100% { box-shadow: 0 0 15px rgba(176, 88, 232, 0.15); } 50% { box-shadow: 0 0 30px rgba(176, 88, 232, 0.45), inset 0 0 10px rgba(176, 88, 232, 0.1); } }
+
+/* A-R Reveal */
+.ar-reveal { margin-top: 12px; display: none; background: var(--tb); padding: 12px; border-radius: 12px; width: 100%; box-sizing: border-box; }
+.ar-reveal.show { display: block; }
+.ar-ans { display: inline-flex; align-items: center; padding: 4px 8px; border-radius: 6px; font-size: 0.65rem; font-weight: 800; font-family: 'JetBrains Mono', monospace; background: var(--panel); box-shadow: var(--shadow-sm); }
+.ar-exp { font-size: 0.75rem; line-height: 1.5; margin-top: 8px; font-weight: 600; color: var(--tx); }
+.ar-toggle { font-family: 'Syne', sans-serif; font-size: 0.65rem; font-weight: 800; color: var(--tx); cursor: pointer; margin-top: 10px; display: inline-block; padding: 6px 12px; border-radius: 8px; background: var(--tb); border: none; text-transform: uppercase; transition: 0.2s; }
+
+/* -------------------------------------- */
+/* PROGRESS TAB DASHBOARD                 */
+/* -------------------------------------- */
+.prog-hero-top { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 16px; }
+.prog-hero-pct { 
+  font-family: 'JetBrains Mono', monospace; font-size: 3.2rem; font-weight: 800; line-height: 1; letter-spacing: -2px; 
+  background: linear-gradient(90deg, var(--cyan), var(--teal), var(--green)); -webkit-background-clip: text; color: transparent; 
+}
+.prog-hero-meta { text-align: right; }
+.prog-hero-days { font-family: 'JetBrains Mono', monospace; font-size: 1rem; font-weight: 800; opacity: 0.8; }
+.prog-hero-lbl { font-size: 0.55rem; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; color: var(--mu); margin-top: 4px; }
+.prog-bar-wrap { height: 8px; background: var(--tb); border-radius: 8px; overflow: hidden; }
+.prog-bar-fill { height: 100%; border-radius: 8px; background: linear-gradient(90deg, var(--cyan), var(--teal), var(--green)); width: 0%; transition: width 1s cubic-bezier(0.16, 1, 0.3, 1); }
+
+.prog-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.prog-card { 
+  display: flex; flex-direction: column; align-items: center; gap: 12px; cursor: pointer; 
+  padding: 22px 14px; text-align: center; position: relative; overflow: hidden; 
+  border-radius: 24px; background: var(--glass-bg); border: 1px solid var(--glass-border);
+  box-shadow: inset 0 2px 0 rgba(255,255,255,0.4), var(--shadow-sm); transition: transform 0.2s;
+}
+body.dark .prog-card { box-shadow: inset 0 2px 0 rgba(255,255,255,0.05), var(--shadow-sm); }
+.prog-card:hover { transform: translateY(-3px); box-shadow: inset 0 2px 0 rgba(255,255,255,0.4), var(--shadow-md); }
+body.dark .prog-card:hover { box-shadow: inset 0 2px 0 rgba(255,255,255,0.05), var(--shadow-md); }
+.prog-card:active { transform: scale(0.96); }
+
+.prog-ring-svg { overflow: visible; }
+.prog-ring-track { fill: none; stroke: var(--tb); stroke-width: 4; }
+.prog-ring-arc { fill: none; stroke-linecap: round; stroke-width: 4; stroke-dasharray: 226.19; stroke-dashoffset: 226.19; transform: rotate(-90deg); transform-origin: 40px 40px; transition: stroke-dashoffset 1s cubic-bezier(0.16, 1, 0.3, 1); }
+.prog-ring-pct { font-family: 'JetBrains Mono', monospace; font-size: 1.15rem; font-weight: 800; text-anchor: middle; dominant-baseline: central; fill: var(--tx); letter-spacing: -0.5px;}
+.prog-ring-sub { font-family: 'Syne', sans-serif; font-size: 0.4rem; font-weight: 800; text-anchor: middle; dominant-baseline: central; letter-spacing: 0.5px; opacity: 0.7; }
+.prog-card-icon { font-size: 1.4rem; }
+.prog-card-name { font-size: 0.65rem; font-weight: 800; color: var(--mu); text-transform: uppercase; letter-spacing: 1px; }
+
+/* Detail View Styles */
+.dth{display:flex;flex-direction:column;align-items:center;padding:10px 0 24px;}
+.rbig{position:relative;width:170px;height:170px;margin-bottom:14px;}
+.rbig svg{transform:rotate(-90deg);}
+.rbb{fill:none;stroke:var(--tb);stroke-width:8;}
+.rbar{fill:none;stroke-width:8;stroke-linecap:round;stroke-dasharray:502.65;stroke-dashoffset:502.65;transition:stroke-dashoffset 1s cubic-bezier(0.16, 1, 0.3, 1);}
+.rbi{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;}
+.rbn{font-family:'JetBrains Mono',monospace;font-size:2.5rem;font-weight:800;color:var(--tx);line-height:1; letter-spacing:-1px;}
+.dst{text-align:center;margin-top:12px;}
+.dsv{font-family:'JetBrains Mono',monospace;font-size:1.4rem;font-weight:800;color:var(--tx);}
+.dsl{font-size:.55rem;font-weight:800;letter-spacing:2px;color:var(--mu);text-transform:uppercase;margin-top:3px;}
+.dbl-pill { display: inline-block; background: rgba(255,136,32,.15); color: var(--or); font-size: .52rem; font-weight: 800; padding: 2px 6px; border-radius: 6px; margin-left: 6px; vertical-align: middle; }
+.dcard{display:flex;align-items:flex-start;padding:16px 14px;border-radius:20px;margin-bottom:10px;cursor:pointer;transition:transform .15s;}
+.dcard:active{transform:scale(.98);}
+.dcard.done{opacity:.6;border-color:transparent;box-shadow:none;}
+.dcard.today{border:2px solid var(--gold);}
+.dcd{flex-shrink:0;width:50px;text-align:center;padding-right:12px;margin-right:12px;border-right:1px solid var(--tb);}
+.dcn{font-family:'JetBrains Mono',monospace;font-size:1.6rem;font-weight:800;color:var(--tx);line-height:1;display:block;}
+.dcm{font-size:.5rem;font-weight:800;color:var(--mu);margin-top:4px;display:block;text-transform:uppercase;letter-spacing:.5px;}
+.dci{flex:1;min-width:0;}
+.dcmain{font-family:'JetBrains Mono',monospace;font-size:.85rem;font-weight:800;color:var(--tx);line-height:1.3;margin-bottom:4px;}
+.dcpills{display:flex;flex-wrap:wrap;gap:3px;margin-top:4px;}
+.dcpill{font-size:.52rem;font-weight:700;padding:3px 6px;border-radius:6px;background:var(--tb);color:var(--tx);}
+.upill{flex-shrink:0;font-size:.5rem;font-weight:800;letter-spacing:.5px;text-transform:uppercase;color:var(--mu);background:var(--tb);padding:4px 8px;border-radius:8px;white-space:nowrap;margin-left:8px;margin-top:4px;}
+.chk { flex-shrink:0; width:22px; height:22px; display:flex; align-items:center; justify-content:center; }
+.chk svg { width:18px; height:18px; fill:none; stroke:var(--mu); stroke-width:2.5; stroke-linecap:round; stroke-linejoin:round; opacity:0.35; }
+.chk.on svg { stroke:var(--green); opacity:1; }
+
+.dmsg { display:none; text-align:center; padding:24px 16px; margin-bottom:14px; border-radius:24px; animation:vIn .5s ease; }
+.dt { font-size:2.5rem; margin-bottom:8px; display:block; }
+.dtl { font-family:'DM Serif Display',serif; font-size:1.7rem; font-style:italic; color:var(--tx); margin-bottom:6px; }
+.ds { font-size:.8rem; color:var(--mu); line-height:1.6; font-weight:600; }
+
+/* Plan View */
+.plhdr { padding: 16px; background: var(--panel); backdrop-filter: blur(30px); border-bottom: 1px solid var(--tb); }
+.plttl { font-family: 'DM Serif Display', serif; font-size: 1.1rem; font-style: italic; color: var(--gold); text-align: center; margin-bottom: 12px; }
+.plleg{display:flex;gap:5px;flex-wrap:wrap;justify-content:center;}
+.leg{font-size:.52rem;font-weight:800;padding:4px 8px;border-radius:16px;letter-spacing:.3px;text-transform:uppercase;}
+.lb{background:rgba(46,216,114,.15);color:var(--green);} .lc{background:rgba(78,207,248,.15);color:var(--cyan);} .lp{background:rgba(255,149,51,.15);color:var(--or);} .lm{background:rgba(201,110,245,.15);color:var(--pu);}
+
+.pl-actions { display: flex; gap: 10px; margin-top: 14px; }
+.pl-actions input { flex: 1; padding: 12px 16px; border-radius: 12px; border: 1px solid var(--tb); background: var(--glass-bg); color: var(--tx); font-size: 0.85rem; outline: none; font-family: 'Syne', sans-serif; }
+.pl-actions button { padding: 0 16px; border-radius: 12px; border: none; background: var(--tx); color: var(--bg); font-weight: 800; cursor: pointer; display: flex; align-items: center; gap: 8px; font-family: 'Syne', sans-serif; }
+
+.plsc { overflow-x: auto; padding-bottom: calc(110px + var(--safe)); }
+.ptbl { width: 100%; border-collapse: collapse; min-width: 1300px; }
+.ptbl th { background: var(--sticky-head); color: var(--tx); font-family: 'JetBrains Mono', monospace; font-size: 0.6rem; font-weight: 800; padding: 14px 10px; text-transform: uppercase; border-bottom: 2px solid var(--tb); }
+.ptbl th .sub { display:block; font-size:.46rem; font-weight:600; opacity:.6; text-transform:none; margin-top:3px; }
+.ptbl td { padding: 14px 12px; text-align: center; border-bottom: 1px solid var(--tb); font-size: 0.75rem; font-weight: 600; line-height: 1.5; word-break: break-word; }
+.ptbl tbody tr:nth-child(odd) td { background: var(--tr); }
+.ptbl tbody tr:nth-child(even) td { background: var(--ta); }
+.ptbl tbody td:first-child, .ptbl thead th:first-child { position: sticky; left: 0; z-index: 2; border-right: 2px solid var(--tb); text-align: left; }
+.ptbl tbody tr:nth-child(odd) td:first-child { background: var(--sticky-odd); }
+.ptbl tbody tr:nth-child(even) td:first-child { background: var(--sticky-even); }
+.ptbl tr.rt td { background: rgba(52, 212, 240, 0.1) !important; }
+.ptbl tr.rt td:first-child { border-left: 4px solid var(--cyan); }
+.ptbl tr.rd td { opacity: 0.4; }
+.ptbl tr.dbl td { background: rgba(255,136,32,.06) !important; }
+.ptbl tr.dbl td:first-child { border-left: 4px solid rgba(255,136,32,.6); }
+.plan-focus td::after { content:''; position:absolute; inset:0; border-top:2px solid var(--cyan); border-bottom:2px solid var(--cyan); pointer-events:none; }
+.bdg{display:inline-block;background:var(--gold);color:#000;font-size:.38rem;font-weight:900;padding:3px 6px;border-radius:6px;letter-spacing:.7px;vertical-align:middle;margin-left:6px;text-transform:uppercase;}
+.bdgdb{display:inline-block;background:var(--or);color:#000;font-size:.36rem;font-weight:900;padding:3px 6px;border-radius:6px;letter-spacing:.5px;vertical-align:middle;margin-left:6px;text-transform:uppercase;}
+.bdgd{display:inline-flex;align-items:center;justify-content:center;background:var(--green);color:#000;font-size:.55rem;font-weight:900;width:16px;height:16px;border-radius:50%;vertical-align:middle;margin-left:6px;}
+
+/* Columns width adjustments for new data */
+.ptbl tbody td:nth-child(4){min-width:200px;text-align:left;}
+.ptbl tbody td:nth-child(5){min-width:150px;text-align:left;}
+.ptbl tbody td:nth-child(6){min-width:180px;text-align:left;}
+.ptbl tbody td:nth-child(8){min-width:160px;text-align:left;}
+.ptbl tbody td:nth-child(10), .ptbl tbody td:nth-child(11), .ptbl tbody td:nth-child(12), .ptbl tbody td:nth-child(13) { min-width: 160px; text-align: left; }
+
+/* Bottom Nav */
+.bnav { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); width: calc(100% - 32px); max-width: 400px; background: var(--panel); backdrop-filter: blur(30px); border: 1px solid var(--glass-border); display: flex; padding: 8px; border-radius: 100px; box-shadow: var(--shadow-md); z-index: 100; }
+.bb { flex: 1; padding: 14px; background: transparent; border: none; display: flex; align-items: center; justify-content: center; gap: 8px; color: var(--mu); cursor: pointer; transition: 0.3s; border-radius: 100px; }
+.bb.active { flex: 1.2; background: var(--tx); color: var(--bg); box-shadow: var(--shadow-sm); }
+.bb svg { width: 22px; height: 22px; stroke: currentColor; stroke-width: 2.2; fill: none; transition: 0.2s; }
+.nav-lbl { display: none; font-family: 'Syne', sans-serif; font-size: 0.75rem; font-weight: 800; letter-spacing: 0.5px; }
+.bb.active .nav-lbl { display: block; animation: vIn 0.3s ease forwards; }
+
+/* Global Pomodoro Float */
+.pom-float{position:fixed;bottom:calc(100px + var(--safe) + 12px);left:50%;transform:translateX(-50%) translateY(80px); background:var(--panel);backdrop-filter:blur(30px);-webkit-backdrop-filter:blur(30px); border:1px solid var(--glass-border);border-radius:24px; padding:14px 22px;display:flex;align-items:center;gap:14px; z-index:200;opacity:0;pointer-events:none;transition:all .4s cubic-bezier(.34,1.56,.64,1); box-shadow:0 10px 35px rgba(0,0,0,.1);}
+.pom-float.on{opacity:1;pointer-events:auto;transform:translateX(-50%) translateY(0);}
+.pom-time{font-family:'JetBrains Mono',monospace;font-size:1.7rem;font-weight:800;color:var(--pom-run-color);min-width:68px;text-align:center;}
+.pom-task{font-size:.68rem;font-weight:700;color:var(--mu2);max-width:160px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;}
+.pom-ctrl{display:flex;gap:8px;}
+.pom-c{width:34px;height:34px;border-radius:10px;border:none;cursor:pointer; display:flex;align-items:center;justify-content:center;font-size:1rem;transition:.2s;}
+.pom-c:active{transform:scale(.85);}
+.pom-stop{background:rgba(255,61,107,.15);color:var(--pink);}
+.pom-pause{background:rgba(240,192,64,.15);color:var(--pom-run-color);}
+
+/* Print & PDF */
+.print-only { display: none; }
+@media print {
+  @page { size: landscape; margin: 12mm 15mm; }
+  html, body, .app, .vc, .plsc, .plwp { height: auto !important; min-height: 100% !important; overflow: visible !important; display: block !important; position: relative !important; background: #fff !important; }
+  .bg, .hdr, .bnav, .pom-float, .hero, .wstrip, .pl-actions, .plleg, #tw, .dmsg, #vT, #vP, #vD { display: none !important; }
+  #vPl { display: block !important; opacity: 1 !important; visibility: visible !important; padding: 0 !important;}
+  .plhdr { background: #fff !important; border-bottom: 3px solid #111 !important; padding: 0 0 15px 0 !important; margin-bottom: 25px !important; text-align: center; }
+  .plttl { color: #111 !important; font-size: 24pt !important; font-family: 'Syne', sans-serif; font-weight: 800 !important; letter-spacing: 1px; text-transform: uppercase; }
+  .plttl::after { content: " - OFFICIAL STUDY SCHEDULE"; font-weight: 600; color: #888 !important; }
+  .ptbl { width: 100% !important; border-collapse: collapse !important; font-size: 9pt !important; font-family: 'JetBrains Mono', monospace !important; page-break-inside: auto !important;}
+  .ptbl thead { display: table-header-group !important; }
+  .ptbl tr { page-break-inside: avoid !important; page-break-after: auto !important; }
+  .ptbl th { background: #111 !important; color: #fff !important; padding: 12px 8px !important; font-weight: 800 !important; border: 1px solid #000 !important; text-transform: uppercase; font-family: 'Syne', sans-serif; }
+  .ptbl th .sub { color: #aaa !important; font-family: 'JetBrains Mono', monospace; font-size: 7.5pt !important; margin-top: 4px !important; }
+  .ptbl th:nth-child(2), .ptbl td:nth-child(2), .ptbl th:nth-child(3), .ptbl td:nth-child(3), .ptbl th:nth-child(7), .ptbl td:nth-child(7) { display: none !important; }
+  .ptbl td { border: 1px solid #d4d4d4 !important; padding: 12px 10px !important; color: #111 !important; vertical-align: top !important; text-align: left !important; line-height: 1.5 !important; }
+  .ptbl th:first-child, .ptbl td:first-child { position: static !important; font-weight: 800 !important; white-space: nowrap !important; background: #fafafa !important; border-right: 2px solid #111 !important; width: 85px !important; }
+  .ptbl tbody tr:nth-child(even) td { background: #fafafa !important; }
+  * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+  .ptbl tr.dbl td { background: #fdf6d6 !important; }
+  .ptbl tr.dbl td:first-child { border-left: 6px solid #f8d42d !important; }
+  .ptbl tr.rt td { background: #e9f0ec !important; border-top: 2px solid #55ca76 !important; border-bottom: 2px solid #55ca76 !important;}
+  .ptbl tr.rt td:first-child { border-left: 6px solid #55ca76 !important; }
+  .bdg, .bdgdb, .dbl-pill { border: 1px solid #111 !important; color: #111 !important; background: transparent !important; padding: 2px 6px !important; font-size: 6.5pt !important; border-radius: 6px !important; font-family: 'Syne', sans-serif !important; }
+  .bdgd { display: none !important; }
+  .print-hide { display: none !important; }
+  .print-only { display: inline !important; }
+  .ptbl td { padding: 8px 6px !important; line-height: 1.2 !important; font-size: 8pt !important; }
+}
+.pdf-exporting .print-hide { display: none !important; }
+.pdf-exporting .print-only { display: inline !important; }
+.pdf-exporting .ptbl td { padding: 8px 6px !important; line-height: 1.2 !important; font-size: 8pt !important; }
+</style>
+</head>
+<body>
+<div class="bg"><div class="bg-blob-3"></div></div>
+
+<div class="app">
+  <div class="hdr">
+    <div style="min-width: 40px;">
+      <button class="hbtn" id="btnBack" onclick="closeDetail()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="12 19 5 12 12 5"/></svg>
+      </button>
+    </div>
+    <div class="hdr-c">
+      <div class="hdr-eye">NEET · 40-DAY · BLITZ</div>
+      <div class="hdr-ttl" id="htl">AIIMS DELHI</div>
+    </div>
+    <div style="display:flex; gap:8px; min-width: 40px;">
+      <button class="hbtn" id="pomGlobalBtn" onclick="pomToggleGlobal()">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+      </button>
+      <button class="hbtn" id="themeHBtn" onclick="toggleTheme()"><span id="themeHIcon">☀️</span></button>
+    </div>
+  </div>
+
+  <div class="vc">
+    <div class="view active" id="vT">
+      <div class="wstrip glass-card" id="ws"></div>
+      <div class="hero glass-card" style="padding: 24px;">
+        <div class="hs">
+          <div class="hst"><div class="hv" id="hEx">0/0</div><div class="hl">Tasks</div></div>
+          <div class="hst" style="align-items:center"><div class="hv" id="hPct">0%</div><div class="hl">Today</div></div>
+          <div class="hst" style="align-items:flex-end"><div class="hv" id="hDay">1/40</div><div class="hl">Journey</div></div>
+        </div>
+        <div class="pw"><div class="pf" id="pf" style="width:0%"></div></div>
+        <div id="streakRow" class="streak-container"></div>
+      </div>
+      <div id="dmsg" class="dmsg glass-card">
+        <span class="dt">🎯</span>
+        <div class="dtl">Day Crushed!</div>
+        <div class="ds">All tasks done. Review your notes &amp; rest well.</div>
+      </div>
+      <div id="tw"></div>
+    </div>
+
+    <div class="view" id="vP"></div>
+
+    <div class="view" id="vD">
+      <div class="dth">
+        <div class="rbig">
+          <svg width="162" height="162" viewBox="0 0 190 190">
+            <circle class="rbb" cx="95" cy="95" r="80"/>
+            <circle class="rbar" cx="95" cy="95" r="80" id="rb"/>
+          </svg>
+          <div class="rbi">
+            <div class="rbn" id="bc">0</div>
+            <div style="font-size:.52rem;color:var(--mu);font-weight:800;text-transform:uppercase;letter-spacing:2px;margin-top:2px;font-family:'JetBrains Mono',monospace;">Done</div>
+          </div>
+        </div>
+        <div class="dst">
+          <div class="dsv"><span id="dd">0</span><span style="opacity:.28;font-weight:300;margin:0 5px">/</span><span id="dt">40</span></div>
+          <div class="dsl">Days Logged</div>
+        </div>
+      </div>
+      <div id="dw"></div>
+    </div>
+    
+    <div class="view" id="vPl">
+      <div class="plhdr">
+        <div class="plttl">40 Day NEET Blitz · 24 Mar → 2 May 2026</div>
+        <div class="plleg">
+          <span class="leg lm">🔢 Maths</span>
+          <span class="leg lb">🧬 Biology</span>
+          <span class="leg lc">⚗️ Chemistry</span>
+          <span class="leg lp">📐 Physics</span>
+        </div>
+        <div class="pl-actions">
+          <input type="text" id="planSearch" placeholder="🔍 Search topics..." onkeyup="filterPlan()">
+          <button id="pdfBtn" onclick="printPlan()">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+            PDF
+          </button>
+        </div>
+      </div>
+      <div class="plsc">
+        <div class="plwp" style="padding:12px 14px 0;">
+            <table class="ptbl">
+            <thead><tr>
+                <th>Date</th>
+                <th>Table<span class="sub">n×</span></th>
+                <th>n² · n³<span class="sub">values</span></th>
+                <th>Bio Diagrams<span class="sub">Fig · Ch · Page</span></th>
+                <th>Elements<span class="sub">Z · Mass · Group</span></th>
+                <th>Graph<span class="sub">Fig · Ch · Page</span></th>
+                <th>Dim Batch<span class="sub">10 formulas</span></th>
+                <th>Table Ref<span class="sub">Book · No · Page</span></th>
+                <th>Named Rxn<span class="sub">Reactants→Product</span></th>
+                <th>Phy Formulas<span class="sub">Key Equations</span></th>
+                <th>Chem Reagents<span class="sub">Catalyst · Use</span></th>
+                <th>Bio Diseases<span class="sub">Pathogen · Trait</span></th>
+                <th>PYQ Target<span class="sub">Solve 20+ Qs</span></th>
+                <th>A-R<span class="sub">Assertion · Reason</span></th>
+            </tr></thead>
+            <tbody id="pb"></tbody>
+            </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="bnav">
+    <button class="bb active" id="t0" onclick="switchTab(0)">
+      <svg viewBox="0 0 24 24"><polyline points="3 12 8 12 12 4 16 20 20 12 23 12"></polyline></svg>
+      <span class="nav-lbl">TODAY</span>
+    </button>
+    <button class="bb" id="t1" onclick="switchTab(1)">
+      <svg viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M7 16l4-4 4 4 4-6"/></svg>
+      <span class="nav-lbl">PROGRESS</span>
+    </button>
+    <button class="bb" id="t2" onclick="switchTab(2)">
+      <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="3"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      <span class="nav-lbl">PLAN</span>
+    </button>
+  </div>
+</div>
+
+<div class="pom-float" id="pomFloat">
+  <div>
+    <div class="pom-time" id="pomTime">25:00</div>
+    <div class="pom-task" id="pomTask">Focus Timer</div>
+  </div>
+  <div class="pom-ctrl">
+    <button class="pom-c pom-pause" id="pomPause" onclick="pomTogglePause()">⏸</button>
+    <button class="pom-c pom-stop" onclick="pomStop()">✕</button>
+  </div>
+</div>
+
+<script>
+'use strict';
+const SK='aiims41v1',ST='aiims41v1t';
+const TOTAL=40; // Strict 40 days to end exactly on May 2nd
+const DS=new Date(2026,2,24); // March is index 2, Starts Tomorrow (Mar 24)
+const BC=502.65,MC=201.06;
+const MN=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+function makeProSched(baseOffset, peakStart, peakEnd) {
+    var s = new Array(TOTAL).fill(1);
+    for(var i = 0; i < TOTAL; i++){
+        if (i >= peakStart && i <= peakEnd && (i + baseOffset) % 3 === 0) {
+            s[i] = 2;
+        }
+        if (i >= TOTAL - 4) { s[i] = 1; }
+    }
+    return s;
+}
+
+const SCHED = {
+    tab: makeProSched(0, 5, 35),
+    sqc: makeProSched(1, 5, 35),
+    bio: makeProSched(2, 10, 38),
+    chm: makeProSched(0, 15, 38),
+    phy: makeProSched(1, 10, 35)
+};
+
+function getIndices(d, cat) {
+    if (d < 0 || d >= TOTAL) return [0];
+    var start = 0;
+    for(var i=0; i<d; i++) {
+        var v = SCHED[cat][i];
+        start += (typeof v === 'number' && !isNaN(v)) ? v : 1;
+    }
+    var count = SCHED[cat][d] || 1;
+    if (count === 1) return [start];
+    return [start, start+1];
+}
+
+// --- NEW PRO DATABASES ---
+const PF = [
+    ['Kinematics', 'v = u + at, s = ut + ½at², v² = u² + 2as'],
+    ['Gravitation', 'F = G m₁m₂/r²'],
+    ['Work Energy', 'W = ∫F·dx = ΔK'],
+    ['Power', 'P = F·v'],
+    ['Momentum', 'p = mv, F = dp/dt'],
+    ['Escape Velocity', 'v_e = √(2GM/R)'],
+    ['Orbital Velocity', 'v_o = √(GM/R)'],
+    ['Capacitance', 'C = ε₀A/d, U = ½CV²'],
+    ['Ohm Law', 'V = IR, R = ρL/A'],
+    ['Magnetic Force', 'F = q(v × B)'],
+    ['Lorentz Force', 'F = qE + q(v × B)'],
+    ['Faraday Law', 'ε = -dΦ/dt'],
+    ['AC RMS', 'V_rms = V_0/√2'],
+    ['De Broglie', 'λ = h/p'],
+    ['Photoelectric', 'K_max = hν - Φ'],
+    ['Bohr Radius', 'r_n = 0.529 n²/Z Å'],
+    ['Mass Defect', 'Δm = [Z m_p + (A-Z)m_n] - M'],
+    ['Radioactivity', 'N = N_0 e^(-λt)'],
+    ['Thermodynamics', 'ΔQ = ΔU + ΔW'],
+    ['Ideal Gas', 'PV = nRT'],
+];
+
+const CR = [
+    ['Grignard Reagent', 'RMgX → Nucleophile / Base'],
+    ['Lindlar Catalyst', 'Pd/CaCO₃ + Quinoline → Alkyne to cis-Alkene'],
+    ['Birch Reduction', 'Na/Li in liq. NH₃ → Alkyne to trans-Alkene / Benzene to 1,4-Cyclohexadiene'],
+    ['PCC / PDC', 'Mild Oxidation → 1° Alcohol to Aldehyde'],
+    ['KMnO4 (alkaline)', 'Strong Oxidation → Alkene to Diol / 1° Alcohol to Acid'],
+    ['Jones Reagent', 'CrO₃/H₂SO₄ → 1° Alcohol to Acid / 2° to Ketone'],
+    ['LiAlH4', 'Strong Reducing Agent → Reduces Aldehyde, Ketone, Acid, Ester to Alcohol'],
+    ['NaBH4', 'Mild Reducing Agent → Reduces Aldehyde, Ketone to Alcohol (Not Esters)'],
+    ['Zn(Hg) / HCl', 'Clemmensen Reduction → C=O to CH₂'],
+    ['NH₂NH₂ / KOH', 'Wolff-Kishner Reduction → C=O to CH₂'],
+    ['DIBAL-H', 'Reduces Esters and Nitriles to Aldehydes at low temp'],
+    ['SnCl2 / HCl', 'Stephen Reaction → Nitrile to Aldehyde'],
+    ['NBS', 'Allylic / Benzylic Bromination'],
+    ['AlCl3 (Anhydrous)', 'Lewis Acid → Friedel-Crafts Catalyst'],
+    ['NaNH2', 'Strong Base → Dehydrohalogenation to Alkyne'],
+    ['O3 / Zn-H2O', 'Reductive Ozonolysis → Cleaves C=C to Carbonyls'],
+    ['NaOI / I2+NaOH', 'Iodoform Test → Methyl Ketones to CHI₃'],
+    ['Hinsberg Reagent', 'PhSO₂Cl → Distinguishes 1°, 2°, 3° Amines'],
+    ['Lucas Reagent', 'ZnCl₂ / conc. HCl → Distinguishes Alcohols (3° > 2° > 1°)'],
+    ['Tollen Reagent', 'Ag(NH₃)₂⁺ → Oxidises Aldehydes to Acids (Silver Mirror)'],
+];
+
+const BD_DIS = [
+    ['Malaria', 'Plasmodium sp. (Protozoan) → Vector: Female Anopheles'],
+    ['Typhoid', 'Salmonella typhi (Bacteria) → Widal Test'],
+    ['Pneumonia', 'Streptococcus pneumoniae (Bacteria) → Infects alveoli'],
+    ['Common Cold', 'Rhinovirus (Virus) → Infects upper resp. tract'],
+    ['Ringworm', 'Microsporum, Trichophyton (Fungi) → Skin lesions'],
+    ['Amoebiasis', 'Entamoeba histolytica (Protozoan) → Intestinal parasite'],
+    ['Ascariasis', 'Ascaris lumbricoides (Helminth) → Internal bleeding, blockage'],
+    ['Elephantiasis', 'Wuchereria bancrofti (Filarial worm) → Lymphatic swelling'],
+    ['Dengue', 'Flavivirus (Virus) → Vector: Aedes aegypti'],
+    ['Chikungunya', 'Flavivirus (Virus) → Vector: Aedes aegypti'],
+    ['AIDS', 'HIV (Retrovirus) → Depletes Helper T-cells (CD4)'],
+    ['Cancer', 'Oncogenes / Tumor Suppressor mutation → Uncontrolled growth'],
+    ['Sickle Cell Anemia', 'Autosomal Recessive → Point mutation (Glu → Val)'],
+    ['Hemophilia', 'Autosomal Recessive → Defective blood clotting cascade'],
+    ['Cystic Fibrosis', 'Autosomal Recessive → Thick mucus in lungs/pancreas'],
+    ['Color Blindness', 'X-linked Recessive → Defect in red/green cone cells'],
+    ['Turner Syndrome', 'Chromosomal (45, X0) → Sterile female, webbed neck'],
+    ['Klinefelter', 'Chromosomal (47, XXY) → Sterile male, gynecomastia'],
+    ['Down Syndrome', 'Trisomy 21 → Broad palm, furrowed tongue, retardation'],
+    ['PKU', 'Autosomal Recessive → Lacks enzyme to convert Phe to Tyr'],
+];
+
+const PYQ = [
+    'Kinematics (1D & 2D)', 'Laws of Motion & Friction', 'Work, Energy & Power',
+    'Rotational Motion', 'Gravitation', 'Thermodynamics (Physics)',
+    'Electrostatics', 'Current Electricity', 'Moving Charges & Magnetism',
+    'Ray Optics & Instruments', 'Dual Nature of Matter', 'Semiconductors',
+    'Concepts of Chemistry', 'Atomic Structure', 'Chemical Bonding',
+    'Thermodynamics (Chem)', 'Equilibrium', 'Coordination Compounds',
+    'GOC & Hydrocarbons', 'Aldehydes, Ketones & Acids', 'Amines',
+    'Biological Classification', 'Plant Kingdom', 'Animal Kingdom',
+    'Cell: The Unit of Life', 'Cell Cycle & Division', 'Biomolecules',
+    'Human Reproduction', 'Genetics (Principles)', 'Basis of Inheritance',
+    'Biotechnology', 'Ecosystem', 'Human Health & Disease'
+];
+
+const BD=[
+['Fig 2.1','Bacterial cell shapes: coccus, bacillus, spirillum','Bio11 Ch2 p.18'],
+['Fig 2.3','Nostoc filament: heterocyst, vegetative cell, akinete','Bio11 Ch2 p.21'],
+['Fig 3.1','Marchantia: dorsal thallus, rhizoids, gemma cup','Bio11 Ch3 p.31'],
+['Fig 3.2','Funaria: gametophyte (leafy stem) and sporophyte','Bio11 Ch3 p.34'],
+['Fig 3.3','Fern: prothallus with archegonia and antheridia','Bio11 Ch3 p.37'],
+['Fig 3.6','Cycas: microsporophyll and megasporophyll','Bio11 Ch3 p.42'],
+['Fig 3.8','Alternation of generations in Angiosperm','Bio11 Ch3 p.44'],
+['Fig 4.2','Sycon: longitudinal section showing canal system','Bio11 Ch4 p.55'],
+['Fig 4.4','Obelia colony: hydranth and gonangium','Bio11 Ch4 p.58'],
+['Fig 4.10','Starfish (Asterias): aboral and oral surface','Bio11 Ch4 p.66'],
+['Fig 5.1','Root types: tap root, fibrous root, adventitious root','Bio11 Ch5 p.63'],
+['Fig 5.2','Root modifications: storage, climbing, respiratory','Bio11 Ch5 p.64'],
+['Fig 5.5','Leaf parts: lamina, petiole, leaf base, stipule','Bio11 Ch5 p.69'],
+['Fig 5.7','Venation: reticulate (dicot) vs parallel (monocot)','Bio11 Ch5 p.70'],
+['Fig 5.14','Aestivation types: valvate, twisted, imbricate','Bio11 Ch5 p.76'],
+['Fig 5.19','Brassicaceae floral diagram and formula','Bio11 Ch5 p.84'],
+['Fig 6.1a','Parenchyma TS: isodiametric thin-walled cells','Bio11 Ch6 p.88'],
+['Fig 6.1b','Collenchyma TS: thickened corners','Bio11 Ch6 p.89'],
+['Fig 6.1c','Sclerenchyma TS: thick lignified walls','Bio11 Ch6 p.90'],
+['Fig 6.5','Dicot root TS: cortex, endodermis, pericycle, vascular','Bio11 Ch6 p.95'],
+['Fig 6.6','Monocot root TS: many vascular bundles, pith','Bio11 Ch6 p.96'],
+['Fig 6.7','Dicot stem TS: epidermis, cortex, vascular bundle','Bio11 Ch6 p.97'],
+['Fig 6.8','Monocot stem TS: scattered vascular bundles, no pith ring','Bio11 Ch6 p.98'],
+['Fig 6.11','Dicot leaf TS: palisade, spongy mesophyll, stomata','Bio11 Ch6 p.102'],
+['Fig 7.1','Earthworm external: segments, clitellum, setae','Bio11 Ch7 p.106'],
+['Fig 7.3','Earthworm TS body wall and alimentary canal','Bio11 Ch7 p.109'],
+['Fig 8.2','Eukaryotic plant cell fully labelled','Bio11 Ch8 p.131'],
+['Fig 8.3','Eukaryotic animal cell fully labelled','Bio11 Ch8 p.132'],
+['Fig 8.4','Mitochondria TS: cristae, matrix, outer and inner membrane','Bio11 Ch8 p.138'],
+['Fig 8.5','Chloroplast TS: grana, stroma, thylakoid membrane','Bio11 Ch8 p.140'],
+['Fig 8.6','Endoplasmic reticulum: rough and smooth','Bio11 Ch8 p.141'],
+['Fig 8.8','Nucleus: nuclear envelope, pore, nucleolus, chromatin','Bio11 Ch8 p.145'],
+['Fig 9.9','Enzyme: lock and key model vs induced fit model','Bio11 Ch9 p.163'],
+['Fig 10.2','Mitosis: prophase, metaphase, anaphase, telophase','Bio11 Ch10 p.176'],
+['Fig 10.5','Meiosis I: zygotene, pachytene, diplotene, crossing over','Bio11 Ch10 p.183'],
+['Fig 10.6','Meiosis II: separation of chromatids','Bio11 Ch10 p.185'],
+['Fig 11.4','Osmosis: thistle funnel demonstration stages','Bio11 Ch11 p.198'],
+['Fig 11.5','Plasmolysis: turgid, flaccid, plasmolysed stages','Bio11 Ch11 p.200'],
+['Fig 13.1','Absorption spectrum (chlorophyll a/b) vs action spectrum','Bio11 Ch13 p.222'],
+['Fig 13.3','Chloroplast: site of light and dark reactions','Bio11 Ch13 p.224'],
+['Fig 13.5','Z-scheme: PS-II, PS-I, PQ, Cyt b6f, PC, Fd','Bio11 Ch13 p.229'],
+['Fig 13.7','Calvin cycle: CO2 fixation, reduction, regeneration','Bio11 Ch13 p.233'],
+['Fig 13.9','C4 pathway: mesophyll vs bundle sheath','Bio11 Ch13 p.237'],
+['Fig 13.10','CAM: stomata open at night, CO2 stored as malate','Bio11 Ch13 p.239'],
+['Fig 14.2','Glycolysis (EMP): glucose to 2 pyruvate, 2ATP net','Bio11 Ch14 p.244'],
+['Fig 14.4','Krebs cycle: all 8 steps with cofactors','Bio11 Ch14 p.249'],
+['Fig 14.5','ETC: Complex I-IV, ATP synthase, chemiosmosis','Bio11 Ch14 p.252'],
+['Fig 14.6','Fermentation: alcoholic and lactic acid pathways','Bio11 Ch14 p.254'],
+['Fig 15.2','Sigmoid growth curve: lag, log, stationary, decline','Bio11 Ch15 p.263'],
+['Fig 15.3','Arithmetic vs geometric growth comparison','Bio11 Ch15 p.264'],
+['Fig 18.2','Neuron: axon, dendrites, myelin sheath, nodes of Ranvier','Bio11 Ch18 p.317'],
+['Fig 18.4','Synapse: vesicles, neurotransmitter, receptor','Bio11 Ch18 p.321'],
+['Fig 18.7','Brain sagittal: cerebrum, cerebellum, pons, medulla','Bio11 Ch18 p.326'],
+['Fig 18.9','Spinal cord TS: grey matter, white matter, dorsal horn','Bio11 Ch18 p.329'],
+['Fig 19.1','Endocrine glands: positions in human body','Bio11 Ch19 p.335'],
+['Fig 19.3','Feedback regulation: hypothalamus-pituitary-target gland','Bio11 Ch19 p.339'],
+['Fig 21.2','Digestive system: all organs with labels','Bio11 Ch16 p.269'],
+['Fig 21.4','Villus TS: microvilli, lacteal, capillaries','Bio11 Ch16 p.275'],
+['Fig 22.2','Respiratory system: trachea, bronchi, alveoli','Bio11 Ch17 p.280'],
+['Fig 22.4','Lung volumes: TV, IRV, ERV, RV on spirogram','Bio11 Ch17 p.285'],
+['Fig 18.12','Heart: 4 chambers, valves, coronary vessels, conducting system','Bio11 Ch18 p.285'],
+['Fig 18.14','ECG: P wave, QRS complex, T wave — normal sinus rhythm','Bio11 Ch18 p.290'],
+['Fig 19.2','Nephron: Bowman capsule, PCT, loop of Henle, DCT, collecting duct','Bio11 Ch19 p.304'],
+['Fig 19.5','Countercurrent mechanism in loop of Henle — concentration gradient','Bio11 Ch19 p.309'],
+['Fig 1.3','Pollen grain: exine, intine, germ pore, generative cell','Bio12 Ch1 p.12'],
+['Fig 1.5','Anther TS: 4 microsporangia, tapetum, MMC','Bio12 Ch1 p.14'],
+['Fig 1.6','Female gametophyte: 7-celled 8-nucleated embryo sac','Bio12 Ch1 p.17'],
+['Fig 1.7','Double fertilisation: syngamy and triple fusion','Bio12 Ch1 p.21'],
+['Fig 1.9','Dicot seed (bean): testa, cotyledon, plumule, radicle','Bio12 Ch1 p.26'],
+['Fig 1.10','Monocot seed (maize): endosperm, scutellum, aleurone','Bio12 Ch1 p.27'],
+['Fig 2.1','Male reproductive system fully labelled','Bio12 Ch2 p.31'],
+['Fig 2.3','Seminiferous tubule TS: spermatogonia, spermatocytes, Sertoli','Bio12 Ch2 p.35'],
+['Fig 2.5','Female reproductive system fully labelled','Bio12 Ch2 p.38'],
+['Fig 2.8','Ovarian follicle stages: primordial to Graafian to CL','Bio12 Ch2 p.42'],
+['Fig 2.11','Placenta and foetal membranes: amnion, chorion, umbilicus','Bio12 Ch2 p.47'],
+['Fig 3.1','Contraceptives: IUD types, barrier methods','Bio12 Ch3 p.55'],
+['Fig 4.2','Monohybrid cross: dominant vs recessive pea traits','Bio12 Ch4 p.64'],
+['Fig 4.4','Dihybrid cross: 9:3:3:1 ratio derivation','Bio12 Ch4 p.68'],
+['Fig 4.10','Sex determination: XX-XY and ZZ-ZW mechanisms','Bio12 Ch4 p.80'],
+['Fig 4.12','Pedigree analysis: autosomal dominant pattern','Bio12 Ch4 p.84'],
+['Fig 5.1','DNA double helix: antiparallel strands, base pairing, grooves','Bio12 Ch5 p.95'],
+['Fig 5.4','DNA replication: semi-conservative, replication fork, Okazaki','Bio12 Ch5 p.101'],
+['Fig 5.6','Transcription: template strand, RNA polymerase, mRNA','Bio12 Ch5 p.106'],
+['Fig 5.9','Translation: ribosome, A/P/E sites, codon-anticodon','Bio12 Ch5 p.112'],
+['Fig 5.11','Lac operon: repressor bound (no inducer) vs induced','Bio12 Ch5 p.118'],
+['Fig 6.2','Darwin finches: 13 beak types showing adaptive radiation','Bio12 Ch6 p.133'],
+['Fig 6.4','Hardy-Weinberg equilibrium: allele frequencies','Bio12 Ch6 p.139'],
+['Fig 7.1','Antibody structure: 2 heavy + 2 light chains, antigen site','Bio12 Ch7 p.151'],
+['Fig 7.3','Plasmodium life cycle: mosquito and human stages','Bio12 Ch7 p.157'],
+['Fig 8.2','Biogas plant: inlet slurry, digester, gas holder, outlet','Bio12 Ch8 p.171'],
+['Fig 9.1','rDNA technology: restriction, ligation, transformation steps','Bio12 Ch9 p.179'],
+['Fig 9.3','pBR322 plasmid: ori, ampR, tetR, BamHI, EcoRI sites','Bio12 Ch9 p.184'],
+['Fig 9.6','Gel electrophoresis: agarose gel, DNA bands, UV','Bio12 Ch9 p.190'],
+['Fig 10.2','Bt toxin (cry protein) mechanism in insect gut','Bio12 Ch10 p.199'],
+['Fig 11.3','Population growth: J-curve vs S-curve (logistic)','Bio12 Ch11 p.214'],
+['Fig 12.5','Ecological pyramids: energy, biomass, number','Bio12 Ch12 p.233'],
+['Fig 12.7','Carbon cycle: photosynthesis, respiration, decomposition arrows','Bio12 Ch12 p.238'],
+['Fig 13.3','In-situ vs Ex-situ conservation: national park, gene bank','Bio12 Ch13 p.250'],
+['Fig 7.2','AIDS: HIV structure, HIV replication and CD4 T-cells','Bio12 Ch7 p.153'],
+['Fig 8.1','Sewage treatment plant: primary, secondary and tertiary stages','Bio12 Ch8 p.165'],
+]
+const PG=[
+['Fig 3.3','x-t graph: uniform motion (slope = constant velocity)','Phy11 Ch3 p.44'],
+['Fig 3.4','x-t graph: uniformly accelerated (parabola, slope increasing)','Phy11 Ch3 p.45'],
+['Fig 3.5','v-t graph: uniform velocity (horizontal line, area = displacement)','Phy11 Ch3 p.46'],
+['Fig 3.6','v-t graph: uniform acceleration (straight line, area = s, slope = a)','Phy11 Ch3 p.47'],
+['Fig 3.7','v-t graph: retardation, velocity reversal, direction change','Phy11 Ch3 p.48'],
+['Fig 4.10','Projectile: parabolic path, horizontal R, max height H','Phy11 Ch4 p.71'],
+['Fig 5.6','F-t graph: impulse as area under curve','Phy11 Ch5 p.95'],
+['Fig 6.3','F vs x (spring): linear graph, slope = k (spring constant)','Phy11 Ch6 p.115'],
+['Fig 6.5','PE vs x for spring: parabola U = kx²/2, F = -dU/dx','Phy11 Ch6 p.117'],
+['Fig 8.8','Gravitational PE vs r: U = -GMm/r (hyperbola below axis)','Phy11 Ch8 p.190'],
+['Fig 9.3','Stress-strain: proportional limit, elastic limit, yield point, fracture','Phy11 Ch9 p.231'],
+['Fig 11.9','P-T phase diagram: solid, liquid, gas, triple point, critical point','Phy11 Ch11 p.275'],
+['Fig 12.7','P-V diagram: isothermal vs adiabatic (adiabatic steeper)','Phy11 Ch12 p.300'],
+['Fig 13.2','P-V graph: Boyle law (rectangular hyperbola at constant T)','Phy11 Ch13 p.321'],
+['Fig 13.4','V-T graph: Charles law (straight line through -273 on x-axis)','Phy11 Ch13 p.324'],
+['Fig 13.9','Maxwell-Boltzmann speed distribution: vmp, vav, vrms positions','Phy11 Ch13 p.335'],
+['Fig 14.6','SHM: x-t, v-t, a-t graphs showing phase differences','Phy11 Ch14 p.344'],
+['Fig 14.8','KE and PE vs displacement in SHM: sum constant at all points','Phy11 Ch14 p.346'],
+['Fig 14.15','Simple pendulum: T vs L (curve) and T vs sqrt-L (straight line)','Phy11 Ch14 p.352'],
+['Fig 15.6','Standing waves in string: fundamental and overtones (nodes, antinodes)','Phy11 Ch15 p.371'],
+['Fig 1.8','E vs r for point charge: E = kq/r² (inverse square law)','Phy12 Ch1 p.15'],
+['Fig 1.9','Electric field lines: isolated charge, dipole, parallel plates','Phy12 Ch1 p.16'],
+['Fig 2.14','V vs r for point charge: V = kq/r (always positive for +q)','Phy12 Ch2 p.55'],
+['Fig 2.21','V vs d for parallel plate capacitor: linear, C = ε₀A/d','Phy12 Ch2 p.66'],
+['Fig 3.4','I-V characteristic: ohmic conductor (perfect straight line)','Phy12 Ch3 p.96'],
+['Fig 3.5','I-V characteristic: non-ohmic (lamp - curves upward)','Phy12 Ch3 p.97'],
+['Fig 3.6','R vs T graph: metal (linear increase) vs semiconductor (exponential decrease)','Phy12 Ch3 p.98'],
+['Fig 4.20','B vs r inside and outside solenoid: uniform inside, drops to 0','Phy12 Ch4 p.147'],
+['Fig 5.13','Hysteresis (B-H) loop: retentivity, coercivity, saturation','Phy12 Ch5 p.179'],
+['Fig 6.10','Induced EMF vs time for rotating coil: sinusoidal e = E₀ sin(ωt)','Phy12 Ch6 p.209'],
+['Fig 7.10','AC circuit phasors: V leads I (inductor), I leads V (capacitor)','Phy12 Ch7 p.229'],
+['Fig 7.14','Resonance curve: I vs ω, peak at ω₀, bandwidth and Q factor','Phy12 Ch7 p.234'],
+['Fig 8.4','Electromagnetic spectrum: gamma to radio with wavelength and frequency','Phy12 Ch8 p.261'],
+['Fig 9.21','Lens: 1/v vs 1/u graph (linear, slope = 1, intercept = -1/f)','Phy12 Ch9 p.316'],
+['Fig 10.14','YDSE interference: bright and dark fringe pattern','Phy12 Ch10 p.349'],
+['Fig 10.19','Single-slit diffraction: central maximum and secondary maxima','Phy12 Ch10 p.356'],
+['Fig 11.3','Photoelectric effect: photocurrent vs intensity (linear)','Phy12 Ch11 p.376'],
+['Fig 11.5','Photoelectric effect: KE vs frequency (linear, threshold at ν₀)','Phy12 Ch11 p.378'],
+['Fig 11.14','de Broglie: λ vs p (hyperbola λ = h/p)','Phy12 Ch11 p.390'],
+['Fig 12.8','Hydrogen energy levels: Lyman, Balmer, Paschen series','Phy12 Ch12 p.409'],
+['Fig 13.1','Binding energy per nucleon vs mass number: peak at Fe-56','Phy12 Ch13 p.442'],
+['Fig 13.9','Radioactive decay: N vs t (exponential N = N₀ e^−λt)','Phy12 Ch13 p.450'],
+['Fig 13.10','Half-life graph: successive halvings N₀, N₀/2, N₀/4...','Phy12 Ch13 p.451'],
+['Fig 14.1','Energy band diagram: conductor (overlap), semiconductor (small gap), insulator','Phy12 Ch14 p.462'],
+['Fig 14.9','p-n diode I-V: forward bias (exponential), reverse bias (near 0)','Phy12 Ch14 p.472'],
+['Fig 14.13','Zener diode I-V: breakdown region at reverse Vz','Phy12 Ch14 p.476'],
+['Fig 14.22','NPN transistor output: Ic vs VCE for different IB values','Phy12 Ch14 p.488'],
+['Fig 14.31','Logic gates: AND, OR, NOT, NAND, NOR truth tables','Phy12 Ch14 p.497'],
+['Fig 11.15','Newton\'s law of cooling: T vs t (exponential decay curve, tangent = cooling rate)','Phy11 Ch11 p.296'],
+['Fig 5.3','Adsorption isotherm (Freundlich): x/m vs P at constant T','Chem12 Ch5 p.130'],
+]
+const EL=[
+['H','Hydrogen',1,'1.008','1','1s1','Lightest; forms H₂O, HCl; amphoteric (+1/-1)'],
+['Li','Lithium',3,'6.94','1','[He]2s1','Softest metal; Li-ion batteries; anomalous (similar to Mg)'],
+['Na','Sodium',11,'22.99','1','[Ne]3s1','Reacts violently with water; NaCl; Na₂O₂ with excess O₂'],
+['K','Potassium',19,'39.10','1','[Ar]4s1','KO₂ with excess O₂; nerve impulses; KNO₃ fertiliser'],
+['Rb','Rubidium',37,'85.47','1','[Kr]5s1','Soft silvery; ignites in air; Rb₂O₂ peroxide'],
+['Cs','Caesium',55,'132.9','1','[Xe]6s1','Lowest IE1 among all; atomic clock; photoelectric emitter'],
+['Fr','Francium',87,'(223)','1','[Rn]7s1','Radioactive; rarest natural element; t½=22 min'],
+['Be','Beryllium',4,'9.012','2','[He]2s2','Anomalous: covalent; diagonal with Al; no reaction with water'],
+['Mg','Magnesium',12,'24.31','2','[Ne]3s2','Chlorophyll centre; Grignard reagent; burns with white light'],
+['Ca','Calcium',20,'40.08','2','[Ar]4s2','Bones (CaCO₃, Ca₃(PO₄)₂); CaO quicklime; plaster of Paris'],
+['Sr','Strontium',38,'87.62','2','[Kr]5s2','Crimson-red flame; SrSO₄; similar to Ca in biology'],
+['Ba','Barium',56,'137.3','2','[Xe]6s2','BaSO₄ X-ray meal; apple-green flame; Ba(OH)₂ strong base'],
+['Ra','Radium',88,'(226)','2','[Rn]7s2','Radioactive; t½=1600yr; discovered by Marie Curie'],
+['B','Boron',5,'10.81','13','[He]2s²2p1','Metalloid; electron deficient; forms borax Na₂B₄O₇; no d-orbital'],
+['Al','Aluminium',13,'26.98','13','[Ne]3s²3p1','Most abundant metal in crust; amphoteric Al₂O₃; Hall-Heroult'],
+['Ga','Gallium',31,'69.72','13','[Ar]3d¹⁰4s²4p1','mp=29.8°C (melts in hand); d-contraction makes it smaller than Al'],
+['In','Indium',49,'114.8','13','[Kr]4d¹⁰5s²5p1','ITO in LCD screens; In³⁺ dominant; inert pair begins'],
+['Tl','Thallium',81,'204.4','13','[Xe]4f¹⁴5d¹⁰6s²6p1','Tl⁺ stable (inert pair effect); toxic; Tl₂SO₄ rodenticide'],
+['C','Carbon',6,'12.01','14','[He]2s²2p2','Diamond/graphite/fullerene allotropes; sp³/sp²/sp hybridisation'],
+['Si','Silicon',14,'28.09','14','[Ne]3s²3p2','Semiconductor; silicates; SiO₂; Si is after C in semiconductors'],
+['Ge','Germanium',32,'72.63','14','[Ar]3d¹⁰4s²4p2','eka-silicon (predicted by Mendeleev); transistors; metalloid'],
+['Sn','Tin',50,'118.7','14','[Kr]4d¹⁰5s²5p2','α-Sn (grey) and β-Sn (white); solder; tin cans'],
+['Pb','Lead',82,'207.2','14','[Xe]4f¹⁴5d¹⁰6s²6p2','Pb²⁺ dominant (inert pair); car batteries; heaviest stable metal'],
+['N','Nitrogen',7,'14.01','15','[He]2s²2p3','78% atmosphere; N≡N triple bond strongest; forms NH₃, HNO₃'],
+['P','Phosphorus',15,'30.97','15','[Ne]3s²3p3','White/red/black allotropes; ATP, DNA backbone; PCl₃, PCl₅'],
+['As','Arsenic',33,'74.92','15','[Ar]3d¹⁰4s²4p3','Metalloid; cumulative poison; grey and yellow allotropes'],
+['Sb','Antimony',51,'121.8','15','[Kr]4d¹⁰5s²5p3','Metalloid; Sb₂O₃; fire retardants; kohl (kajal) historically'],
+['Bi','Bismuth',83,'209.0','15','[Xe]4f¹⁴5d¹⁰6s²6p3','Most metallic in Gr15; low toxicity; Pepto-Bismol'],
+['O','Oxygen',8,'16.00','16','[He]2s²2p4','Most electronegative after F; -2 only (-1 in peroxides)'],
+['S','Sulphur',16,'32.07','16','[Ne]3s²3p4','Rhombic and monoclinic allotropes; H₂SO₄ contact process'],
+['Se','Selenium',34,'78.97','16','[Ar]3d¹⁰4s²4p4','Metalloid; photoelectric; CdTe solar; antioxidant enzyme'],
+['Te','Tellurium',52,'127.6','16','[Kr]4d¹⁰5s²5p4','Metalloid; CdTe solar cells; rare; bad garlic odour'],
+['Po','Polonium',84,'(209)','16','[Xe]4f¹⁴5d¹⁰6s²6p4','Radioactive metal; alpha emitter; t½=138days; Curie'],
+['F','Fluorine',9,'19.00','17','[He]2s²2p5','Most electronegative (3.98); no +ve OS; HF weak acid; anomalous'],
+['Cl','Chlorine',17,'35.45','17','[Ne]3s²3p5','Greenish-yellow gas; -1/+1/+3/+5/+7; bleaching powder'],
+['Br','Bromine',35,'79.90','17','[Ar]3d¹⁰4s²4p5','Only liquid non-metal at RT; red-brown; AgBr photography'],
+['I','Iodine',53,'126.9','17','[Kr]4d¹⁰5s²5p5','Shiny black solid, purple vapour; thyroid; iodoform CHI₃'],
+['At','Astatine',85,'(210)','17','[Xe]4f¹⁴5d¹⁰6s²6p5','Radioactive; rarest halogen in nature; t½=8.1h; At⁻ stable'],
+['He','Helium',2,'4.003','18','1s2','Lightest noble gas; MRI cooling; superfluid below 2.17K'],
+['Ne','Neon',10,'20.18','18','[He]2s²2p6','Neon signs; 2nd lightest noble; no known stable compound'],
+['Ar','Argon',18,'39.95','18','[Ne]3s²3p6','3rd most abundant in atmosphere (0.93%); welding shield gas'],
+['Kr','Krypton',36,'83.80','18','[Ar]3d¹⁰4s²4p6','KrF₂ known compound; light source; standard of length (1960)'],
+['Xe','Xenon',54,'131.3','18','[Kr]4d¹⁰5s²5p6','XeF₂, XeF₄, XeO₃ known; anaesthetic; ion propulsion'],
+['Rn','Radon',86,'(222)','18','[Xe]4f¹⁴5d¹⁰6s²6p6','Radioactive noble gas; from ²²⁶Ra decay; lung cancer risk'],
+['Sc','Scandium',21,'44.96','3','[Ar]3d¹4s2','Lightest d-block; aerospace alloys with Al; Sc(OH)₃ basic'],
+['Ti','Titanium',22,'47.87','4','[Ar]3d²4s2','Strongest light metal; TiO₂ white pigment; Ti⁴⁺ most stable'],
+['V','Vanadium',23,'50.94','5','[Ar]3d³4s2','V₂O₅ catalyst in contact process (H₂SO₄); +2 to +5 OS'],
+['Cr','Chromium',24,'52.00','6','[Ar]3d⁵4s1','Aufbau exception; stainless steel; Cr₂O₇²⁻ orange, CrO₄²⁻ yellow'],
+['Mn','Manganese',25,'54.94','7','[Ar]3d⁵4s2','KMnO₄ purple oxidiser; MnO₂ dry cell; highest OS = +7'],
+['Fe','Iron',26,'55.85','8','[Ar]3d⁶4s2','Haemoglobin (Fe²⁺); Fe²⁺ and Fe³⁺; most used structural metal'],
+['Co','Cobalt',27,'58.93','9','[Ar]3d⁷4s2','Vitamin B₁₂ centre (Co³⁺); hard magnets; Co-60 radiotherapy'],
+['Ni','Nickel',28,'58.69','10','[Ar]3d⁸4s2','Raney-Ni catalyst; coins; Ni-Cd battery; corrosion resistant'],
+['Cu','Copper',29,'63.55','11','[Ar]3d¹⁰4s1','Aufbau exception; best conductor; CuSO₄·5H₂O blue vitriol'],
+['Zn','Zinc',30,'65.38','12','[Ar]3d¹⁰4s2','Not true transition (d¹⁰ always); galvanisation; ZnO white zinc'],
+]
+const DIM=[
+`Length [L]\nMass [M]\nTime [T]\nArea [L²]\nVolume [L³]\nDensity [ML⁻³]\nVelocity [LT⁻¹]\nAcceleration [LT⁻²]\nForce [MLT⁻²]\nMomentum [MLT⁻¹]`,
+`Work/Energy [ML²T⁻²]\nPower [ML²T⁻³]\nImpulse [MLT⁻¹]\nPressure [ML⁻¹T⁻²]\nStress [ML⁻¹T⁻²]\nYoung Modulus [ML⁻¹T⁻²]\nSurface Tension [MT⁻²]\nViscosity η [ML⁻¹T⁻¹]\nSpring Constant k [MT⁻²]\nSurface Energy [ML⁰T⁻²]`,
+`Angular Velocity ω [T⁻¹]\nAngular Acceleration [T⁻²]\nAngular Momentum [ML²T⁻¹]\nTorque τ [ML²T⁻²]\nMoment of Inertia [ML²]\nGravitational Constant G [M⁻¹L³T⁻²]\nGravitational PE [ML²T⁻²]\nFrequency ν [T⁻¹]\nTime Period T [T]\nWavelength λ [L]`,
+`Charge q [AT]\nVoltage V [ML²T⁻³A⁻¹]\nResistance R [ML²T⁻³A⁻²]\nCapacitance C [M⁻¹L⁻²T⁴A²]\nElectric Field E [MLT⁻³A⁻¹]\nPermittivity ε₀ [M⁻¹L⁻³T⁴A²]\nElectric Flux φ [ML³T⁻³A⁻¹]\nElectric Dipole Moment [ATL]\nElectric Potential Energy [ML²T⁻²]\nElectrostatic Force [MLT⁻²]`,
+`Magnetic Field B [MT⁻²A⁻¹]\nMagnetic Flux Φ [ML²T⁻²A⁻¹]\nInductance L [ML²T⁻²A⁻²]\nPermeability μ₀ [MLT⁻²A⁻²]\nEMF [ML²T⁻³A⁻¹]\nMagnetic Dipole Moment [AL²]\nMagnetic Moment of Electron [AL²]\nMagnetic Susceptibility [dimensionless]\nReactance X [ML²T⁻³A⁻²]\nImpedance Z [ML²T⁻³A⁻²]`,
+`Planck Constant h [ML²T⁻¹]\nde Broglie Wavelength [L]\nIntensity I [MT⁻³]\nRefractive Index n [dimensionless]\nPower of Lens [L⁻¹]\nFocal Length f [L]\nMagnification [dimensionless]\nWave Number k [L⁻¹]\nSpeed of Light c [LT⁻¹]\nPhoton Energy hν [ML²T⁻²]`,
+`Heat Q [ML²T⁻²]\nSpecific Heat c [L²T⁻²K⁻¹]\nLatent Heat L [L²T⁻²]\nThermal Conductivity k [MLT⁻³K⁻¹]\nEntropy S [ML²T⁻²K⁻¹]\nBoltzmann Constant k_B [ML²T⁻²K⁻¹]\nGas Constant R [ML²T⁻²K⁻¹mol⁻¹]\nStefan Constant σ [MT⁻³K⁻⁴]\nWien Constant b [LK]\nCoefficient of Linear Expansion α [K⁻¹]`,
+`Radioactivity A [T⁻¹]\nDecay Constant λ [T⁻¹]\nHalf-life t½ [T]\nBinding Energy [ML²T⁻²]\nMass Defect [M]\nAvogadro Number N_A [mol⁻¹]\nMolarity [L⁻³mol]\nPressure Gradient [ML⁻²T⁻²]\nBulk Modulus K [ML⁻¹T⁻²]\nCoefficient of Friction μ [dimensionless]`,
+]
+const TR=[
+['Phy11','Table 2.1','p.34','SI base units (7 fundamental units)'],
+['Phy11','Table 2.2','p.36','Derived SI units with special names'],
+['Phy11','Table 2.4','p.42','Dimensional formulas of key physical quantities'],
+['Phy11','Table 3.1','p.56','Equations of motion for uniform acceleration'],
+['Phy11','Table 9.1','p.233','Elastic moduli: Y, K, G for common materials'],
+['Phy11','Table 11.1','p.274','Cp, Cv, and gamma values for ideal gases'],
+['Phy11','Table 11.2','p.297','Thermal conductivities (W/mK) of solids/liquids'],
+['Phy11','Table 13.1','p.335','Mean speed, rms speed, most probable speed formulas'],
+['Phy12','Table 3.1','p.98','Resistivities of common conductors and insulators'],
+['Phy12','Table 5.2','p.171','Magnetic susceptibility of dia, para, ferromagnetic'],
+['Phy12','Table 8.1','p.258','EM spectrum: frequency, wavelength, source, use'],
+['Phy12','Table 14.1','p.463','Comparison: conductor, semiconductor, insulator'],
+['Chem11','Table 1.4','p.28','SI units used in chemistry (base + derived)'],
+['Chem11','Table 2.4','p.55','Atomic masses of first 30 elements'],
+['Chem11','Table 3.2','p.79','Atomic and ionic radii across periods and groups'],
+['Chem11','Table 3.3','p.84','First ionisation enthalpies (kJ/mol) across period 2-3'],
+['Chem11','Table 3.4','p.88','Electron gain enthalpies of group 17 and 16'],
+['Chem11','Table 3.5','p.90','Electronegativity values (Pauling scale)'],
+['Chem11','Table 4.5','p.125','Bond lengths and bond enthalpies of common bonds'],
+['Chem11','Table 6.1','p.158','Standard enthalpies of formation ΔHf° (kJ/mol)'],
+['Chem11','Table 7.1','p.194','Ka values and pKa of common weak acids'],
+['Chem11','Table 10.2','p.265','Properties of Group 13 elements (B to Tl)'],
+['Chem11','Table 10.3','p.279','Properties of Group 14 elements (C to Pb)'],
+['Chem12','Table 2.2','p.45','Colligative properties: equations and examples'],
+['Chem12','Table 3.2','p.72','Standard electrode potentials (E° vs SHE)'],
+['Chem12','Table 4.1','p.98','Rate law, order, units of k for 0, 1, 2 order'],
+['Chem12','Table 7.2','p.159','Properties of Group 15 elements (N to Bi)'],
+['Chem12','Table 7.3','p.178','Properties of Group 16 elements (O to Po)'],
+['Chem12','Table 7.4','p.189','Properties of Group 17 halogens (F to At)'],
+['Chem12','Table 7.5','p.201','Noble gas compounds: XeF₂, XeF₄, XeO₃'],
+['Chem12','Table 8.1','p.213','Electronic configurations of d-block elements'],
+['Chem12','Table 9.2','p.236','CFSE values and colours of transition metal complexes'],
+['Bio11','Table 1.1','p.8','Five kingdom classification (Whittaker)'],
+['Bio11','Table 2.1','p.26','Prokaryotes vs Eukaryotes (9 parameters)'],
+['Bio11','Table 3.1','p.50','Plant kingdom: algae to angiosperms comparison'],
+['Bio11','Table 6.1','p.99','Plant tissues: meristematic vs permanent types'],
+['Bio11','Table 9.1','p.161','Enzyme classification by EC numbers (1-6)'],
+['Bio11','Table 13.1','p.194','C3 vs C4 vs CAM photosynthesis comparison'],
+['Bio11','Table 18.1','p.253','Blood cells: types, count, lifespan, function'],
+['Bio11','Table 19.2','p.305','Hormones: gland, chemical nature, target, function'],
+['Bio12','Table 4.1','p.60','Mendelian ratios: monohybrid, dihybrid, testcross'],
+['Bio12','Table 5.1','p.78','DNA vs RNA: 6 structural and functional differences'],
+['Bio12','Table 5.2','p.92','Types of RNA: mRNA, tRNA, rRNA functions'],
+['Bio12','Table 7.1','p.144','Innate vs Adaptive immunity comparison'],
+['Bio12','Table 8.2','p.180','Microbes and their industrial/medical uses'],
+['Bio12','Table 10.1','p.198','Transgenic crops: gene inserted and its function'],
+['Bio12','Table 11.1','p.214','Population interactions: +/+ to -/- table'],
+['Bio12','Table 12.2','p.233','Ecological pyramids: energy, biomass, numbers'],
+['Bio12','Table 12.3','p.238','Nutrient cycles: carbon, nitrogen, phosphorus'],
+['Bio12','Table 13.2','p.250','IUCN threatened species categories (CR, EN, VU)'],
+]
+const NR=[
+['Aldol Condensation','2 CH₃CHO (acetaldehyde)','β-hydroxybutyraldehyde → crotonaldehyde (on heating)','Dilute NaOH, 15-20°C → heat for dehydration','Chem12 Ch12 Aldehydes'],
+['Cannizzaro Reaction','2 HCHO (formaldehyde, no α-H)','CH₃OH + HCOONa (alcohol + formate)','Conc. NaOH; disproportionation (no α-H required)','Chem12 Ch12 Aldehydes'],
+['Reimer-Tiemann Reaction','Phenol + CHCl₃','o-Hydroxybenzaldehyde (salicylaldehyde)','Conc. NaOH, 340K; electrophilic substitution at ortho','Chem12 Ch12 Phenols'],
+['Kolbe\'s Reaction (Kolbe-Schmitt)','Sodium phenoxide + CO₂','Sodium salicylate → Salicylic acid (H⁺)','High pressure CO₂, 400K; carboxylation of phenol','Chem12 Ch12 Phenols'],
+['Sandmeyer Reaction','Benzene diazonium chloride + CuCl/CuBr','Chlorobenzene / Bromobenzene + N₂','CuCl/CuCl₂ or CuBr/CuBr₂; replaces N₂⁺ with halide','Chem12 Ch13 Amines'],
+['Balz-Schiemann Reaction','Benzene diazonium chloride + HBF₄','Fluorobenzene + N₂ + BF₃','NaBF₄ → heat → ArF; only reliable route to ArF','Chem12 Ch13 Amines'],
+['Coupling Reaction','Benzene diazonium salt + phenol/amine','Azo dye (–N=N–, orange-red colour)','Alkaline medium; electrophilic substitution at para','Chem12 Ch13 Amines'],
+['Williamson Ether Synthesis','R–ONa (sodium alkoxide) + R2–X','R–O–R2 (ether) + NaX','SN2; primary alkyl halide preferred; avoid 3° (elimination)','Chem12 Ch12 Alcohols'],
+['Hell-Volhard-Zelinsky (HVZ)','Carboxylic acid + Cl₂/Br₂','α-Halo acid (α-chloro or α-bromo acid)','Red P + X₂; substitution at α-carbon','Chem12 Ch12 Carboxylic Acids'],
+['Rosenmund Reduction','Acyl chloride (RCOCl) + H₂','Aldehyde (RCHO)','Pd/BaSO₄ catalyst (poisoned Pd); stops at aldehyde','Chem12 Ch12 Aldehydes'],
+['Stephen Reaction','Nitrile (RCN) + SnCl₂/HCl then H₂O','Aldehyde (RCHO)','SnCl₂ + HCl (anhydrous); imine salt intermediate → aldehyde','Chem12 Ch12 Aldehydes'],
+['Gabriel Phthalimide Synthesis','Phthalimide + KOH + RX','Primary amine (RNH₂)','K-phthalimide + alkyl halide → hydrolysis; no 2°/3° amines','Chem12 Ch13 Amines'],
+['Hoffmann Bromamide Degradation','Primary amide (RCONH₂) + Br₂','Primary amine with one fewer carbon (RNH₂)','Br₂/NaOH; amide → isocyanate → amine; carbon lost as CO₂','Chem12 Ch13 Amines'],
+['Carbylamine Reaction','Primary amine + CHCl₃','Isocyanide (R–NC, foul smell)','Alc. KOH; test for 1° amine; isocyanide has intolerable smell','Chem12 Ch13 Amines'],
+['Etard Reaction','Toluene (C₆H₅CH₃) + CrO₂Cl₂','Benzaldehyde (C₆H₅CHO)','Chromyl chloride (CrO₂Cl₂); mild oxidation of CH₃','Chem12 Ch13 Aromatic'],
+['Gattermann-Koch Reaction','Benzene + CO + HCl','Benzaldehyde','Anhydrous AlCl₃/CuCl catalyst; Friedel-Crafts type','Chem12 Ch13 Aromatic'],
+['Fries Rearrangement','Phenyl ester → heat with AlCl₃','ortho + para hydroxy ketones','Lewis acid AlCl₃; acyl group migrates to ring','Chem12 Ch12 Phenols'],
+['Clemmensen Reduction','Aldehyde or ketone (C=O)','–CH₂– (methylene, fully reduced)','Zn-Hg amalgam + conc. HCl; reduces carbonyl to CH₂','Chem12 Ch12 Aldehydes'],
+['Wolff-Kishner Reduction','Aldehyde or ketone (C=O)','–CH₂– (methylene, fully reduced)','NH₂NH₂ + KOH in ethylene glycol; complement to Clemmensen','Chem12 Ch12 Aldehydes'],
+['Fehling\'s Test','Aldehyde + Fehling solution (Cu²⁺)','Brick-red Cu₂O precipitate (positive)','Cu²⁺ reduced to Cu₂O; +ve for aliphatic aldehydes, –ve for ketones','Chem12 Ch12 Aldehydes'],
+['Tollen\'s Test (Silver Mirror)','Aldehyde + ammoniacal AgNO₃','Silver mirror (Ag deposit) + carboxylate','Ag⁺ → Ag⁰; +ve for all aldehydes incl. aromatic; –ve for ketones','Chem12 Ch12 Aldehydes'],
+['Lucas Test','Alcohol + ZnCl₂/conc. HCl (Lucas reagent)','Alkyl chloride (turbidity = positive)','3° instant, 2° ~5 min, 1° no reaction (room temp)','Chem12 Ch12 Alcohols'],
+['Victor Meyer Test','Alcohol → red/blue/colourless with HNO₂ + KOH','1°=red, 2°=blue, 3°=colourless (Liebermann)','P+I₂→alkyl iodide → AgNO₂ → nitroalkane → HNO₂+KOH','Chem12 Ch12 Alcohols'],
+['Hinsberg Test','Amine + Benzenesulphonyl chloride','1°: soluble in KOH; 2°: insoluble; 3°: no reaction','PhSO₂Cl; distinguishes 1°, 2°, 3° amines','Chem12 Ch13 Amines'],
+['Haber Process','N₂ + 3H₂ → 2NH₃','Ammonia (NH₃)','Fe catalyst, 450-500°C, 200 atm; reversible exothermic','Chem11 Ch7 Equilibrium / Chem11 Ch13 p-Block N₂'],
+['Contact Process','2SO₂ + O₂ → 2SO₃ → H₂SO₄','Sulphuric acid (H₂SO₄)','V₂O₅ catalyst, 450°C; SO₃ absorbed in H₂SO₄ (oleum)','Chem11 Ch14 s-Block / Chem12 Ch7 p-Block S'],
+['Solvay Process','NaCl + NH₃ + CO₂ + H₂O','Na₂CO₃ (washing soda)','NaHCO₃ precipitates → filtered → heated → Na₂CO₃','Chem11 Ch10 s-Block Na'],
+['Dow Process','Chlorobenzene + NaOH','Phenol + NaCl','Fused NaOH, 623K, 300 atm; nucleophilic aromatic substitution','Chem12 Ch12 Phenols'],
+['Markovnikov\'s Rule (addition)','HX + unsymmetrical alkene','Major product: H adds to less substituted C','Electrophilic addition; carbocation intermediate more stable','Chem12 Ch10 Haloalkanes'],
+['Anti-Markovnikov (Peroxide effect)','HBr + alkene + peroxide','H adds to more substituted C (opposite to Markovnikov)','Free radical mechanism with peroxide; ONLY for HBr','Chem12 Ch10 Haloalkanes'],
+['Friedel-Crafts Alkylation','Benzene + RCl + AlCl₃','Alkylbenzene (toluene, ethylbenzene etc.)','Lewis acid AlCl₃; carbocation intermediate; polyalkylation possible','Chem12 Ch11 Hydrocarbons'],
+['Friedel-Crafts Acylation','Benzene + RCOCl + AlCl₃','Aryl ketone (acetophenone etc.)','Lewis acid; acylium ion R–C≡O⁺; no polyacylation (deactivates ring)','Chem12 Ch11 Hydrocarbons'],
+['Baeyer\'s Test (KMnO₄)','Alkene/alkyne + cold dil. KMnO₄','Diol (glycol); KMnO₄ decolourises (positive)','Alkaline KMnO₄; purple → colourless = unsaturation present','Chem12 Ch11 Hydrocarbons'],
+['Ozonolysis','Alkene + O₃ then Zn/H₂O','Aldehydes and/or ketones (cleavage at C=C)','O₃ → molozonide → ozonide → Zn/H₂O (reductive)','Chem12 Ch11 Hydrocarbons'],
+['Birch Reduction','Benzene + Na/Li in liq. NH₃ + alcohol','1,4-cyclohexadiene (partial reduction of ring)','Dissolving metal reduction; ring not fully reduced','Chem12 Ch11 Hydrocarbons'],
+['Wurtz Reaction','2R–X + 2Na','R–R (alkane) + 2NaX','Dry ether; couples two alkyl halides; makes symmetric alkanes','Chem12 Ch10 Haloalkanes'],
+['Wurtz-Fittig Reaction','ArX + RX + 2Na','Ar–R (alkylarene) + 2NaX','Dry ether; mixed version of Wurtz; makes alkylarenes','Chem12 Ch11 Hydrocarbons'],
+['Fitting Reaction','2ArX + 2Na','Ar–Ar (biaryl) + 2NaX','Dry ether; symmetric aryl coupling','Chem12 Ch11 Hydrocarbons'],
+['Finkelstein Reaction','R–Cl/Br + NaI in acetone','R–I + NaCl/NaBr (precipitate)','Acetone solvent; NaCl/NaBr precipitates → drives equilibrium','Chem12 Ch10 Haloalkanes'],
+['Swarts Reaction','R–Cl + AgF / SbF₃','R–F (alkyl fluoride)','AgF or SbF₃; halide exchange to get fluoroalkane','Chem12 Ch10 Haloalkanes'],
+['Diazotisation','Primary aromatic amine + NaNO₂ + HCl','Benzene diazonium chloride (ArN₂⁺Cl⁻)','0-5°C; below 5°C to prevent decomposition of diazonium salt','Chem12 Ch13 Amines'],
+['Hoffmann Mustard Oil Reaction','1° amine + CS₂ then HgCl₂','Isothiocyanate (mustard oil smell) + HgS','Distinguishes 1° amines; mustard oil has pungent odour','Chem12 Ch13 Amines'],
+['Fehling vs Benedict Test','Aldehyde + Benedict solution (Cu²⁺ citrate)','Brick-red Cu₂O (same as Fehling, more sensitive)','Used in clinical glucose detection; same chemistry as Fehling','Chem12 Ch16 Biomolecules'],
+['Ester Hydrolysis (Saponification)','Ester + NaOH (conc.)','Sodium carboxylate + alcohol','Hot NaOH; irreversible (unlike acid hydrolysis); soap-making basis','Chem12 Ch12 Carboxylic Acids'],
+['Hell-Volhard-Zelinsky Mechanism','RCH₂COOH + Br₂ + P','RCHBrCOOH (α-bromoacid)','P forms PBr₃ → activates C=O → α-bromination → ester product','Chem12 Ch12 Carboxylic Acids'],
+['Knoevenagel Condensation','Aldehyde + active methylene compound','α,β-unsaturated product + H₂O','Weak base catalyst (pyridine/piperidine); similar to Aldol','Chem12 Ch12 Aldehydes'],
+['Beckmann Rearrangement','Oxime of ketone + H₂SO₄ / PCl₅','Amide (ring → lactam for cyclic ketones)','Anti-OH migrates; caprolactam from cyclohexanone oxime (nylon-6)','Chem12 Ch13 Amines'],
+['Perkin Reaction','Aromatic aldehyde + acid anhydride','α,β-unsaturated aryl carboxylic acid','Anhydrous sodium salt of acid + heat; cinnamic acid from PhCHO','Chem12 Ch12 Aldehydes'],
+['Claisen Condensation','2 Esters (with α-H) + base','β-Keto ester + alcohol','NaOEt; acyl substitution + deprotonation; intramolecular = Dieckmann','Chem12 Ch12 Carboxylic Acids'],
+]
+const AR=[
+['Sodium is stored under kerosene','Sodium reacts vigorously with atmospheric O₂ and moisture','A','Na reacts with O₂ (Na₂O₂) and H₂O (NaOH + H₂); kerosene prevents both'],
+['Fluorine has no positive oxidation state','F is the most electronegative element and lacks d-orbitals','A','No d-orbitals means no expansion of valence shell; always attracts electrons'],
+['HF is a weak acid despite F being most electronegative','H–F bond is exceptionally strong (bond enthalpy 568 kJ/mol)','A','High bond strength means less dissociation; HCl, HBr, HI are stronger acids'],
+['Helium is used in deep-sea diving cylinders instead of N₂','Helium is less soluble in blood than nitrogen','A','N₂ dissolved in blood at pressure causes decompression sickness (bends); He does not'],
+['Ozone is thermodynamically less stable than O₂','O₃ has an unpaired electron','D','Ozone IS less stable than O₂ but it is diamagnetic (no unpaired e⁻); resonance structure'],
+['AlCl₃ is a Lewis acid','Al in AlCl₃ has an incomplete octet (only 6 electrons)','A','sp² hybridised Al has empty p-orbital; accepts lone pair from Lewis base'],
+['Diamond is the hardest natural substance','Diamond has a network covalent structure with sp³ C–C bonds in all directions','A','3D tetrahedral network; all bonds equivalent; no planes of weakness'],
+['Graphite is a good conductor of electricity','Graphite has free π electrons delocalised over the layers','A','sp² hybridised C; each C has one unhybridised p-orbital contributing to π system'],
+['Transition metals form coloured compounds','They have completely filled d-orbitals','D','Coloured compounds arise from PARTIALLY filled d-orbitals (d-d transitions); fully filled gives colourless'],
+['KMnO₄ acts as an oxidising agent in acidic medium','Mn changes from +7 to +2 in acidic medium','A','MnO₄⁻ + 8H⁺ + 5e⁻ → Mn²⁺ + 4H₂O; gain of 5e⁻ confirms oxidation'],
+['Noble gases have very high ionisation enthalpies','They have stable completely filled orbitals (ns²np⁶)','A','Completely filled stable configuration requires maximum energy to remove electron'],
+['Phosphorus shows +5 oxidation state but N does not (readily)','Phosphorus has available d-orbitals, nitrogen does not','A','N: 2s²2p³ — no d-orbitals; P: 3s²3p³ — empty 3d available for expansion'],
+['ClF₃ has a T-shaped geometry','Central Cl has 3 bond pairs and 2 lone pairs','A','5 electron pairs total (sp³d); 2 LP occupy equatorial positions → T-shape'],
+['XeF₄ is square planar','Xe has 4 bond pairs and 2 lone pairs around it','A','6 electron pairs (sp³d²); 2 LP opposite each other → square planar geometry'],
+['Ionic radii of Fe³⁺ is less than Fe²⁺','Higher charge causes greater attraction on same electrons','A','Fe²⁺: 24e⁻ on 26p; Fe³⁺: 23e⁻ on 26p → more attraction → smaller radius'],
+['Copper has higher melting point than expected for its group','Cu has additional stability from 3d orbital involvement in metallic bonding','A','d-electrons participate in metallic bond; stronger than for Zn where d is full'],
+['Nucleophilic substitution at sp³ C follows SN2 with primary alkyl halide','Primary substrate has less steric hindrance and a good leaving group','A','Backside attack in SN2 is unhindered at 1° C; 3° C undergoes SN1 due to stability of carbocation'],
+['Benzene does not undergo addition reactions readily','Benzene has a planar ring with delocalised π electrons (aromatic)','A','Loss of aromaticity in addition costs ~150 kJ/mol; electrophilic substitution preserves aromaticity'],
+['ortho-nitrophenol has lower boiling point than para-nitrophenol','ortho-nitrophenol has intramolecular hydrogen bonding','A','Intramolecular H-bond reduces intermolecular association; lower boiling point vs para (intermolecular)'],
+['Primary amines have higher boiling points than tertiary amines of similar MW','Primary amines form stronger intermolecular H-bonds','A','RNH₂ has 2 H for H-bonding; R₃N has no N–H; more H-bonds → higher bp'],
+['Proteins are polymers of α-amino acids','Amino acids are linked by peptide bonds (–CO–NH–)','A','Condensation polymerisation; –COOH + –NH₂ → –CONH– + H₂O; peptide bond'],
+['Reducing sugars give positive Fehling\'s test','They have free aldehyde or ketone group that can be oxidised','A','Free anomeric –OH (open chain form); oxidised by Cu²⁺; sucrose is non-reducing'],
+['DNA is more stable than RNA','DNA has thymine instead of uracil and lacks 2′-OH group','A','2′-OH in RNA makes it susceptible to alkaline hydrolysis; DNA is chemically more stable'],
+['Transcription produces mRNA from DNA template','RNA polymerase reads 3′→5′ and synthesises 5′→3′','A','Template strand read 3′→5′; new RNA strand grows 5′→3′; no primer needed (unlike DNA replication)'],
+['Enzyme activity decreases at very high temperature','Proteins are denatured at high temperature','A','Heat disrupts H-bonds and hydrophobic interactions holding 3D structure; active site lost'],
+['CAM plants keep stomata closed during day','They fix CO₂ into malic acid at night using PEP carboxylase','A','Stomata open at night to minimise water loss; malate stored in vacuole; released in daytime'],
+['C4 plants are more efficient in hot dry conditions','They have Kranz anatomy with bundle sheath cells','B','Kranz anatomy is the structural feature; efficiency is due to CO₂ concentration mechanism that suppresses photorespiration'],
+['Earthworms are called farmer\'s friend','They increase soil fertility by vermicomposting and aeration','A','Castings enrich soil; burrowing aerates; enhances drainage and microbial activity'],
+['Mitochondria are called powerhouses of the cell','They produce ATP through oxidative phosphorylation','A','ETC + ATP synthase in inner membrane; 36-38 ATP per glucose; cristae increase surface area'],
+['Meiosis results in genetic variation','Crossing over occurs during pachytene of prophase I','B','Crossing over (chiasmata) causes variation, but it occurs during pachytene (not the only cause); independent assortment also contributes'],
+['The lac operon is an inducible operon','Lactose acts as the inducer by binding the repressor','A','Allolactose (metabolite of lactose) binds repressor → repressor detaches from operator → structural genes expressed'],
+['Restriction enzymes cut DNA at specific palindromic sequences','They protect bacteria from bacteriophage DNA','B','Restriction enzymes do protect bacteria (reason correct) but they cut palindromic sequences (assertion correct); reason explains origin not the palindrome property'],
+['Bt toxin is specific to target insects','The cry protein binds to receptors in the midgut epithelium','A','Receptor specificity in midgut of lepidopteran/coleopteran larvae; human gut lacks receptors → safe'],
+['Biogas production is an anaerobic process','Methane-producing bacteria (methanogens) are strict anaerobes','A','O₂ inhibits methanogens; anaerobic digestion: complex organics → acids → methane + CO₂'],
+['Population growth follows logistic model in nature','Resources in nature are limited','A','K = carrying capacity; S-shaped curve due to resource limitation; dN/dt = rN(K-N)/K'],
+['Energy flow in ecosystem is unidirectional','Energy is lost as heat at each trophic level (10% rule)','A','Second law of thermodynamics; ~90% lost as heat metabolically; cannot be recycled unlike matter'],
+['In situ conservation is more effective than ex situ','It conserves species in natural habitat with natural interactions','A','Evolutionary processes continue; species retain adaptations; ex situ removes species from evolutionary context'],
+['Crossing over increases genetic diversity','It occurs between non-sister chromatids of homologous chromosomes','A','Non-sister chromatids exchange segments at chiasmata during pachytene; creates new allele combinations'],
+['Apical dominance is caused by auxin','High auxin concentration at apex inhibits lateral bud growth','A','IAA produced at apex moves basipetally; high [IAA] at lateral buds inhibits them; decapitation releases inhibition'],
+['Gibberellins cause bolting in plants','They promote internode elongation and rosette plants to flower','A','Bolting = rapid stem elongation before flowering; GA₃ substitutes for cold (vernalisation) in some plants'],
+['ABA is called the stress hormone','It promotes stomatal closure under water stress','A','ABA causes K⁺ efflux from guard cells → loss of turgor → stomata close; accumulates in drought'],
+['Spermatogenesis is regulated by FSH and testosterone','FSH acts on Sertoli cells; testosterone acts on Leydig cells','B','FSH acts on Sertoli cells (correct); but testosterone is produced BY Leydig cells (stimulated by LH); both needed for spermatogenesis'],
+['Colostrum provides passive immunity to newborn','It is rich in IgA (secretory) antibodies','A','First milk; IgA crosses intestinal epithelium of newborn; provides immediate but temporary immunity'],
+['HIV attacks helper T cells (CD4⁺)','HIV uses CD4 as receptor and CCR5/CXCR4 as co-receptor','A','Progressive loss of CD4⁺ T-cells → immune deficiency; AIDS defined as CD4 count <200/µL'],
+['PCR can amplify DNA from a single molecule','It uses thermostable Taq polymerase and specific primers','A','Taq from Thermus aquaticus; denature-anneal-extend cycles; exponential amplification 2ⁿ copies'],
+['Gel electrophoresis separates DNA by size','Smaller DNA fragments migrate faster in agarose gel','A','Negative charge on DNA backbone; moves to anode; smaller fragments less resistance through pores'],
+['Ozone depletion leads to increased UV-B radiation','UV-B causes thymine dimers in DNA leading to skin cancer','A','O₃ absorbs UV-B (280-315nm); thymine dimers block replication; leads to mutations/skin cancer'],
+['Biodiversity hot spots have high endemism','They have lost >70% of original habitat','A','Defined by Myers: >1500 endemic plant species AND >70% habitat loss; 34 hotspots globally; India has 4'],
+]
+
+while(EL.length<100){EL.push(['—','Revision',0,'—','—','—','Revise previous elements']);}
+while(BD.length<100){BD.push(['Revision','Review Previous Diagram','Bio NCERT']);}
+while(PG.length<100){PG.push(['Revision','Review Previous Graph','Physics Notes']);}
+while(TR.length<100){TR.push(['Revision','Review Table','p.0','Revise previous tables']);}
+
+// Now 12 Subjects (4 Extra Pro Subjects Added)
+const SUBJ=[
+  {k:'ma',n:'Tables / Pwr',ic:'🔢',cl:'#c96ef5'},
+  {k:'bi',n:'Bio Diagrams',ic:'🧬',cl:'#2ed872'},
+  {k:'el',n:'Elements',ic:'⚗️',cl:'#4ecff8'},
+  {k:'gr',n:'Graphs',ic:'📈',cl:'#ff9533'},
+  {k:'dm',n:'Dim Formulas',ic:'📏',cl:'#f5c842'},
+  {k:'tr',n:'Table Refs',ic:'📋',cl:'#ff4b7b'},
+  {k:'nr',n:'Named Rxns',ic:'🧪',cl:'#34d4f0'},
+  {k:'ar',n:'A-R',ic:'💡',cl:'#22d46a'},
+  {k:'pf',n:'Phy Formulas',ic:'🧲',cl:'#f43962'},
+  {k:'cr',n:'Chem Reagent',ic:'🧪',cl:'#1ec8b4'},
+  {k:'bd',n:'Bio Diseases',ic:'🦠',cl:'#b058e8'},
+  {k:'pq',n:'PYQ Targets',ic:'🎯',cl:'#ff9300'}
+];
+
+var DB={};
+try{DB=JSON.parse(localStorage.getItem(SK)||'{}');}catch(e){}
+var dI=0,pre=false,detK='';
+function save(){try{localStorage.setItem(SK,JSON.stringify(DB));}catch(e){}}
+
+function getTasksForDay(cd){
+  if(cd < 0 || cd >= TOTAL) return [];
+  var tasks = [];
+  var tabIdx = getIndices(cd, 'tab');
+  var sqcIdx = getIndices(cd, 'sqc');
+  var bioIdx = getIndices(cd, 'bio');
+  var chmIdx = getIndices(cd, 'chm');
+  var phyIdx = getIndices(cd, 'phy');
+
+  tabIdx.forEach(ci => {
+      let n = ci + 1;
+      tasks.push({ k:'tb'+ci, s:'ma', icon:'🔢', tag:'ma', n:'Table of '+n, d:'Write and recite '+n+'×1 to '+n+'×20', p:['Table '+n] });
+  });
+
+  sqcIdx.forEach(ci => {
+      let n = ci + 1;
+      tasks.push({ k:'sq'+ci, s:'ma', icon:'2⃣', tag:'ma', n:'Square: '+n+'² = '+(n*n), d:n+' × '+n+' = '+(n*n)+'. Write 5 times.', p:[n+'²='+(n*n)] });
+      tasks.push({ k:'cu'+ci, s:'ma', icon:'³', tag:'ma', n:'Cube: '+n+'³ = '+(n*n*n), d:n+' × '+n+' × '+n+' = '+(n*n*n)+'. Write 5 times.', p:[n+'³='+(n*n*n)] });
+  });
+
+  bioIdx.forEach(ci => {
+      let d1 = BD[ci*2], d2 = BD[ci*2+1];
+      if(d1) tasks.push({ k:'b1'+ci, s:'bi', icon:'🧬', tag:'bio', n:d1[1], d:d1[0]+' · '+d1[2]+'\nLabel → close → redraw from memory.', p:[d1[0],d1[2]] });
+      if(d2) tasks.push({ k:'b2'+ci, s:'bi', icon:'🧬', tag:'bio', n:d2[1], d:d2[0]+' · '+d2[2]+'\nLabel → close → redraw from memory.', p:[d2[0],d2[2]] });
+      let tr = TR[ci];
+      if(tr) tasks.push({ k:'tr'+ci, s:'tr', icon:'📋', tag:'bio', n:tr[0]+' '+tr[1]+' — '+tr[3], d:tr[0]+' · '+tr[1]+' · '+tr[2]+'\n'+tr[3], p:[tr[0],tr[1],tr[2]] });
+  });
+
+  chmIdx.forEach(ci => {
+      let e1 = EL[ci*2], e2 = EL[ci*2+1];
+      if(e1) tasks.push({ k:'e1'+ci, s:'el', icon:'⚗️', tag:'ch', n:e1[0]+' — '+e1[1]+' (Z='+e1[2]+')', d:'Mass: '+e1[3]+' | Group: '+e1[4]+' | '+e1[5]+'\n'+e1[6], p:['Z='+e1[2],'Gr-'+e1[4]] });
+      if(e2) tasks.push({ k:'e2'+ci, s:'el', icon:'⚗️', tag:'ch', n:e2[0]+' — '+e2[1]+' (Z='+e2[2]+')', d:'Mass: '+e2[3]+' | Group: '+e2[4]+' | '+e2[5]+'\n'+e2[6], p:['Z='+e2[2],'Gr-'+e2[4]] });
+      let nr = NR[ci%NR.length];
+      if(nr) tasks.push({ k:'nr'+ci, s:'nr', icon:'🧪', tag:'ch', n:'Rxn: '+nr[0], d:'⟹ '+nr[1]+'\n→ '+nr[2]+'\n⚙ '+nr[3]+'\n'+nr[4], p:[nr[0]] });
+  });
+
+  phyIdx.forEach(ci => {
+      let pg = PG[ci];
+      if(pg) tasks.push({ k:'gr'+ci, s:'gr', icon:'📈', tag:'ph', n:pg[1], d:pg[0]+' · '+pg[2]+'\nSketch, label axes, write key formula.', p:[pg[0],pg[2]] });
+      let db = DIM[ci%8];
+      if(db) tasks.push({ k:'dm'+ci, s:'dm', icon:'📏', tag:'ph', n:'Dim. Formulas — Batch '+(ci%8+1)+(ci>=8?' (Rev)':''), d:db, p:['Batch '+(ci%8+1)] });
+      let ar = AR[ci%AR.length];
+      if(ar) tasks.push({ k:'ar'+ci, s:'ar', icon:'💡', tag:'bio', n:ar[0].slice(0,55)+(ar[0].length>55?'…':''), d:'A: '+ar[0]+'\nR: '+ar[1]+'\nAns: ('+ar[2]+') '+ar[3], p:['Ans: '+ar[2]] });
+  });
+
+  // THE 4 EXTRA PRO TASKS
+  let pf = PF[cd % PF.length];
+  tasks.push({ k:'pf'+cd, s:'pf', icon:'🧲', tag:'ph', n:pf[0], d:pf[1], p:[pf[0]] });
+
+  let cr = CR[cd % CR.length];
+  tasks.push({ k:'cr'+cd, s:'cr', icon:'🧪', tag:'ch', n:cr[0], d:cr[1], p:[cr[0]] });
+
+  let bd = BD_DIS[cd % BD_DIS.length];
+  tasks.push({ k:'bd'+cd, s:'bd', icon:'🦠', tag:'bio', n:bd[0], d:bd[1], p:[bd[0]] });
+
+  let pq = PYQ[cd % PYQ.length];
+  tasks.push({ k:'pq'+cd, s:'pq', icon:'🎯', tag:'pyq', n:'Solve 20+ PYQs', d:'Target Chapter:\n' + pq, p:[pq] });
+
+  return tasks;
+}
+
+function init(){
+  var now=new Date();now.setHours(0,0,0,0);
+  var s2=new Date(DS);s2.setHours(0,0,0,0);
+  var raw=Math.round((now-s2)/86400000);
+  pre=raw<0;
+  dI=Math.max(0,Math.min(raw,TOTAL-1));
+  document.getElementById('hDay').textContent=pre?'0/'+TOTAL:(dI+1)+'/'+TOTAL;
+  drawWeek();
+}
+
+function drawWeek(){
+  var el=document.getElementById('ws');el.innerHTML='';
+  var DL=['S','M','T','W','T','F','S'];
+  var rt=new Date();rt.setHours(0,0,0,0);
+  var sow=new Date(rt);sow.setDate(rt.getDate()-rt.getDay());
+  var sn=new Date(DS);sn.setHours(0,0,0,0);
+  for(var i=0;i<7;i++){
+    var d=new Date(sow);d.setDate(sow.getDate()+i);
+    var act=d.getTime()===rt.getTime();
+    var diff=Math.round((d-sn)/86400000);
+    var dn=false;
+    if(diff>=0&&diff<TOTAL){var t=getTasksForDay(diff);dn=t.length>0&&t.every(function(x){return!!DB[x.k];});}
+    el.innerHTML+='<div class="wd'+(act?' on':'')+(dn?' dn':'')+'"><div class="wl">'+DL[i]+'</div><div class="wn">'+d.getDate()+'</div></div>';
+  }
+}
+
+function calcStreak() {
+  var n = 0;
+  for (var i = dI - 1; i >= 0; i--) {
+    var t = getTasksForDay(i);
+    if (t.length > 0 && t.every(function(x){ return !!DB[x.k]; })) { n++; } else { break; }
+  }
+  var tToday = getTasksForDay(dI);
+  if (tToday.length > 0 && tToday.every(function(x){ return !!DB[x.k]; })) { n++; }
+  return n;
+}
+
+function renderStreak() {
+  var el = document.getElementById('streakRow');
+  if (!el) return;
+  var n = calcStreak();
+  var icon = n >= 3 ? '🔥' : '🩺';
+  var subtext = n === 0 ? 'Start today!' : (n >= 3 ? 'On fire!' : 'Keep going!');
+  var glowClass = n >= 3 ? ' streak-glow' : '';
+  el.className = 'streak-container' + glowClass;
+  el.innerHTML = 
+    '<div class="streak-icon-wrap">' + icon + '</div>' + 
+    '<div style="display:flex; flex-direction:column; justify-content:center;">' +
+      '<div class="streak-n">' + n + ' <span style="font-size:0.6rem; opacity:0.7; font-weight:800; font-family:\'Syne\', sans-serif; text-transform:uppercase;">' + subtext + '</span></div>' + 
+      '<div class="streak-lbl">Day Streak</div>' +
+    '</div>';
+}
+
+var fr=true;
+function renderToday(){
+  var wrap=document.getElementById('tw');wrap.innerHTML='';
+  if(pre){
+    wrap.innerHTML='<p style="color:var(--mu);font-size:.83rem;text-align:center;padding:36px 0;line-height:2">Challenge starts<br><strong style="color:var(--gold);font-size:1.1rem;font-family:JetBrains Mono,monospace">Tomorrow, 24 Mar 2026</strong></p>';
+    document.getElementById('hEx').textContent='0/0';
+    document.getElementById('hPct').textContent='0%';
+    document.getElementById('pf').style.width='0%';
+    document.getElementById('dmsg').style.display='none';
+    renderStreak();
+    return;
+  }
+  
+  var tasks=getTasksForDay(dI);
+  var done=0;tasks.forEach(function(t){if(DB[t.k])done++;});
+  var an=fr;fr=false;
+
+  var hasDouble = Object.values(SCHED).some(arr => arr[dI] === 2);
+
+  if(hasDouble){
+    var badge = document.createElement('div'); badge.className='dbadge';
+    badge.innerHTML='<span style="font-size:1.2rem;">⚡</span><b>Boost Day</b><span style="margin-left:auto;font-family:JetBrains Mono,monospace;font-size:.65rem;color:var(--or)">'+tasks.length+' tasks</span>';
+    wrap.appendChild(badge);
+  } else {
+    var sh2=document.createElement('div');sh2.className='sh';sh2.textContent="Today's Schedule";
+    wrap.appendChild(sh2);
+  }
+
+  tasks.forEach(function(t,i){wrap.appendChild(makeCard(t,!!DB[t.k],an,i));});
+
+  updateHero(done,tasks.length);
+  document.getElementById('dmsg').style.display=(done===tasks.length&&tasks.length>0?'block':'none');
+  drawWeek();renderStreak();
+}
+
+function makeCard(t, dk, an, idx) {
+  var themeIdx = idx % 4;
+  var c = document.createElement('div');
+  c.className = 'workout-card glass-card theme-' + themeIdx + (dk ? ' done' : '');
+  if (an) c.style.animationDelay = (idx * 0.05) + 's';
+  
+  c.onclick = function(ev) {
+    if (ev.target.closest('.ar-toggle') || ev.target.closest('.ar-reveal')) return;
+    toggle(c, t.k);
+  };
+
+  var extra = '';
+  if (t.s === 'ar') {
+    var parts = t.d.split('\n');
+    var ansChar = t.p[0] ? t.p[0].replace('Ans: ', '') : 'A';
+    extra = '<div class="ar-reveal"><span class="ar-ans ar-' + ansChar.toLowerCase() + '">Answer ' + ansChar + '</span>'
+          + '<div class="ar-exp">' + (parts[3] || '') + '</div></div>'
+          + '<button class="ar-toggle" onclick="arToggle(this)">Show Answer ▼</button>';
+  }
+
+  c.innerHTML = `
+    <div class="wc-info">
+      <div class="wc-header-top">
+        <span class="wc-icon">${t.icon}</span>
+        <span class="wc-tag-badge">${t.tag}</span>
+      </div>
+      <div class="wc-val-text">${t.n}</div>
+      <div class="wc-desc">${t.d.replace(/\n/g, '<br>')}</div>
+      ${extra}
+    </div>
+    <div class="pro-checkbox">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+    </div>
+  `;
+  return c;
+}
+
+function updateHero(done,total){
+  var pct=total>0?Math.round(done/total*100):0;
+  document.getElementById('hEx').textContent=done+'/'+total;
+  document.getElementById('hPct').textContent=pct+'%';
+  document.getElementById('pf').style.width=pct+'%';
+}
+
+var _nextFocusTimer = null;
+function toggle(card, key) {
+  var was = !!DB[key];
+  if (was) { delete DB[key]; }
+  else {
+    DB[key] = true;
+    if (navigator.vibrate) navigator.vibrate(14);
+    if (typeof confetti === 'function') {
+        confetti({particleCount: 50, spread: 65, startVelocity: 25, origin: {y: .86}, colors: ['#f93d6b','#f8d42d','#55ca76','#ff9300'], disableForReducedMotion: true});
+    }
+  }
+  save();
+
+  card.classList.toggle('done', !was);
+
+  var tasks = getTasksForDay(dI), d2 = 0;
+  tasks.forEach(function(t) { if (DB[t.k]) d2++; });
+  updateHero(d2, tasks.length);
+  document.getElementById('dmsg').style.display = (d2 === tasks.length && tasks.length > 0 ? 'block' : 'none');
+  renderStreak();
+
+  clearTimeout(_nextFocusTimer);
+  _nextFocusTimer = setTimeout(() => {
+      const allCards = Array.from(document.querySelectorAll('.workout-card'));
+      allCards.forEach(c => c.classList.remove('next-focus')); 
+      const nextCard = allCards.find(c => !c.classList.contains('done'));
+      if (nextCard) {
+          nextCard.classList.add('next-focus');
+          nextCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+  }, 500);
+}
+
+function renderProg() {
+  var CIRC = 226.19; // 2π × 36
+  var fd = 0;
+  for (var i = 0; i < TOTAL; i++) {
+    var t = getTasksForDay(i);
+    if (t.length > 0 && t.every(function(x){ return !!DB[x.k]; })) fd++;
+  }
+  var ovPct = Math.round(fd / TOTAL * 100);
+
+  var subjData = SUBJ.map(function(subj) {
+    var cnt = 0;
+    for (var i = 0; i < TOTAL; i++) {
+      var rel = getTasksForDay(i).filter(function(t){ return t.s === subj.k; });
+      if (rel.length > 0 && rel.every(function(t){ return !!DB[t.k]; })) cnt++;
+    }
+    return { subj: subj, cnt: cnt, pct: Math.round(cnt / TOTAL * 100) };
+  });
+
+  var isDark = document.body.classList.contains('dark');
+  var pctFill = isDark ? '#eeeef8' : '#111122';
+  var subFill = isDark ? '#888898' : '#8888aa';
+
+  var cards = subjData.map(function(d) {
+    return `
+      <div class="prog-card glass-card" style="--accent:${d.subj.cl}" onclick="openDetail('${d.subj.k}')">
+<svg class="prog-ring-svg" width="84" height="84" viewBox="0 0 80 80">
+          <circle class="prog-ring-track" cx="40" cy="40" r="36"/>
+          <circle class="prog-ring-arc" id="parc_${d.subj.k}" cx="40" cy="40" r="36" stroke="${d.subj.cl}"/>
+          <text class="prog-ring-pct" x="40" y="34" fill="${pctFill}">${d.pct}%</text>
+          <text class="prog-ring-sub" x="40" y="48" fill="${subFill}">${d.cnt}/${TOTAL} days</text>
+        </svg>
+        <div style="display:flex; flex-direction:column; align-items:center; gap:3px; width:100%;">
+          <span class="prog-card-icon">${d.subj.ic}</span>
+          <span class="prog-card-name">${d.subj.n}</span>
+          <div class="prog-mini-bar"><div class="prog-mini-fill" id="pmini_${d.subj.k}" style="background:${d.subj.cl}"></div></div>
+        </div>
+      </div>`;
+  }).join('');
+
+  document.getElementById('vP').innerHTML = `
+    <div class="glass-card" style="padding: 20px 20px 18px;">
+      <div class="prog-hero-top">
+        <div class="prog-hero-pct" id="ovPctTxt">${ovPct}%</div>
+        <div class="prog-hero-meta">
+          <div class="prog-hero-days">${fd} / ${TOTAL}</div>
+          <div class="prog-hero-lbl">Days Complete</div>
+        </div>
+      </div>
+      <div class="prog-bar-wrap">
+        <div class="prog-bar-fill" id="ovBar"></div>
+      </div>
+    </div>
+    <div class="prog-sh" style="font-size:.6rem;font-weight:800;color:var(--mu);margin-bottom:10px;letter-spacing:1.5px;text-transform:uppercase;padding-left:2px;">Subjects</div>
+    <div class="prog-grid">${cards}</div>`;
+
+  requestAnimationFrame(function(){ requestAnimationFrame(function(){
+    var ob = document.getElementById('ovBar');
+    if (ob) ob.style.width = ovPct + '%';
+    subjData.forEach(function(d) {
+      var arc = document.getElementById('parc_' + d.subj.k);
+      if (arc) arc.style.strokeDashoffset = CIRC * (1 - d.pct / 100);
+      var mini = document.getElementById('pmini_' + d.subj.k);
+      if (mini) mini.style.width = d.pct + '%';
+    });
+  }); });
+}
+
+function openDetail(key){
+  detK=key;
+  var subj=SUBJ.filter(function(x){return x.k===key;})[0];
+  document.getElementById('vP').classList.remove('active');
+  document.getElementById('vD').classList.add('active');
+  document.getElementById('btnBack').classList.add('on');
+  document.getElementById('htl').textContent=subj.ic+' '+subj.n;
+  document.getElementById('rb').style.stroke=subj.cl;
+  renderDetail(true);
+}
+function closeDetail(){switchTab(1);}
+
+function renderDetail(scroll){
+  var subj=SUBJ.filter(function(x){return x.k===detK;})[0];
+  var wrap=document.getElementById('dw');wrap.innerHTML='';
+  var rt=new Date();rt.setHours(0,0,0,0);
+  var cnt=0,scrollTarget=null;
+  for(var i=0;i<TOTAL;i++){
+    var d=new Date(DS);d.setDate(d.getDate()+i);
+    var isT=d.getTime()===rt.getTime();
+    var isFut=d>rt;
+    var rel=getTasksForDay(i).filter(function(t){return t.s===subj.k;});
+    var allDone=rel.length>0&&rel.every(function(t){return!!DB[t.k];});
+    if(allDone)cnt++;
+    var card=document.createElement('div');
+    card.className='dcard glass-card'+(allDone?' done':'')+(isT?' today':'');
+    card.style.padding='16px 14px';
+    card.style.marginBottom='10px';
+    (function(rel2,ad,fut){
+      card.onclick=function(){
+        if(fut)return;
+        rel2.forEach(function(t){if(ad)delete DB[t.k];else DB[t.k]=true;});
+        save();renderDetail(false);
+      };
+    })(rel,allDone,isFut);
+    var names=rel.map(function(t){return t.n;}).join('<br>');
+    var pills=(rel[0]&&rel[0].p||[]).map(function(x){return'<span class="dcpill">'+x+'</span>';}).join('');
+    var isDbl = rel.length > 2;
+    var dblTag=isDbl?'<span class="dbl-pill">×2</span>':'';
+    card.innerHTML='<div class="dcd"><span class="dcn">'+d.getDate()+'</span><span class="dcm">'+MN[d.getMonth()]+'</span></div>'
+      +'<div class="dci"><div class="dcmain">'+names+dblTag+'</div><div class="dcpills">'+pills+'</div></div>'
+      +(isFut&&!allDone?'<div class="upill">Soon</div>':'<div class="chk'+(allDone?' on':'')+'" style="flex-shrink:0;margin-left:6px;margin-top:1px"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>');
+    wrap.appendChild(card);
+    if(isT)scrollTarget=card;
+  }
+  var off=BC-BC*(cnt/TOTAL);
+  document.getElementById('rb').style.strokeDashoffset=off;
+  document.getElementById('bc').textContent=cnt;
+  document.getElementById('dd').textContent=cnt;
+  document.getElementById('dt').textContent=TOTAL;
+  if(scroll&&scrollTarget)setTimeout(function(){scrollTarget.scrollIntoView({behavior:'smooth',block:'center'});},360);
+}
+
+function buildPlan(){
+  var tbody=document.getElementById('pb');tbody.innerHTML='';
+  var rt=new Date();rt.setHours(0,0,0,0);
+  for(var i=0;i<TOTAL;i++){
+    var d=new Date(DS);d.setDate(d.getDate()+i);
+    var ds=d.getDate()+' '+MN[d.getMonth()];
+    var isT = d.getTime() === rt.getTime(); 
+    var isPast = d.getTime() < rt.getTime(); 
+    var tasks=getTasksForDay(i);
+    var isDone=isPast&&tasks.every(function(t){return!!DB[t.k];});
+    var isDbl = Object.values(SCHED).some(s => s[i] === 2);
+
+    var tabIdx = getIndices(i, 'tab');
+    var sqcIdx = getIndices(i, 'sqc');
+    var bioIdx = getIndices(i, 'bio');
+    var chmIdx = getIndices(i, 'chm');
+    var phyIdx = getIndices(i, 'phy');
+
+    var tr2=document.createElement('tr');
+    if(isT)tr2.classList.add('rt');
+    if(isDone)tr2.classList.add('rd');
+    if(isDbl)tr2.classList.add('dbl');
+    var badge=isT?'<span class="bdg">TODAY</span>':(isDone?'<span class="bdgd">✓</span>':'');
+    var dblBadge=isDbl?'<span class="bdgdb" title="Boost Day">⚡</span>':'';
+    var SEP='<hr style="border:none;border-top:1px dashed rgba(100,100,100,.15);margin:4px 0">';
+
+    var cols=['','','','','','','','','','','','',''];
+    
+    cols[0] = tabIdx.map(ci => '<b>'+(ci+1)+'</b>').join(SEP);
+    cols[1] = sqcIdx.map(ci => { let n2 = ci+1; return n2+'²='+(n2*n2)+'<br class="print-hide"><small class="print-hide">'+n2+'³='+(n2*n2*n2)+'</small>'; }).join(SEP);
+    
+    cols[2] = bioIdx.map(ci => {
+        let str = '';
+        if(BD[ci*2]) {
+            let pg = (BD[ci*2][2] || '').split(' ').pop();
+            str += '<b>'+BD[ci*2][0]+'</b><span class="print-only"> '+pg+'</span> <span class="print-hide">'+BD[ci*2][1].slice(0,28)+'<br><span style="opacity:.5">'+BD[ci*2][2]+'</span></span>';
+        }
+        if(BD[ci*2+1]) {
+            let pg2 = (BD[ci*2+1][2] || '').split(' ').pop();
+            str += '<br><b>'+BD[ci*2+1][0]+'</b><span class="print-only"> '+pg2+'</span> <span class="print-hide">'+BD[ci*2+1][1].slice(0,28)+'</span>';
+        }
+        return str;
+    }).join(SEP);
+    
+    cols[3] = chmIdx.map(ci => {
+        let str = '';
+        if(EL[ci*2]) str += '<b>'+EL[ci*2][0]+'</b> <span class="print-hide">'+EL[ci*2][1]+' </span><span style="white-space:nowrap">Z='+EL[ci*2][2]+'</span>';
+        if(EL[ci*2+1]) str += '<br><b>'+EL[ci*2+1][0]+'</b> <span class="print-hide">'+EL[ci*2+1][1]+' </span><span style="white-space:nowrap">Z='+EL[ci*2+1][2]+'</span>';
+        return str;
+    }).join(SEP);
+    
+    cols[4] = phyIdx.map(ci => { 
+        if(!PG[ci]) return '';
+        let pg = (PG[ci][2] || '').split(' ').pop();
+        return '<b>'+PG[ci][0]+'</b><span class="print-only"> '+pg+'</span><br class="print-hide"><span class="print-hide">'+PG[ci][1].slice(0,35)+'</span>'; 
+    }).join(SEP);
+    
+    cols[5] = phyIdx.map(ci => 'Batch '+((ci%8)+1)).join(SEP);
+    
+    cols[6] = bioIdx.map(ci => { 
+        let tr = TR[ci]; 
+        if(!tr) return '';
+        let pg = tr[2] || '';
+        return '<b>'+tr[0]+' '+tr[1]+'</b><span class="print-only"> '+pg+'</span><span class="print-hide"> '+tr[2]+'<br>'+tr[3].slice(0,30)+'</span>'; 
+    }).join(SEP);
+    
+    cols[7] = chmIdx.map(ci => { 
+        let nr = NR[ci%NR.length]; 
+        return nr ? '<b>'+nr[0]+'</b><br class="print-hide"><span class="print-hide" style="opacity:.7">'+nr[1].slice(0,30)+'</span>' : ''; 
+    }).join(SEP);
+
+    // New Columns
+    cols[8] = '<b>'+PF[i%PF.length][0]+'</b><br class="print-hide"><span class="print-hide" style="font-size:.55rem;opacity:.7">'+PF[i%PF.length][1]+'</span>';
+    cols[9] = '<b>'+CR[i%CR.length][0]+'</b><br class="print-hide"><span class="print-hide" style="font-size:.55rem;opacity:.7">'+CR[i%CR.length][1]+'</span>';
+    cols[10] = '<b>'+BD_DIS[i%BD_DIS.length][0]+'</b><br class="print-hide"><span class="print-hide" style="font-size:.55rem;opacity:.7">'+BD_DIS[i%BD_DIS.length][1]+'</span>';
+    cols[11] = '<span class="print-hide">Solve 20+ PYQs on</span><br><b>'+PYQ[i%PYQ.length]+'</b>';
+    
+    cols[12] = phyIdx.map(ci => { 
+        let ar = AR[ci%AR.length]; 
+        return ar ? '<span class="print-hide">'+ar[0].slice(0,40)+'</span><span class="print-only"><b>Q'+((ci%AR.length)+1)+'</b></span>' : ''; 
+    }).join(SEP);
+
+    tr2.innerHTML='<td>'+ds+badge+dblBadge+'</td>'
+      +'<td>'+cols[0]+'</td>'
+      +'<td style="color:var(--green)">'+cols[1]+'</td>'
+      +'<td style="text-align:left;color:var(--cyan);font-size:.6rem">'+cols[2]+'</td>'
+      +'<td style="text-align:left;color:var(--or);font-size:.61rem">'+cols[3]+'</td>'
+      +'<td style="text-align:left;color:var(--pink);font-size:.6rem">'+cols[4]+'</td>'
+      +'<td style="color:var(--gold);font-size:.6rem">'+cols[5]+'</td>'
+      +'<td style="text-align:left;color:var(--mu2);font-size:.58rem">'+cols[6]+'</td>'
+      +'<td style="text-align:left;color:var(--teal);font-size:.58rem">'+cols[7]+'</td>'
+      +'<td style="text-align:left;color:var(--pink);font-size:.58rem">'+cols[8]+'</td>'
+      +'<td style="text-align:left;color:var(--cyan);font-size:.58rem">'+cols[9]+'</td>'
+      +'<td style="text-align:left;color:var(--green);font-size:.58rem">'+cols[10]+'</td>'
+      +'<td style="text-align:left;color:var(--gold);font-size:.58rem">'+cols[11]+'</td>'
+      +'<td style="text-align:left;color:var(--mu2);font-size:.56rem">'+cols[12]+'</td>';
+    tbody.appendChild(tr2);
+  }
+
+  setTimeout(function() {
+      var todayRow = tbody.querySelector('.rt');
+      if (todayRow) {
+          todayRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          todayRow.classList.add('plan-focus');
+      } else {
+          var nextRow = tbody.querySelector('tr:not(.rd)');
+          if(nextRow) {
+              nextRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
+              nextRow.classList.add('plan-focus');
+          }
+      }
+  }, 300);
+}
+
+function switchTab(i){
+  ['vT','vP','vD','vPl'].forEach(function(id){document.getElementById(id).classList.remove('active');});
+  ['t0','t1','t2'].forEach(function(id){document.getElementById(id).classList.remove('active');});
+  document.getElementById('btnBack').classList.remove('on');
+  document.getElementById('htl').textContent='AIIMS DELHI'; 
+  if(i===0){
+    document.getElementById('vT').classList.add('active');
+    document.getElementById('t0').classList.add('active');
+    renderToday();
+  } else if(i===1){
+    document.getElementById('vP').classList.add('active');
+    document.getElementById('t1').classList.add('active');
+    renderProg();
+  } else if(i===2){
+    document.getElementById('vPl').classList.add('active');
+    document.getElementById('t2').classList.add('active');
+    buildPlan();
+  }
+}
+
+function printPlan() {
+  var btn = document.getElementById('pdfBtn');
+  var originalHTML = btn.innerHTML;
+  btn.innerHTML = '<span>⏳</span>';
+  btn.style.opacity = '0.7';
+  btn.style.pointerEvents = 'none';
+
+  if (!document.getElementById('vPl').classList.contains('active')) {
+    switchTab(2);
+  }
+
+  document.body.classList.add('pdf-exporting');
+
+  setTimeout(function() {
+    var element = document.querySelector('.plwp'); 
+    var opt = {
+      margin: 0.3,
+      filename: 'AIIMS_Delhi_40_Day_Blitz.pdf',
+      image: { type: 'jpeg', quality: 1 },
+      html2canvas: { scale: 2, useCORS: true, windowWidth: 1400, backgroundColor: '#ffffff' },
+      jsPDF: { unit: 'in', format: 'a3', orientation: 'landscape' }
+    };
+    var wasDark = document.body.classList.contains('dark');
+    if (wasDark) document.body.classList.remove('dark');
+
+    html2pdf().set(opt).from(element).save().then(function() {
+      if (wasDark) document.body.classList.add('dark');
+      document.body.classList.remove('pdf-exporting');
+      btn.innerHTML = originalHTML;
+      btn.style.opacity = '1';
+      btn.style.pointerEvents = 'auto';
+    }).catch(function(err) {
+      console.error('PDF Error:', err);
+      document.body.classList.remove('pdf-exporting');
+      btn.innerHTML = '<span>❌</span>';
+      setTimeout(() => { btn.innerHTML = originalHTML; btn.style.opacity = '1'; btn.style.pointerEvents = 'auto'; }, 2000);
+    });
+  }, 500);
+}
+
+function toggleTheme(){
+  var l = document.body.classList.toggle('dark');
+  localStorage.setItem(ST, l ? 'd' : 'l');
+  document.getElementById('themeHIcon').textContent = l ? '🌙' : '☀️';
+  if (document.getElementById('vP').classList.contains('active')) renderProg();
+}
+
+var pomTimer=null,pomSec=25*60,pomPaused=false;
+
+function pomToggleGlobal(){
+  if(pomTimer || pomPaused) {
+      document.getElementById('pomFloat').classList.add('on');
+  } else {
+      pomStart('Deep Work Session');
+  }
+}
+
+function pomStart(name){
+  clearInterval(pomTimer);pomTimer=null;
+  pomSec=25*60;pomPaused=false;
+  document.getElementById('pomTask').textContent=name;
+  document.getElementById('pomPause').textContent='⏸';
+  document.getElementById('pomFloat').classList.add('on');
+  
+  // Highlight Header Button
+  var gb = document.getElementById('pomGlobalBtn');
+  gb.style.color = 'var(--pom-run-color)';
+  gb.style.background = 'rgba(240, 192, 64, 0.2)';
+  
+  pomTick();pomTimer=setInterval(pomTick,1000);
+}
+function pomTick(){
+  if(pomPaused)return;
+  var m=Math.floor(pomSec/60),sec=pomSec%60;
+  var ts=(m<10?'0':'')+m+':'+(sec<10?'0':'')+sec;
+  document.getElementById('pomTime').textContent=ts;
+  document.title=ts+' ⏳ Focus | AIIMS Blitz';
+  if(pomSec<=0){
+    pomStop();
+    if(navigator.vibrate)navigator.vibrate([100,50,100]);
+    if(typeof confetti==='function'){confetti({particleCount:60,spread:70,startVelocity:28,origin:{y:.7},colors:['#f0c040','#ff8c20','#22d46a'],disableForReducedMotion:true});}
+  } else {
+    pomSec--;
+  }
+}
+function pomTogglePause(){
+  pomPaused=!pomPaused;
+  document.getElementById('pomPause').textContent=pomPaused?'▶':'⏸';
+}
+function pomStop(){
+  clearInterval(pomTimer);pomTimer=null;
+  document.getElementById('pomFloat').classList.remove('on');
+  
+  // Reset Header Button
+  var gb = document.getElementById('pomGlobalBtn');
+  gb.style.color = '';
+  gb.style.background = '';
+  
+  document.title='AIIMS DELHI - 40 Day Blitz';
+}
+
+function arToggle(btn){
+  var rev=btn.previousElementSibling;
+  if(!rev||!rev.classList.contains('ar-reveal'))return;
+  var show=rev.classList.toggle('show');
+  btn.textContent=show?'Hide Answer ▲':'Show Answer ▼';
+}
+
+function filterPlan() {
+  var query = document.getElementById('planSearch').value.toLowerCase();
+  var rows = document.getElementById('pb').querySelectorAll('tr');
+  if (!rows.length) return;
+  rows.forEach(function(row) {
+    row.style.display = row.textContent.toLowerCase().indexOf(query) > -1 ? '' : 'none';
+  });
+}
+
+document.addEventListener('visibilitychange',function(){
+  if(document.visibilityState==='visible'){init();if(document.getElementById('vT').classList.contains('active'))renderToday();}
+});
+
+if(localStorage.getItem(ST)==='d'){
+  document.body.classList.add('dark');
+  document.getElementById('themeHIcon').textContent = '🌙';
+}
+
+init();
+switchTab(0);
+</script>
+</body>
+</html>
