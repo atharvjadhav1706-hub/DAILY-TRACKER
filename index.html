@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no,viewport-fit=cover">
+<title>NEET 30-Day Tracker</title>
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #f0f2f5;
+  --tx: #111118;
+  --mu: #717182;
+  --mu2: #505062;
+  --glass-bg: rgba(255,255,255,0.8);
+  --glass-border: rgba(255,255,255,0.9);
+  --panel: #ffffff;
+  --tb: rgba(0,0,0,0.06);
+  --tr: rgba(255,255,255,0.5);
+  --ta: rgba(245,246,250,0.8);
+  --shadow-sm: 0 2px 10px rgba(0,0,0,0.03);
+  --shadow-md: 0 8px 30px rgba(0,0,0,0.06);
+  --gold: #facc15;
+  --pink: #ff2a5f;
+  --cyan: #00d0f4;
+  --green: #00d26a;
+  --pu: #b058e8;
+  --or: #ff8800;
+  --teal: #14b8a6;
+  --card-title: #111118;
+  --card-desc: #444455;
+  --safe: env(safe-area-inset-bottom);
+}
+body.dark {
+  --bg: #09090c;
+  --tx: #f4f4f8;
+  --mu: #8a8a9d;
+  --mu2: #b0b0c0;
+  --glass-bg: rgba(24,24,32,0.7);
+  --glass-border: rgba(255,255,255,0.06);
+  --panel: #16161e;
+  --tb: rgba(255,255,255,0.08);
+  --tr: transparent;
+  --ta: rgba(255,255,255,0.02);
+  --shadow-sm: 0 4px 20px rgba(0,0,0,0.4);
+  --shadow-md: 0 10px 40px rgba(0,0,0,0.6);
+  --card-title: #ffffff;
+  --card-desc: #b0b0c0;
+}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+html,body{width:100vw;height:100dvh;overflow:hidden;font-family:'Syne',sans-serif;-webkit-font-smoothing:antialiased;background-color:var(--bg);color:var(--tx);transition:background-color .4s ease;user-select:none;}
+::-webkit-scrollbar{display:none;}*{scrollbar-width:none;}
+
+.bg{position:fixed;inset:0;z-index:0;overflow:hidden;pointer-events:none;}
+.bg::before,.bg::after,.bg-blob-3{content:'';position:absolute;border-radius:50%;filter:blur(90px);opacity:.5;animation:floatBg 25s infinite alternate cubic-bezier(.4,0,.2,1);}
+.bg::before{width:75vw;height:75vw;background:var(--cyan);top:-10%;left:-20%;}
+.bg::after{width:80vw;height:80vw;background:var(--or);bottom:-10%;right:-20%;animation-delay:-5s;}
+.bg-blob-3{width:60vw;height:60vw;background:var(--pink);top:30%;left:20%;animation-duration:30s;}
+body.dark .bg::before{opacity:.15;}body.dark .bg::after{opacity:.1;}body.dark .bg-blob-3{opacity:.1;}
+@keyframes floatBg{0%{transform:translate(0,0) scale(1);}100%{transform:translate(15vw,15vh) scale(1.2);}}
+
+.app{position:relative;z-index:1;width:100%;max-width:440px;height:100dvh;margin:0 auto;display:flex;flex-direction:column;overflow:hidden;background:var(--bg);}
+@media(min-width:441px){.app{border-left:1px solid var(--tb);border-right:1px solid var(--tb);box-shadow:var(--shadow-md);}}
+
+.hdr{flex-shrink:0;display:flex;align-items:center;justify-content:space-between;padding:calc(16px + env(safe-area-inset-top)) 16px 16px;background:var(--panel);border-bottom:1px solid var(--tb);z-index:100;}
+.hbtn{width:38px;height:38px;border-radius:12px;background:var(--bg);border:1px solid var(--tb);color:var(--tx);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:.2s;}
+.hbtn:active{transform:scale(.9);}
+#btnBack{opacity:0;pointer-events:none;transform:translateX(-8px);}
+#btnBack.on{opacity:1;pointer-events:auto;transform:none;}
+.hdr-c{display:flex;flex-direction:column;align-items:center;}
+
+.countdown-pill{background:var(--tx);color:var(--panel);padding:6px 14px;border-radius:100px;font-family:'JetBrains Mono',monospace;font-size:.85rem;font-weight:800;letter-spacing:-.5px;display:inline-flex;align-items:center;gap:6px;box-shadow:var(--shadow-sm);}
+.hdr-ttl{font-size:1.1rem;font-weight:800;display:none;}
+
+.vc{flex:1;overflow-y:auto;overflow-x:hidden;padding:16px 14px calc(110px + var(--safe));scroll-behavior:smooth;-webkit-overflow-scrolling:touch;}
+.view{display:none;animation:vIn .3s ease-out;}
+.view.active{display:block;}
+#vRev{padding:0;display:none;flex-direction:column;height:100%;animation:vIn .3s ease-out;}
+#vRev.active{display:flex;}
+@keyframes vIn{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:none;}}
+
+.glass-card{background:var(--glass-bg);backdrop-filter:blur(25px);-webkit-backdrop-filter:blur(25px);border:1px solid var(--glass-border);border-radius:20px;box-shadow:var(--shadow-sm);padding:20px;margin-bottom:16px;}
+
+/* Week strip */
+.wstrip{display:flex;justify-content:space-between;padding:14px 10px;border-radius:20px;}
+.wd{display:flex;flex-direction:column;align-items:center;gap:6px;flex:1;opacity:.4;transition:.3s;}
+.wd.on,.wd.dn{opacity:1;}
+.wl{font-size:.5rem;font-weight:800;text-transform:uppercase;color:var(--mu);}
+.wn{font-size:.85rem;font-family:'JetBrains Mono',monospace;font-weight:800;width:30px;height:30px;display:flex;align-items:center;justify-content:center;border-radius:50%;transition:.3s;}
+.wd.on .wn{background:var(--tx);color:var(--panel);box-shadow:0 4px 10px rgba(0,0,0,.15);}
+.wd.dn .wn{background:var(--green);color:#fff;box-shadow:0 4px 10px rgba(0,210,106,.3);}
+
+/* Hero */
+.hs{display:flex;justify-content:space-between;margin-bottom:18px;}
+.hst{display:flex;flex-direction:column;gap:4px;}
+.hv{font-family:'JetBrains Mono',monospace;font-size:1.6rem;font-weight:800;line-height:1;}
+.hl{font-size:.55rem;font-weight:800;letter-spacing:1px;color:var(--mu);text-transform:uppercase;}
+.pw{height:6px;background:var(--tb);border-radius:6px;overflow:hidden;}
+.pf{height:100%;border-radius:6px;background:var(--tx);transition:width .9s cubic-bezier(.16,1,.3,1);}
+
+/* Streak */
+.streak-container{display:inline-flex;align-items:center;gap:14px;padding:10px 20px 10px 10px;border-radius:100px;border:1px solid var(--gold);background:rgba(250,204,21,.1);margin-top:16px;box-shadow:var(--shadow-sm);transition:.2s;}
+.streak-icon-wrap{width:34px;height:34px;background:var(--gold);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.2rem;color:#111;}
+.streak-n{font-family:'JetBrains Mono',monospace;font-size:1.2rem;font-weight:800;line-height:1;}
+.streak-lbl{font-size:.55rem;font-weight:800;color:var(--gold);text-transform:uppercase;letter-spacing:1px;margin-top:2px;}
+
+.sh{font-size:.65rem;font-weight:800;color:var(--mu);margin-bottom:12px;letter-spacing:1.5px;text-transform:uppercase;padding-left:4px;}
+
+/* Task cards */
+.workout-card{display:flex;align-items:center;justify-content:space-between;gap:16px;border-radius:20px;padding:16px;margin-bottom:14px;position:relative;transition:all .2s ease;cursor:pointer;border-left:6px solid transparent;background:var(--panel);border:1px solid var(--tb);border-left-width:6px;box-shadow:var(--shadow-sm);}
+.workout-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-md);}
+.workout-card:active{transform:scale(.98);}
+.workout-card.theme-math{border-left-color:var(--pu);}
+.workout-card.theme-phy{border-left-color:var(--or);}
+.workout-card.theme-che{border-left-color:var(--cyan);}
+.workout-card.theme-bio{border-left-color:var(--green);}
+.workout-card.done{opacity:.6;filter:grayscale(20%);border-left-color:var(--green)!important;box-shadow:none;background:var(--bg);}
+.wc-info{flex:1;min-width:0;display:flex;flex-direction:column;align-items:flex-start;}
+.wc-header-top{display:flex;align-items:center;gap:8px;margin-bottom:6px;}
+.wc-tag-badge{font-size:.55rem;font-weight:800;letter-spacing:1px;text-transform:uppercase;background:var(--bg);border:1px solid var(--tb);color:var(--tx);padding:4px 8px;border-radius:6px;}
+.wc-num{font-family:'JetBrains Mono',monospace;background:var(--tx);color:var(--panel);width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:800;}
+.wc-val-text{font-size:.95rem;font-weight:800;letter-spacing:-.3px;color:var(--card-title);line-height:1.3;margin-bottom:4px;width:100%;}
+.wc-desc{font-size:.75rem;color:var(--card-desc);line-height:1.5;font-weight:600;}
+.pro-checkbox{flex-shrink:0;width:26px;height:26px;border-radius:50%;border:2px solid var(--mu);background:transparent;display:flex;align-items:center;justify-content:center;transition:all .3s cubic-bezier(.16,1,.3,1);opacity:.5;}
+.pro-checkbox svg{width:14px;height:14px;stroke-width:3.5;stroke:#fff;transform:scale(0);transition:.4s cubic-bezier(.34,1.56,.64,1);}
+.workout-card.done .pro-checkbox{background:var(--green);border-color:var(--green);opacity:1;}
+.workout-card.done .pro-checkbox svg{transform:scale(1);}
+
+/* Done message */
+#dmsg{display:none;text-align:center;padding:20px;}
+.dmsg{border-radius:20px;}
+.dtl{font-size:1.1rem;font-weight:800;margin:8px 0 4px;}
+.ds{font-size:.8rem;color:var(--mu);font-weight:600;}
+
+/* ── PROGRESS TAB ── */
+.prog-hero-top{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:16px;}
+.prog-hero-pct{font-family:'JetBrains Mono',monospace;font-size:2.5rem;font-weight:800;line-height:1;letter-spacing:-1.5px;background:linear-gradient(90deg,var(--cyan),var(--teal),var(--green));-webkit-background-clip:text;color:transparent;}
+.prog-hero-meta{text-align:right;}
+.prog-hero-days{font-family:'JetBrains Mono',monospace;font-size:.95rem;font-weight:800;}
+.prog-hero-lbl{font-size:.5rem;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--mu);margin-top:4px;}
+.prog-bar-wrap{height:8px;background:var(--tb);border-radius:8px;overflow:hidden;}
+.prog-bar-fill{height:100%;border-radius:8px;background:linear-gradient(90deg,var(--cyan),var(--teal),var(--green));width:0%;transition:width 1s cubic-bezier(.16,1,.3,1);}
+
+/* Subject rings grid */
+.subj-rings{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px;}
+.subj-ring-card{display:flex;flex-direction:column;align-items:center;gap:10px;padding:18px 12px;border-radius:20px;background:var(--panel);border:1px solid var(--tb);box-shadow:var(--shadow-sm);transition:transform .2s,box-shadow .2s;cursor:default;}
+.subj-ring-card:hover{transform:translateY(-3px);box-shadow:var(--shadow-md);}
+.prog-ring-svg{overflow:visible;}
+.prog-ring-track{fill:none;stroke:var(--bg);stroke-width:5;}
+.prog-ring-arc{fill:none;stroke-linecap:round;stroke-width:5;stroke-dasharray:226.19;stroke-dashoffset:226.19;transform:rotate(-90deg);transform-origin:40px 40px;transition:stroke-dashoffset 1s cubic-bezier(.16,1,.3,1);}
+.prog-ring-pct{font-family:'JetBrains Mono',monospace;font-size:1rem;font-weight:800;text-anchor:middle;dominant-baseline:central;fill:var(--tx);letter-spacing:-.5px;}
+.prog-ring-sub{font-family:'Syne',sans-serif;font-size:.38rem;font-weight:800;text-anchor:middle;dominant-baseline:central;letter-spacing:.5px;fill:var(--mu);}
+.subj-ring-name{font-size:.6rem;font-weight:800;color:var(--tx);text-transform:uppercase;letter-spacing:1px;}
+.subj-ring-icon{font-size:1.2rem;}
+
+/* 30-day plan accordion */
+.plan-section{margin-top:4px;}
+.plan-day-card{border-radius:16px;margin-bottom:10px;background:var(--panel);border:1px solid var(--tb);box-shadow:var(--shadow-sm);overflow:hidden;transition:.2s;}
+.plan-day-card.completed{border-color:rgba(0,210,106,.25);background:rgba(0,210,106,.03);}
+.plan-day-card.today-card{border:2px solid var(--gold);box-shadow:0 0 0 3px rgba(250,204,21,.1);}
+.plan-day-header{display:flex;align-items:center;gap:12px;padding:14px 16px;cursor:pointer;transition:.15s;}
+.plan-day-header:active{background:var(--ta);}
+.plan-day-num{font-family:'JetBrains Mono',monospace;font-size:.7rem;font-weight:800;background:var(--tx);color:var(--panel);width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.plan-day-card.completed .plan-day-num{background:var(--green);}
+.plan-day-card.today-card .plan-day-num{background:var(--gold);color:#111;}
+.plan-day-title{flex:1;font-size:.75rem;font-weight:800;color:var(--tx);line-height:1.3;}
+.plan-day-meta{font-size:.55rem;color:var(--mu);font-weight:700;margin-top:2px;}
+.plan-day-chevron{color:var(--mu);transition:transform .25s;flex-shrink:0;}
+.plan-day-card.open .plan-day-chevron{transform:rotate(180deg);}
+.plan-day-body{display:none;padding:0 16px 14px;}
+.plan-day-card.open .plan-day-body{display:block;}
+.plan-subject-row{display:flex;gap:8px;align-items:flex-start;padding:8px 0;border-bottom:1px solid var(--tb);}
+.plan-subject-row:last-child{border-bottom:none;}
+.plan-subj-badge{flex-shrink:0;font-size:.48rem;font-weight:800;padding:4px 7px;border-radius:6px;text-transform:uppercase;letter-spacing:.8px;margin-top:1px;}
+.badge-math{color:var(--pu);background:rgba(176,88,232,.15);}
+.badge-phy{color:var(--or);background:rgba(255,136,0,.15);}
+.badge-che{color:var(--cyan);background:rgba(0,208,244,.15);}
+.badge-bio{color:var(--green);background:rgba(0,210,106,.15);}
+.plan-subj-text{font-size:.72rem;color:var(--card-desc);font-weight:600;line-height:1.4;flex:1;}
+
+/* Nav */
+.bnav{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);width:calc(100% - 32px);max-width:400px;background:var(--panel);border:1px solid var(--tb);display:flex;padding:8px;border-radius:100px;box-shadow:var(--shadow-md);z-index:100;}
+.bb{flex:1;padding:12px;background:transparent;border:none;display:flex;align-items:center;justify-content:center;gap:8px;color:var(--mu);cursor:pointer;transition:.3s;border-radius:100px;}
+.bb.active{flex:1.2;background:var(--tx);color:var(--panel);box-shadow:var(--shadow-sm);}
+.bb svg{width:20px;height:20px;stroke:currentColor;stroke-width:2.2;fill:none;transition:.2s;}
+.nav-lbl{display:none;font-family:'Syne',sans-serif;font-size:.7rem;font-weight:800;letter-spacing:.5px;}
+.bb.active .nav-lbl{display:block;animation:vIn .3s ease forwards;}
+
+/* Revision tab */
+.rev-form{display:flex;gap:8px;flex-wrap:wrap;background:var(--panel);padding:14px;border-radius:16px;border:1px solid var(--tb);box-shadow:var(--shadow-sm);margin-bottom:20px;}
+.rev-input{flex:1;min-width:150px;padding:12px 14px;border-radius:12px;border:1px solid var(--tb);background:var(--bg);color:var(--tx);font-family:'Syne',sans-serif;font-size:.8rem;outline:none;transition:.2s;}
+.rev-input:focus{border-color:var(--cyan);}
+.rev-select{padding:12px;border-radius:12px;border:1px solid var(--tb);background:var(--bg);color:var(--tx);font-family:'Syne',sans-serif;font-size:.8rem;outline:none;font-weight:600;cursor:pointer;}
+.rev-btn{padding:0 18px;border-radius:12px;border:none;background:var(--tx);color:var(--panel);font-weight:800;cursor:pointer;display:flex;align-items:center;font-family:'Syne',sans-serif;transition:transform .2s;font-size:.8rem;}
+.rev-btn:active{transform:scale(.95);}
+.rev-card{display:flex;justify-content:space-between;align-items:center;background:var(--panel);padding:16px;border-radius:16px;border:1px solid var(--tb);margin-bottom:12px;box-shadow:var(--shadow-sm);border-left-width:6px;}
+.rev-card.due{border-left-color:var(--pink);background:rgba(255,42,95,.03);border-color:rgba(255,42,95,.15);border-left-width:6px;}
+.rev-card.upcoming{border-left-color:var(--cyan);}
+.rev-card.mastered{border-left-color:var(--green);opacity:.6;box-shadow:none;background:var(--bg);}
+.sub-tag{font-size:.5rem;font-weight:800;padding:4px 8px;border-radius:8px;text-transform:uppercase;letter-spacing:1px;}
+.sub-tag.phy{color:var(--or);background:rgba(255,136,0,.15);}
+.sub-tag.che{color:var(--cyan);background:rgba(0,208,244,.15);}
+.sub-tag.bio{color:var(--green);background:rgba(0,210,106,.15);}
+.rev-dots{display:flex;gap:5px;margin-top:8px;align-items:center;}
+.rdot{width:10px;height:10px;border-radius:50%;background:var(--tb);}
+.rdot.done{background:var(--green);box-shadow:0 0 5px rgba(0,210,106,.4);}
+.pt-btn{padding:8px 14px;border-radius:10px;border:none;background:transparent;color:var(--mu);font-family:'Syne',sans-serif;font-size:.7rem;font-weight:800;cursor:pointer;transition:.2s;}
+.pt-btn.active{background:var(--tx);color:var(--panel);}
+#revWrapper{transition:opacity .2s;flex:1;display:flex;flex-direction:column;overflow:hidden;}
+.rev-scroll{flex:1;overflow-y:auto;padding-bottom:calc(110px + var(--safe));-webkit-overflow-scrolling:touch;}
+
+.plan-fullscreen-landscape{position:fixed!important;top:0!important;left:0!important;width:100dvh!important;height:100vw!important;transform:rotate(90deg) translateY(-100%)!important;transform-origin:0 0!important;z-index:9999!important;background:var(--bg);display:flex;flex-direction:column;animation:rotateIn .3s cubic-bezier(.16,1,.3,1);padding:10px 20px;}
+@keyframes rotateIn{from{opacity:0;transform:rotate(90deg) translateY(-100%) scale(.95);}to{opacity:1;transform:rotate(90deg) translateY(-100%) scale(1);}}
+@media(orientation:landscape){.plan-fullscreen-landscape{width:100vw!important;height:100dvh!important;transform:none!important;}}
+.ls-header{display:none;justify-content:space-between;align-items:center;padding:16px 0;border-bottom:1px solid var(--tb);margin-bottom:16px;}
+.plan-fullscreen-landscape .ls-header{display:flex;}
+.plan-fullscreen-landscape .rev-scroll{padding-bottom:20px;}
+body.is-landscape-locked .bnav,body.is-landscape-locked .hdr{display:none!important;}
+</style>
+</head>
+<body>
+<div class="bg"><div class="bg-blob-3"></div></div>
+<div class="app">
+  <div class="hdr">
+    <div style="min-width:40px;">
+      <button class="hbtn" id="btnBack" onclick="closeDetail()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="12 19 5 12 12 5"/></svg>
+      </button>
+    </div>
+    <div class="hdr-c">
+      <div class="countdown-pill" id="mainCountdown">⏳ <span id="cdText">Calculating...</span></div>
+      <div class="hdr-ttl" id="htl"></div>
+    </div>
+    <div style="display:flex;gap:8px;min-width:40px;">
+      <button class="hbtn" id="themeHBtn" onclick="toggleTheme()"><span id="themeHIcon">☀️</span></button>
+    </div>
+  </div>
+
+  <div class="vc">
+    <!-- TODAY TAB -->
+    <div class="view active" id="vT">
+      <div class="wstrip glass-card" id="ws"></div>
+      <div class="hero glass-card" style="padding:20px;">
+        <div class="hs">
+          <div class="hst"><div class="hv" id="hEx">0/0</div><div class="hl">Tasks</div></div>
+          <div class="hst" style="align-items:center"><div class="hv" id="hPct">0%</div><div class="hl">Today</div></div>
+          <div class="hst" style="align-items:flex-end"><div class="hv" id="hDay">Day 1</div><div class="hl">Journey</div></div>
+        </div>
+        <div class="pw"><div class="pf" id="pf" style="width:0%"></div></div>
+        <div id="streakRow" class="streak-container"></div>
+      </div>
+      <div id="dmsg" class="dmsg glass-card" style="display:none;text-align:center;padding:24px;">
+        <div style="font-size:2rem">🎯</div>
+        <div class="dtl">Day Crushed!</div>
+        <div class="ds">All tasks done. Review your notes &amp; rest well.</div>
+      </div>
+      <div id="tw"></div>
+    </div>
+
+    <!-- PROGRESS TAB -->
+    <div class="view" id="vP"></div>
+
+    <!-- REVISION TAB -->
+    <div class="view" id="vRev">
+      <div class="plhdr" style="padding-bottom:0;">
+        <div class="plan-toggle-wrap" style="display:flex;justify-content:center;margin-bottom:16px;">
+          <div class="plan-toggle" style="background:var(--bg);border:1px solid var(--tb);border-radius:12px;display:inline-flex;overflow:hidden;">
+            <button class="pt-btn active" id="btnTogglePortrait" onclick="setPlanRotation(false)">Portrait 📱</button>
+            <button class="pt-btn" id="btnToggleLandscape" onclick="setPlanRotation(true)">Landscape 🔀</button>
+          </div>
+        </div>
+      </div>
+      <div id="revWrapper">
+        <div class="ls-header">
+          <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:1.1rem;color:var(--tx);">Spaced Repetition System</div>
+          <button class="pt-btn active" onclick="setPlanRotation(false)" style="background:var(--tx);color:var(--panel);">Close ✕</button>
+        </div>
+        <div class="rev-scroll">
+          <div class="rev-form">
+            <input type="text" id="revTask" class="rev-input" placeholder="e.g., Mole Concept Lec 1" onkeypress="if(event.key==='Enter') addRevision()">
+            <select id="revSubj" class="rev-select">
+              <option value="phy">Physics</option>
+              <option value="che">Chemistry</option>
+              <option value="bio">Biology</option>
+            </select>
+            <button class="rev-btn" onclick="addRevision()">Add</button>
+          </div>
+          <div class="sh" style="color:var(--pink);">Due Today</div>
+          <div id="revDue" style="margin-bottom:24px;"></div>
+          <div class="sh" style="color:var(--cyan);">Upcoming Revisions</div>
+          <div id="revUpc" style="margin-bottom:24px;"></div>
+          <div class="sh" style="color:var(--green);">Mastered (Lvl 5)</div>
+          <div id="revMast" style="margin-bottom:24px;"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="bnav">
+    <button class="bb active" id="t0" onclick="switchTab(0)">
+      <svg viewBox="0 0 24 24"><polyline points="3 12 8 12 12 4 16 20 20 12 23 12"></polyline></svg>
+      <span class="nav-lbl">TODAY</span>
+    </button>
+    <button class="bb" id="t1" onclick="switchTab(1)">
+      <svg viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M7 16l4-4 4 4 4-6"/></svg>
+      <span class="nav-lbl">PROGRESS</span>
+    </button>
+    <button class="bb" id="t2" onclick="switchTab(2)">
+      <svg viewBox="0 0 24 24"><path d="M12 20h9M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+      <span class="nav-lbl">REVISE</span>
+    </button>
+  </div>
+</div>
+
+<script>
+'use strict';
+
+const SK = 'neet30v1', ST = 'neet30v1t';
+
+// Start: Day 1 = today's date at launch, plan runs 30 days
+const DS = new Date(2026, 4, 5); // May 5 2026 as Day 1
+DS.setHours(0,0,0,0);
+const TOTAL = 30;
+const MN = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+// ── 30-DAY PLAN DATA ──
+const PLAN = [
+  { day:1, math:"Tables 2-3, Square 2, Split & Multiply Intro (12×3)", phy:"Trig: sin/cos/tan definitions, values for 0° and 90°", che:"Group 1 (Alkali Metals) Mnemonics, Atomic #1-3 (H, He, Li)", bio:"Class 11: The Living World (Para 1-3) — Highlight 'because/since'" },
+  { day:2, math:"Tables 4-5, Squares 3-4, Mental 14×5 drill", phy:"Trig: sin/cos values for 30°, 45°, 60°", che:"Group 2 (Alkaline Earth) Mnemonics, Atomic #4-5 (Be, B)", bio:"Class 11: The Living World (End of chapter) — Find 3 A/R connections" },
+  { day:3, math:"Table 6, Square 5, Cube 2, 2-digit addition drills", phy:"The 3-4-5 Triangle: Why sin 37°=3/5 and sin 53°=4/5", che:"Review Groups 1 & 2, Atomic #6-7 (C, N)", bio:"Class 11: Bio Classification — Kingdom Monera (Bacterial shapes)" },
+  { day:4, math:"Table 7, Square 6, Cube 3, Split & Multiply (17×4)", phy:"Introduction to Vectors: Magnitude vs. Direction", che:"Group 13 (Boron family) Mnemonic, Atomic #8-10 (O, F, Ne)", bio:"Class 11: Bio Classification — Protista & Fungi" },
+  { day:5, math:"Table 8, Square 7, Cube 4, Fractions to Decimals: 1/2, 1/4, 1/5", phy:"Vector Resolution: Finding Horizontal (cos) and Vertical (sin) components", che:"Group 14 (Carbon family) Mnemonic, Atomic #11-13 (Na, Mg, Al)", bio:"Class 11: Bio Classification — Viruses, Viroids & Prions" },
+  { day:6, math:"Table 9, Square 8, Cube 5, Mental 19×3 drill", phy:"ASTC Rule: Finding values for angles > 90° (e.g., sin 120°)", che:"Group 15 (Nitrogen family) Mnemonic, Atomic #14-15 (Si, P)", bio:"Class 11: Plant Kingdom — Algae types and Pigments (Table 3.1)" },
+  { day:7, math:"WEEKLY REVIEW: Test Tables 2-9, Squares 1-8, Cubes 1-5", phy:"Review Trig Values and Vector Resolution", che:"Recall Elements 1-15 (Symbol, Mass, Number)", bio:"Review all A/R highlighted sentences from Week 1" },
+  { day:8, math:"Tables 11-12, Squares 9-10, Fraction 1/8", phy:"Differentiation: The Power Rule d/dx(xⁿ)", che:"Group 16 (Oxygen family) Mnemonic, Atomic #16-18 (S, Cl, Ar)", bio:"Class 11: Animal Kingdom — Non-Chordates (Symmetry/Coelom)" },
+  { day:9, math:"Table 13, Square 11, Cube 6, Mental 22×4 drill", phy:"Differentiation: d/dx of constants and basic sums", che:"Group 17 (Halogens) Mnemonic, Atomic #19-20 (K, Ca)", bio:"Class 11: Cell Unit of Life — Prokaryotic vs Eukaryotic basics" },
+  { day:10, math:"Table 14, Square 12, Cube 7, Decimal Shifting (×10, ×100, ×0.1)", phy:"Differentiation: d/dx of sin(x) and cos(x)", che:"Group 18 (Noble Gases) Mnemonic, Atomic #21-22 (Sc, Ti)", bio:"Class 11: Cell Unit — Endomembrane system (ER, Golgi, Vacuole)" },
+  { day:11, math:"Table 15, Square 13, Cube 8, Fractions 1/3, 1/6, 1/9", phy:"Physics Apps: Finding Velocity (v = dx/dt)", che:"3d Series (Sc to Zn) Mnemonic Part 1, Atomic #23-25", bio:"Class 11: Cell Unit — Mitochondria & Chloroplast (Structure A/R)" },
+  { day:12, math:"Table 16, Square 14, Cube 9, Mental 0.25×8 drill", phy:"Differentiation: Maxima and Minima basics (Setting d/dx to 0)", che:"3d Series Mnemonic Part 2, Atomic #26-30", bio:"Class 11: Biomolecules — Primary & Secondary Metabolites" },
+  { day:13, math:"Table 17, Square 15, Cube 10, Mental 25×6 drill", phy:"Integration: The Reverse Power Rule ∫xⁿ dx", che:"Review P-block Mnemonics and 3d Series Masses", bio:"Class 11: Cell Cycle — Phases of Mitosis" },
+  { day:14, math:"Table 18, Square 16, Cube 11, Fraction 1/7 decimal value", phy:"Definite Integration: Applying Upper and Lower Limits", che:"4d Series Mnemonic (Y to Cd)", bio:"Class 11: Cell Cycle — Meiosis (Crossing over focus)" },
+  { day:15, math:"WEEKLY REVIEW: Test Tables 11-18, Squares 9-16, Cubes 6-11", phy:"Calculus Drill: 10 differentiation + 10 integration problems", che:"Recall Elements 16-30 (Symbol, Mass, Number)", bio:"Review Cell Biology A/R connections" },
+  { day:16, math:"Table 19, Square 17, Mental 32×3 drill", phy:"Integration: ∫sin(x) dx and ∫cos(x) dx", che:"5d Series Mnemonic (La to Hg)", bio:"Class 12: Sexual Repro in Flowering Plants — Pre-fertilization" },
+  { day:17, math:"Table 20, Square 18, Mental 15×15 drill", phy:"The Concept of Slope (Differentiation) on a Graph", che:"Atomic #31-40 Names and Sequences", bio:"Class 12: Human Reproduction — Gametogenesis A/R" },
+  { day:18, math:"Table 21, Square 19, Cube 12, Decimal Division", phy:"Integration of 1/x (Introduction to ln x)", che:"Atomic #41-50 Names and Sequences", bio:"Class 12: Reproductive Health — Contraception methods" },
+  { day:19, math:"Table 22, Square 20, Mental Percentage (10%, 25%)", phy:"Area under a Velocity-Time graph = Displacement", che:"Atomic #51-60 Names and Sequences", bio:"Class 12: Principles of Inheritance — Genetics Terminology" },
+  { day:20, math:"Table 23, Square 21, Cube 13, Logarithm basics (log 2, log 3)", phy:"Maxima/Minima application in kinematics (Max height)", che:"Atomic #61-70 Names and Sequences", bio:"Class 12: Principles of Inheritance — Monohybrid Cross" },
+  { day:21, math:"Table 24, Square 22, Cube 14", phy:"Review: Vector Cross Product vs Dot Product basics", che:"Review 4d and 5d Series", bio:"Class 12: Principles of Inheritance — Dihybrid Cross calculations" },
+  { day:22, math:"Table 25, Square 23, Cube 15", phy:"Calculus mixed speed drill (Differentiation + Integration)", che:"Atomic #71-80 Names and Sequences", bio:"Class 12: Molecular Basis of Inheritance — DNA Structure" },
+  { day:23, math:"WEEKLY REVIEW: Test Tables 19-25, Squares 17-23, Cubes 12-15", phy:"Physics Graph Masterclass (Translating X-T to V-T)", che:"Recall Elements 31-80 sequence", bio:"Review Genetics A/R connections" },
+  { day:24, math:"Tables 26-28, Square 24, Multi-digit Mental Addition", phy:"Kinematic Equation Derivation using Calculus (v = u + at)", che:"Lanthanides (f-block) Mnemonic", bio:"Class 12: Molecular Basis — DNA Replication" },
+  { day:25, math:"Tables 29-30, Squares 25-27, Quick Decimal multiplication", phy:"Kinematic Equation Derivation: s = ut + ½at²", che:"Actinides (f-block) Mnemonic", bio:"Class 12: Molecular Basis — Transcription" },
+  { day:26, math:"Squares 28-30, Speed drill Tables 1-20", phy:"Work-Energy Theorem basics via Integration", che:"Atomic #81-100 Names and Sequences", bio:"Class 12: Molecular Basis — Genetic Code A/R" },
+  { day:27, math:"Full Square/Cube Review (1-30 / 1-15)", phy:"Physics Unit Analysis: Unit & Dimensions via Math", che:"Atomic #101-118 Names and Sequences", bio:"Class 12: Molecular Basis — Translation" },
+  { day:28, math:"Human Calculator Test: 30 random mental math questions", phy:"Review of all Math-Physics formulas", che:"Full Periodic Table Blank Sheet Fill (s, p, d, f blocks)", bio:"Class 12: Human Genome Project & DNA Fingerprinting" },
+  { day:29, math:"Revision of all Split & Multiply tricks and Fraction-Decimals", phy:"Applying Calculus to 2-3 previous year NEET Physics questions", che:"Recall Atomic Masses for 1-30 (Sc, Fe, Cu, Zn focus)", bio:"Full A/R Review for Class 11 & 12 Genetics" },
+  { day:30, math:"FINAL ASSESSMENT: Tables, Squares, Cubes, Mental Calculation", phy:"Math Mastery Test: Trig + Vectors + Calculus", che:"Full 1-118 Periodic Table Test", bio:"Full Unit 1-3 A/R mapping test" }
+];
+
+const SUBJECTS = [
+  { k:'math', label:'Math', icon:'🔢', color:'#b058e8', field:'math' },
+  { k:'phy',  label:'Physics', icon:'⚡', color:'#ff8800', field:'phy' },
+  { k:'che',  label:'Chemistry', icon:'⚗️', color:'#00d0f4', field:'che' },
+  { k:'bio',  label:'Biology', icon:'🧬', color:'#00d26a', field:'bio' },
+];
+
+// task key = "d{dayIdx}_{subjectKey}"
+function taskKey(dayIdx, subjKey) { return 'd' + dayIdx + '_' + subjKey; }
+
+var DB = {};
+try { DB = JSON.parse(localStorage.getItem(SK) || '{}'); } catch(e) {}
+function save() { try { localStorage.setItem(SK, JSON.stringify(DB)); } catch(e) {} }
+
+var dI = 0, pre = false;
+function init() {
+  var now = new Date(); now.setHours(0,0,0,0);
+  var s2 = new Date(DS); s2.setHours(0,0,0,0);
+  var raw = Math.round((now - s2) / 86400000);
+  pre = raw < 0;
+  dI = Math.max(0, Math.min(raw, TOTAL - 1));
+  document.getElementById('hDay').textContent = pre ? 'Day 0' : 'Day ' + (dI + 1);
+  drawWeek();
+}
+
+function getDayTasks(idx) {
+  if (idx < 0 || idx >= TOTAL) return [];
+  var p = PLAN[idx];
+  return SUBJECTS.map(function(s) {
+    return { key: taskKey(idx, s.k), subj: s.k, tag: s.label, icon: s.icon, color: s.color, text: p[s.field] };
+  });
+}
+
+function isDayComplete(idx) {
+  var tasks = getDayTasks(idx);
+  return tasks.length > 0 && tasks.every(function(t) { return !!DB[t.key]; });
+}
+
+function drawWeek() {
+  var el = document.getElementById('ws'); el.innerHTML = '';
+  var DL = ['S','M','T','W','T','F','S'];
+  var rt = new Date(); rt.setHours(0,0,0,0);
+  var sow = new Date(rt); sow.setDate(rt.getDate() - rt.getDay());
+  var sn = new Date(DS); sn.setHours(0,0,0,0);
+  for (var i = 0; i < 7; i++) {
+    var d = new Date(sow); d.setDate(sow.getDate() + i);
+    var act = d.getTime() === rt.getTime();
+    var diff = Math.round((d - sn) / 86400000);
+    var dn = diff >= 0 && diff < TOTAL && isDayComplete(diff);
+    el.innerHTML += '<div class="wd' + (act?' on':'') + (dn?' dn':'') + '"><div class="wl">' + DL[i] + '</div><div class="wn">' + d.getDate() + '</div></div>';
+  }
+}
+
+function calcStreak() {
+  var n = 0;
+  for (var i = dI - 1; i >= 0; i--) {
+    if (isDayComplete(i)) n++; else break;
+  }
+  if (isDayComplete(dI)) n++;
+  return n;
+}
+
+function renderStreak() {
+  var el = document.getElementById('streakRow'); if (!el) return;
+  var n = calcStreak();
+  var icon = n >= 3 ? '🔥' : '🩺';
+  var sub = n === 0 ? 'Start today!' : (n >= 3 ? 'On fire!' : 'Keep going!');
+  el.innerHTML =
+    '<div class="streak-icon-wrap">' + icon + '</div>' +
+    '<div style="display:flex;flex-direction:column;justify-content:center;">' +
+      '<div class="streak-n">' + n + ' <span style="font-size:.5rem;opacity:.7;font-weight:800;font-family:Syne,sans-serif;text-transform:uppercase;">' + sub + '</span></div>' +
+      '<div class="streak-lbl">Day Streak</div>' +
+    '</div>';
+}
+
+var fr = true;
+function renderToday() {
+  var wrap = document.getElementById('tw'); wrap.innerHTML = '';
+  if (pre) {
+    wrap.innerHTML = '<p style="color:var(--mu);font-size:.8rem;text-align:center;padding:36px 0;line-height:2">Challenge starts<br><strong style="color:var(--gold);font-size:1.05rem;font-family:JetBrains Mono,monospace">' + DS.getDate() + ' ' + MN[DS.getMonth()] + ' ' + DS.getFullYear() + '</strong></p>';
+    document.getElementById('hEx').textContent = '0/0';
+    document.getElementById('hPct').textContent = '0%';
+    document.getElementById('pf').style.width = '0%';
+    document.getElementById('dmsg').style.display = 'none';
+    renderStreak(); return;
+  }
+
+  var tasks = getDayTasks(dI);
+  var done = 0; tasks.forEach(function(t) { if (DB[t.key]) done++; });
+  var an = fr; fr = false;
+
+  var sh = document.createElement('div'); sh.className = 'sh';
+  sh.textContent = 'Day ' + (dI + 1) + ' — ' + PLAN[dI].day + ' of 30';
+  wrap.appendChild(sh);
+
+  tasks.forEach(function(t, i) { wrap.appendChild(makeCard(t, !!DB[t.key], an, i)); });
+
+  updateHero(done, tasks.length);
+  document.getElementById('dmsg').style.display = (done === tasks.length && tasks.length > 0) ? 'block' : 'none';
+  drawWeek(); renderStreak();
+}
+
+function makeCard(t, dk, an, idx) {
+  var c = document.createElement('div');
+  c.className = 'workout-card theme-' + t.subj + (dk ? ' done' : '');
+  if (an) c.style.animationDelay = (idx * 0.07) + 's';
+  c.onclick = function() { toggle(c, t.key); };
+  c.innerHTML =
+    '<div class="wc-info">' +
+      '<div class="wc-header-top">' +
+        '<span class="wc-num">' + (idx+1) + '</span>' +
+        '<span class="wc-tag-badge">' + t.icon + ' ' + t.tag + '</span>' +
+      '</div>' +
+      '<div class="wc-val-text">' + t.text + '</div>' +
+    '</div>' +
+    '<div class="pro-checkbox"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></div>';
+  return c;
+}
+
+function updateHero(done, total) {
+  var pct = total > 0 ? Math.round(done / total * 100) : 0;
+  document.getElementById('hEx').textContent = done + '/' + total;
+  document.getElementById('hPct').textContent = pct + '%';
+  document.getElementById('pf').style.width = pct + '%';
+}
+
+var _nft = null;
+function toggle(card, key) {
+  var was = !!DB[key];
+  if (was) { delete DB[key]; } else {
+    DB[key] = true;
+    if (navigator.vibrate) try { navigator.vibrate(14); } catch(e) {}
+    if (typeof confetti === 'function') confetti({ particleCount:50, spread:65, startVelocity:25, origin:{y:.86}, colors:['#ff2a5f','#facc15','#00d26a','#00d0f4'], disableForReducedMotion:true });
+  }
+  save();
+  card.classList.toggle('done', !was);
+  var tasks = getDayTasks(dI), d2 = 0;
+  tasks.forEach(function(t) { if (DB[t.key]) d2++; });
+  updateHero(d2, tasks.length);
+  document.getElementById('dmsg').style.display = (d2 === tasks.length && tasks.length > 0) ? 'block' : 'none';
+  renderStreak();
+  clearTimeout(_nft);
+  _nft = setTimeout(function() {
+    var allCards = Array.from(document.querySelectorAll('.workout-card'));
+    var next = allCards.find(function(c) { return !c.classList.contains('done'); });
+    if (next) next.scrollIntoView({ behavior:'smooth', block:'center' });
+  }, 500);
+}
+
+// ── PROGRESS TAB ──
+function renderProg() {
+  var CIRC = 226.19;
+  var totalDone = 0;
+  for (var i = 0; i < TOTAL; i++) { if (isDayComplete(i)) totalDone++; }
+  var ovPct = Math.round(totalDone / TOTAL * 100);
+
+  // Per-subject counts: how many days has each subject been fully ticked
+  var subjStats = SUBJECTS.map(function(s) {
+    var cnt = 0;
+    for (var i = 0; i < TOTAL; i++) {
+      if (DB[taskKey(i, s.k)]) cnt++;
+    }
+    return { s: s, cnt: cnt, pct: Math.round(cnt / TOTAL * 100) };
+  });
+
+  var isDark = document.body.classList.contains('dark');
+  var pctFill = isDark ? '#f4f4f8' : '#111118';
+  var subFill = isDark ? '#8a8a9d' : '#717182';
+
+  var ringsHTML = subjStats.map(function(d) {
+    return '<div class="subj-ring-card">' +
+      '<svg class="prog-ring-svg" width="80" height="80" viewBox="0 0 80 80">' +
+        '<circle class="prog-ring-track" cx="40" cy="40" r="36"/>' +
+        '<circle class="prog-ring-arc" id="parc_' + d.s.k + '" cx="40" cy="40" r="36" stroke="' + d.s.color + '"/>' +
+        '<text class="prog-ring-pct" x="40" y="34" fill="' + pctFill + '">' + d.pct + '%</text>' +
+        '<text class="prog-ring-sub" x="40" y="50" fill="' + subFill + '">' + d.cnt + '/' + TOTAL + ' days</text>' +
+      '</svg>' +
+      '<div style="display:flex;flex-direction:column;align-items:center;gap:3px;">' +
+        '<span class="subj-ring-icon">' + d.s.icon + '</span>' +
+        '<span class="subj-ring-name">' + d.s.label + '</span>' +
+      '</div>' +
+    '</div>';
+  }).join('');
+
+  // 30-day plan list
+  var rt = new Date(); rt.setHours(0,0,0,0);
+  var planHTML = PLAN.map(function(p, i) {
+    var dayDate = new Date(DS); dayDate.setDate(DS.getDate() + i);
+    var isToday = dayDate.getTime() === rt.getTime();
+    var isFuture = dayDate > rt;
+    var complete = isDayComplete(i);
+    var cls = 'plan-day-card' + (complete ? ' completed' : '') + (isToday ? ' today-card' : '');
+    var dateStr = dayDate.getDate() + ' ' + MN[dayDate.getMonth()];
+    var statusStr = complete ? '✓ Done' : (isToday ? '📍 Today' : (isFuture ? dateStr : dateStr));
+    return '<div class="' + cls + '" id="pday_' + i + '">' +
+      '<div class="plan-day-header" onclick="togglePlanDay(' + i + ')">' +
+        '<div class="plan-day-num">' + p.day + '</div>' +
+        '<div style="flex:1;">' +
+          '<div class="plan-day-title">Day ' + p.day + '</div>' +
+          '<div class="plan-day-meta">' + dateStr + ' · ' + statusStr + '</div>' +
+        '</div>' +
+        '<svg class="plan-day-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>' +
+      '</div>' +
+      '<div class="plan-day-body">' +
+        '<div class="plan-subject-row"><span class="plan-subj-badge badge-math">Math</span><span class="plan-subj-text">' + p.math + '</span></div>' +
+        '<div class="plan-subject-row"><span class="plan-subj-badge badge-phy">Physics</span><span class="plan-subj-text">' + p.phy + '</span></div>' +
+        '<div class="plan-subject-row"><span class="plan-subj-badge badge-che">Chem</span><span class="plan-subj-text">' + p.che + '</span></div>' +
+        '<div class="plan-subject-row"><span class="plan-subj-badge badge-bio">Biology</span><span class="plan-subj-text">' + p.bio + '</span></div>' +
+      '</div>' +
+    '</div>';
+  }).join('');
+
+  document.getElementById('vP').innerHTML =
+    '<div class="glass-card" style="padding:20px;">' +
+      '<div class="prog-hero-top">' +
+        '<div class="prog-hero-pct">' + ovPct + '%</div>' +
+        '<div class="prog-hero-meta">' +
+          '<div class="prog-hero-days">' + totalDone + ' / ' + TOTAL + '</div>' +
+          '<div class="prog-hero-lbl">Days Complete</div>' +
+        '</div>' +
+      '</div>' +
+      '<div class="prog-bar-wrap"><div class="prog-bar-fill" id="ovBar"></div></div>' +
+    '</div>' +
+    '<div class="sh">Subject Progress</div>' +
+    '<div class="subj-rings">' + ringsHTML + '</div>' +
+    '<div class="sh">30-Day Plan</div>' +
+    '<div class="plan-section">' + planHTML + '</div>';
+
+  requestAnimationFrame(function() { requestAnimationFrame(function() {
+    var ob = document.getElementById('ovBar'); if (ob) ob.style.width = ovPct + '%';
+    subjStats.forEach(function(d) {
+      var arc = document.getElementById('parc_' + d.s.k);
+      if (arc) arc.style.strokeDashoffset = CIRC * (1 - d.pct / 100);
+    });
+    // Auto-open today's plan card
+    var todayCard = document.querySelector('.plan-day-card.today-card');
+    if (todayCard) {
+      todayCard.classList.add('open');
+      setTimeout(function() { todayCard.scrollIntoView({ behavior:'smooth', block:'center' }); }, 400);
+    }
+  }); });
+}
+
+function togglePlanDay(i) {
+  var card = document.getElementById('pday_' + i);
+  if (card) card.classList.toggle('open');
+}
+
+// ── REVISION SYSTEM ──
+var revDB = JSON.parse(localStorage.getItem('neet_rev_db') || '[]');
+var REV_INTERVALS = [1,3,7,14,30];
+
+function addRevision() {
+  var task = document.getElementById('revTask').value.trim();
+  var subj = document.getElementById('revSubj').value;
+  if (!task) return;
+  var now = new Date(); now.setHours(0,0,0,0);
+  revDB.push({ id:Date.now(), task:task, subj:subj, created:now.getTime(), level:0 });
+  document.getElementById('revTask').value = '';
+  saveRev(); renderRevisions();
+}
+
+function renderRevisions() {
+  var now = new Date(); now.setHours(0,0,0,0);
+  var todayTime = now.getTime();
+  var dueHTML='', upcHTML='', mastHTML='';
+  revDB.sort(function(a,b) {
+    var dA = a.level>=5 ? Infinity : a.created + REV_INTERVALS[a.level]*86400000;
+    var dB = b.level>=5 ? Infinity : b.created + REV_INTERVALS[b.level]*86400000;
+    return dA - dB;
+  });
+  revDB.forEach(function(item) {
+    var isMastered = item.level >= 5;
+    var nextDue = item.created + (REV_INTERVALS[Math.min(item.level,4)] * 86400000);
+    var daysLeft = Math.ceil((nextDue - todayTime) / 86400000);
+    var isDue = daysLeft <= 0 && !isMastered;
+    var dots = '';
+    for (var i=0;i<5;i++) dots += '<div class="rdot '+(i<item.level?'done':'')+'"></div>';
+    var subN = item.subj==='phy'?'Physics':(item.subj==='che'?'Chemistry':'Biology');
+    var btn = isDue
+      ? '<button class="pt-btn" style="background:var(--tx);color:var(--panel);" onclick="markRev('+item.id+')">Review Done</button>'
+      : (isMastered ? '🏆' : '<span style="font-size:.7rem;color:var(--mu);font-weight:bold;">in '+daysLeft+'d</span>');
+    var html = '<div class="rev-card '+(isMastered?'mastered':(isDue?'due':'upcoming'))+'">' +
+      '<div style="flex:1;"><div style="display:flex;align-items:center;gap:8px;"><span class="sub-tag '+item.subj+'">'+subN+'</span><strong style="font-size:.9rem;">'+item.task+'</strong></div>' +
+      '<div class="rev-dots">'+dots+' <span style="font-size:.55rem;color:var(--mu);margin-left:6px;font-weight:800;text-transform:uppercase;">'+(isMastered?'Mastered':'Lvl '+item.level+'/5')+'</span></div></div>' +
+      '<div style="display:flex;align-items:center;gap:10px;flex-shrink:0;">'+btn +
+      '<button style="background:transparent;border:none;color:var(--pink);font-size:1.4rem;padding:0 8px;cursor:pointer;" onclick="delRev('+item.id+')">×</button></div></div>';
+    if (isMastered) mastHTML += html;
+    else if (isDue) dueHTML += html;
+    else upcHTML += html;
+  });
+  document.getElementById('revDue').innerHTML = dueHTML || '<div class="glass-card" style="text-align:center;padding:16px;margin-bottom:12px;font-size:.8rem;color:var(--mu);font-weight:600;">Nothing due today! 🎉</div>';
+  document.getElementById('revUpc').innerHTML = upcHTML || '<div class="glass-card" style="text-align:center;padding:16px;margin-bottom:12px;font-size:.8rem;color:var(--mu);font-weight:600;">No upcoming revisions yet.</div>';
+  document.getElementById('revMast').innerHTML = mastHTML || '';
+}
+
+function markRev(id) {
+  var item = revDB.find(function(x){return x.id===id;});
+  if (item) {
+    item.level++;
+    var now = new Date(); now.setHours(0,0,0,0);
+    item.created = now.getTime();
+    saveRev(); renderRevisions();
+    if (typeof confetti === 'function') confetti({ particleCount:40, spread:60 });
+  }
+}
+function delRev(id) { revDB = revDB.filter(function(x){return x.id!==id;}); saveRev(); renderRevisions(); }
+function saveRev() { localStorage.setItem('neet_rev_db', JSON.stringify(revDB)); }
+
+// ── UI ──
+function setPlanRotation(isLandscape) {
+  var wrap = document.getElementById('revWrapper');
+  if (isLandscape) { wrap.classList.add('plan-fullscreen-landscape'); document.body.classList.add('is-landscape-locked'); }
+  else { wrap.classList.remove('plan-fullscreen-landscape'); document.body.classList.remove('is-landscape-locked'); }
+  var btnP = document.getElementById('btnTogglePortrait'), btnL = document.getElementById('btnToggleLandscape');
+  btnP.classList.toggle('active', !isLandscape); btnP.style.background = !isLandscape ? 'var(--tx)' : 'transparent'; btnP.style.color = !isLandscape ? 'var(--panel)' : 'var(--mu)';
+  btnL.classList.toggle('active', isLandscape); btnL.style.background = isLandscape ? 'var(--tx)' : 'transparent'; btnL.style.color = isLandscape ? 'var(--panel)' : 'var(--mu)';
+}
+
+function switchTab(i) {
+  if (i !== 2) setPlanRotation(false);
+  ['vT','vP','vRev'].forEach(function(id){document.getElementById(id).classList.remove('active');});
+  ['t0','t1','t2'].forEach(function(id){document.getElementById(id).classList.remove('active');});
+  document.getElementById('btnBack').classList.remove('on');
+  document.getElementById('mainCountdown').style.display = 'inline-flex';
+  document.getElementById('htl').style.display = 'none';
+  if (i===0) { document.getElementById('vT').classList.add('active'); document.getElementById('t0').classList.add('active'); renderToday(); }
+  else if (i===1) { document.getElementById('vP').classList.add('active'); document.getElementById('t1').classList.add('active'); renderProg(); }
+  else { document.getElementById('vRev').classList.add('active'); document.getElementById('t2').classList.add('active'); renderRevisions(); }
+}
+
+function closeDetail() { switchTab(1); }
+
+function toggleTheme() {
+  var l = document.body.classList.toggle('dark');
+  localStorage.setItem(ST, l ? 'd' : 'l');
+  document.getElementById('themeHIcon').textContent = l ? '🌙' : '☀️';
+  if (document.getElementById('vP').classList.contains('active')) renderProg();
+}
+
+function updateCountdown() {
+  var target = new Date("May 4, 2027 00:00:00").getTime();
+  var dist = target - Date.now();
+  var cdText = document.getElementById('cdText'); if (!cdText) return;
+  if (dist < 0) { cdText.innerHTML = "EXAM DAY!"; return; }
+  cdText.innerHTML = Math.floor(dist/86400000) + 'd ' + Math.floor((dist%86400000)/3600000) + 'h ' + Math.floor((dist%3600000)/60000) + 'm';
+}
+
+document.addEventListener('visibilitychange', function() {
+  if (document.visibilityState === 'visible') { init(); if (document.getElementById('vT').classList.contains('active')) renderToday(); }
+});
+
+if (localStorage.getItem(ST) === 'd') { document.body.classList.add('dark'); document.getElementById('themeHIcon').textContent = '🌙'; }
+updateCountdown();
+setInterval(updateCountdown, 60000);
+init();
+switchTab(0);
+</script>
+</body>
+</html>
