@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no,viewport-fit=cover">
+<title>NEET 680+ Master Strategy</title>
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #050507;
+  --tx: #f4f4f8;
+  --mu: #8a8a9d;
+  --glass-bg: rgba(20, 20, 28, 0.6);
+  --glass-border: rgba(255, 255, 255, 0.05);
+  --panel: #111116;
+  --tb: rgba(255, 255, 255, 0.08);
+  --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.6);
+  
+  --gold: #facc15;
+  --pink: #ff2a5f;
+  --cyan: #00d0f4;
+  --green: #00d26a;
+  --pu: #b058e8;
+  --or: #ff8800;
+  --safe: env(safe-area-inset-bottom);
+}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+html,body{width:100vw;height:100dvh;overflow:hidden;font-family:'Syne',sans-serif;-webkit-font-smoothing:antialiased;background-color:var(--bg);color:var(--tx);user-select:none;}
+::-webkit-scrollbar{display:none;}*{scrollbar-width:none;}
+
+.bg{position:fixed;inset:0;z-index:0;overflow:hidden;pointer-events:none; background: #050507;}
+.bg::before,.bg::after,.bg-blob-3{content:'';position:absolute;border-radius:50%;filter:blur(100px);animation:floatBg 30s infinite alternate cubic-bezier(.4,0,.2,1); opacity:0.12;}
+.bg::before{width:80vw;height:80vw;background:var(--cyan);top:-10%;left:-20%;}
+.bg::after{width:90vw;height:90vw;background:var(--or);bottom:-10%;right:-20%;animation-delay:-5s;}
+.bg-blob-3{width:70vw;height:70vw;background:var(--pu);top:30%;left:20%;animation-duration:40s;}
+@keyframes floatBg{0%{transform:translate(0,0) scale(1);}100%{transform:translate(20vw,20vh) scale(1.3);}}
+
+.app{position:relative;z-index:1;width:100%;max-width:440px;height:100dvh;margin:0 auto;display:block;overflow-y:auto;overflow-x:hidden;scroll-behavior:smooth;-webkit-overflow-scrolling:touch;}
+@media(min-width:441px){.app{border-left:1px solid var(--tb);border-right:1px solid var(--tb);box-shadow:var(--shadow-lg);}}
+
+.vc{display:block;padding:max(16px, env(safe-area-inset-top)) 10px calc(90px + var(--safe));}
+.view{display:none;animation:vIn .4s cubic-bezier(.16,1,.3,1) forwards; opacity:0; transform:translateY(15px);}
+.view.active{display:block;}
+@keyframes vIn{to{opacity:1;transform:none;}}
+
+.glass-card{background:var(--glass-bg);backdrop-filter:blur(30px);-webkit-backdrop-filter:blur(30px);border:1px solid var(--glass-border);border-radius:24px;box-shadow:var(--shadow-lg);margin-bottom:16px;}
+
+.pro-dashboard { padding: 16px 10px; display: flex; flex-direction: row; align-items: center; justify-content: space-around; gap: 0; }
+.ring-col { display: flex; flex-direction: column; align-items: center; justify-content: center;}
+.ring-label { margin-top: 20px; font-size: 0.85rem; font-weight: 800; letter-spacing: 2.5px; color: var(--mu); text-transform: uppercase; }
+
+.dash-svg { position: absolute; inset: 0; width: 100%; height: 100%; transform: rotate(-90deg); overflow: visible; }
+.ring-track { fill: none; stroke: var(--tb); stroke-width: 8; }
+.ring-prog { fill: none; stroke-width: 8; stroke-linecap: round; transition: stroke-dashoffset 0.8s cubic-bezier(.16,1,.3,1); }
+
+.center-display { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 5; text-align: center;}
+.cd-val { font-size: 2.2rem; font-family: 'JetBrains Mono', monospace; font-weight: 800; line-height: 1; letter-spacing: -1.5px;}
+
+.val-gradient-week { background: linear-gradient(135deg, #e0f2fe, #ffffff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; color: transparent; }
+.val-gradient-today { background: linear-gradient(90deg, #fef3c7, #ffffff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; color: transparent; }
+
+.day-node { position: absolute; width: 26px; height: 26px; border-radius: 50%; background: var(--panel); border: 2px solid var(--tb); display: flex; flex-direction: column; align-items: center; justify-content: center; transform: translate(-50%, -50%); z-index: 10; transition: 0.3s; box-shadow: 0 4px 10px rgba(0,0,0,0.5); backdrop-filter: blur(5px); }
+.day-node .date-val { font-family: 'JetBrains Mono', monospace; font-size: 0.6rem; font-weight: 800; color: var(--mu); }
+.day-node .day-out { position: absolute; font-family: 'Syne', sans-serif; font-size: 0.65rem; font-weight: 800; color: var(--mu); }
+.day-node.active { background: var(--tx); border-color: var(--cyan); transform: translate(-50%, -50%) scale(1.15); z-index: 11; }
+.day-node.active .date-val { color: var(--bg); }
+.day-node.active .day-out { color: var(--cyan); }
+.day-node.done { background: var(--green); border-color: var(--green); }
+.day-node.done .date-val { color: #fff; }
+
+.sh { font-size: 0.8rem; font-weight: 800; color: var(--tx); margin: 24px 0 14px; letter-spacing: 1.5px; text-transform: uppercase; padding-left: 6px; display: flex; align-items: center; gap: 8px;}
+.sh::before { content: ''; display: block; width: 5px; height: 16px; background: var(--cyan); border-radius: 4px; }
+
+.workout-card { display: flex; flex-direction: column; align-items: stretch; border-radius: 20px; padding: 16px 12px; margin-bottom: 14px; position: relative; transition: all .2s ease; border-left: 6px solid transparent; background: var(--panel); border: 1px solid var(--tb); border-left-width: 6px; box-shadow: var(--shadow-lg); overflow: hidden;}
+.workout-card::before { content:''; position:absolute; inset:0; background: linear-gradient(135deg, rgba(255,255,255,0.03), transparent); pointer-events: none; }
+.workout-card:hover { transform: translateY(-2px); box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
+.workout-card.theme-math { border-left-color: var(--pu); }
+.workout-card.theme-phy { border-left-color: var(--or); }
+.workout-card.theme-che { border-left-color: var(--cyan); }
+.workout-card.theme-bio { border-left-color: var(--green); }
+.workout-card.done { opacity: .5; filter: grayscale(50%); border-left-color: var(--green)!important; background: var(--bg); }
+
+.wc-header { display: flex; align-items: center; justify-content: space-between; width: 100%; cursor: pointer; position: relative; z-index: 2;}
+.wc-header-left { display: flex; align-items: center; gap: 10px; }
+.wc-tag-badge { font-size: 0.8rem; font-weight: 800; letter-spacing: 0.5px; text-transform: uppercase; background: var(--bg); border: 1px solid var(--tb); color: var(--tx); padding: 8px 16px; border-radius: 12px; }
+.wc-body { display: none; padding-top: 12px; margin-top: 14px; border-top: 1px solid var(--tb); animation: vIn 0.2s ease-out; position: relative; z-index: 2;}
+.workout-card.open .wc-body { display: block; }
+
+.pro-checkbox { flex-shrink: 0; width: 32px; height: 32px; border-radius: 50%; border: 2px solid var(--mu); background: var(--bg); display: flex; align-items: center; justify-content: center; transition: all .3s cubic-bezier(.16,1,.3,1); cursor:pointer;}
+.pro-checkbox svg { width: 16px; height: 16px; stroke-width: 4; stroke: #fff; transform: scale(0); transition: .3s cubic-bezier(.34,1.56,.64,1); }
+.workout-card.done .pro-checkbox { background: var(--green); border-color: var(--green); }
+.workout-card.done .pro-checkbox svg { transform: scale(1); }
+
+.data-box { font-size: 0.85rem; line-height: 1.4; background: rgba(0,0,0,0.3); padding: 16px; border-radius: 14px; border: 1px solid var(--tb); }
+.data-lbl { font-size: 0.65rem; text-transform: uppercase; font-weight: 800; letter-spacing: 1px; margin-bottom: 6px; }
+.data-val { margin-bottom: 16px; color: var(--tx); font-weight: 700;}
+.data-val:last-child { margin-bottom: 0; }
+
+.syllabus-target { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 12px; border-radius: 10px; margin-bottom: 16px; border-left: 4px solid var(--cyan); }
+.syllabus-lbl { font-size: 0.6rem; text-transform: uppercase; font-weight: 800; letter-spacing: 1.5px; color: var(--cyan); margin-bottom: 4px; }
+.syllabus-name { font-size: 1rem; font-weight: 700; color: #fff; }
+
+hr.split { border: 0; border-top: 1px dashed var(--tb); margin: 20px 0; }
+
+#dmsg{display:none;text-align:center;padding:30px;}
+.dtl{font-size:1.4rem;font-weight:800;margin:12px 0 6px;}
+.ds{font-size:.9rem;color:var(--mu);font-weight:600;}
+
+.bnav { position: fixed; bottom: 16px; left: 50%; transform: translateX(-50%); width: auto; min-width: 140px; background: rgba(20, 20, 28, 0.7); border: 1px solid rgba(255, 255, 255, 0.08); display: flex; padding: 6px; gap: 8px; border-radius: 100px; box-shadow: 0 10px 30px rgba(0,0,0,0.8); z-index: 100; backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); justify-content: center; }
+.bb { width: 44px; height: 44px; background: transparent; border: none; display: flex; align-items: center; justify-content: center; color: var(--mu); cursor: pointer; transition: all .3s cubic-bezier(.16,1,.3,1); border-radius: 50%; }
+.bb.active { background: linear-gradient(135deg, var(--cyan), var(--pu)); color: #fff; transform: scale(1.05); }
+.bb svg { width: 20px; height: 20px; stroke: currentColor; stroke-width: 2.5; fill: none; transition: .2s; }
+
+.prog-hero-top{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:16px;}
+.prog-hero-pct{font-family:'JetBrains Mono',monospace;font-size:2.5rem;font-weight:800;line-height:1;letter-spacing:-1px;background:linear-gradient(90deg,var(--cyan),var(--green));-webkit-background-clip:text;color:transparent;}
+.prog-hero-meta{text-align:right;}
+.prog-hero-days{font-family:'JetBrains Mono',monospace;font-size:.9rem;font-weight:800;}
+.prog-hero-lbl{font-size:.5rem;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--mu);margin-top:4px;}
+.prog-bar-wrap{height:8px;background:var(--tb);border-radius:8px;overflow:hidden;}
+.prog-bar-fill{height:100%;border-radius:8px;background:linear-gradient(90deg,var(--cyan),var(--green));width:0%;transition:width 1s cubic-bezier(.16,1,.3,1);}
+
+.subj-rings{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px;}
+.subj-ring-card{display:flex;flex-direction:column;align-items:center;gap:8px;padding:18px 12px;border-radius:20px;background:var(--panel);border:1px solid var(--tb);box-shadow:var(--shadow-lg);}
+.prog-ring-svg{overflow:visible;}
+.prog-ring-track{fill:none;stroke:var(--bg);stroke-width:6;}
+.prog-ring-arc{fill:none;stroke-linecap:round;stroke-width:6;stroke-dasharray:226.19;stroke-dashoffset:226.19;transform:rotate(-90deg);transform-origin:40px 40px;transition:stroke-dashoffset 1s cubic-bezier(.16,1,.3,1);}
+.prog-ring-pct{font-family:'JetBrains Mono',monospace;font-size:1.1rem;font-weight:800;text-anchor:middle;dominant-baseline:central;fill:var(--tx);letter-spacing:-.5px;}
+.prog-ring-sub{font-family:'Syne',sans-serif;font-size:.35rem;font-weight:800;text-anchor:middle;dominant-baseline:central;letter-spacing:.5px;fill:var(--mu);}
+.subj-ring-name{font-size:.65rem;font-weight:800;color:var(--tx);text-transform:uppercase;letter-spacing:1px;}
+.subj-ring-icon{font-size:1.4rem;}
+
+.plan-section{margin-top:4px;}
+.plan-day-card{border-radius:16px;margin-bottom:12px;background:var(--panel);border:1px solid var(--tb);overflow:hidden;transition:.2s;}
+.plan-day-card.completed{border-color:rgba(0,210,106,.3);background:rgba(0,210,106,.05);}
+.plan-day-card.today-card{border:2px solid var(--cyan);box-shadow:0 0 10px rgba(0,208,244,.15);}
+.plan-day-header{display:flex;align-items:center;gap:12px;padding:16px;cursor:pointer;}
+.plan-day-num{font-family:'JetBrains Mono',monospace;font-size:.75rem;font-weight:800;background:var(--tx);color:var(--bg);width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.plan-day-card.completed .plan-day-num{background:var(--green); color:#fff;}
+.plan-day-card.today-card .plan-day-num{background:var(--cyan);color:#fff;}
+.plan-day-title{flex:1;font-size:.85rem;font-weight:800;color:var(--tx);}
+.plan-day-meta{font-size:.6rem;color:var(--mu);font-weight:700;margin-top:4px;}
+.plan-day-chevron{color:var(--mu);transition:transform .3s;flex-shrink:0;}
+.plan-day-card.open .plan-day-chevron{transform:rotate(180deg);}
+.plan-day-body{display:none;padding:0 16px 16px;}
+.plan-day-card.open .plan-day-body{display:block;}
+.plan-subject-row{display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--tb);}
+.plan-subject-row:last-child{border-bottom:none;}
+.plan-subj-badge{flex-shrink:0;font-size:.5rem;font-weight:800;padding:6px 10px;border-radius:6px;text-transform:uppercase;margin-top:1px;}
+.badge-math{color:var(--pu);background:rgba(176,88,232,.15);}
+.badge-phy{color:var(--or);background:rgba(255,136,0,.15);}
+.badge-che{color:var(--cyan);background:rgba(0,208,244,.15);}
+.badge-bio{color:var(--green);background:rgba(0,210,106,.15);}
+.plan-subj-text{font-size:.75rem;color:var(--tx);font-weight:600;line-height:1.4;flex:1;}
+</style>
+</head>
+<body>
+<div class="bg"><div class="bg-blob-3"></div></div>
+<div class="app" id="mainAppScroll">
+
+  <div class="vc">
+    <!-- TODAY TAB -->
+    <div class="view active" id="vT">
+      
+      <div class="pro-dashboard glass-card">
+        <div class="ring-col">
+          <div style="width:140px; height:140px; position:relative;">
+            <svg viewBox="0 0 140 140" class="dash-svg">
+              <defs>
+                <linearGradient id="wkGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%"><animate attributeName="stop-color" values="#facc15; #ff2a5f; #ff8800; #facc15" dur="3s" repeatCount="indefinite" /></stop>
+                  <stop offset="100%"><animate attributeName="stop-color" values="#ff8800; #b058e8; #facc15; #ff8800" dur="3s" repeatCount="indefinite" /></stop>
+                </linearGradient>
+              </defs>
+              <circle cx="70" cy="70" r="54" class="ring-track"/>
+              <circle cx="70" cy="70" r="54" class="ring-prog" id="wkProgSvg" stroke="url(#wkGrad)" stroke-dasharray="339.29" stroke-dashoffset="339.29"/>
+            </svg>
+            <div id="weekNodesEl"></div>
+            <div class="center-display">
+              <div class="cd-val val-gradient-week" id="streakVal">0</div>
+            </div>
+          </div>
+          <div class="ring-label">WEEK / STREAK</div>
+        </div>
+
+        <div class="ring-col">
+          <div style="width:140px; height:140px; position:relative;">
+            <svg viewBox="0 0 140 140" class="dash-svg">
+              <defs>
+                <linearGradient id="todayGrad" x1="0%" y1="100%" x2="100%" y2="0%">
+                  <stop offset="0%"><animate attributeName="stop-color" values="#00d0f4; #00d26a; #b058e8; #00d0f4" dur="3s" repeatCount="indefinite" /></stop>
+                  <stop offset="100%"><animate attributeName="stop-color" values="#b058e8; #00d0f4; #00d26a; #b058e8" dur="3s" repeatCount="indefinite" /></stop>
+                </linearGradient>
+              </defs>
+              <circle cx="70" cy="70" r="54" class="ring-track" />
+              <circle cx="70" cy="70" r="54" class="ring-prog" id="todayRingSvg" stroke="url(#todayGrad)" stroke-dasharray="339.29" stroke-dashoffset="339.29"/>
+            </svg>
+            <div class="center-display">
+              <div class="cd-val val-gradient-today" id="cdDays">-- D</div>
+            </div>
+          </div>
+          <div class="ring-label">TODAY</div>
+        </div>
+      </div>
+
+      <div id="dmsg" class="dmsg glass-card">
+        <div style="font-size:2.5rem; margin-bottom:10px;">🏆</div>
+        <div class="dtl">Pro Level Reached.</div>
+        <div class="ds">All targets and memory hacks completed today.</div>
+      </div>
+      
+      <div id="tw"></div>
+    </div>
+
+    <!-- PROGRESS TAB -->
+    <div class="view" id="vP"></div>
+
+  </div>
+
+  <div class="bnav">
+    <button class="bb active" id="t0" onclick="switchTab(0)">
+      <svg viewBox="0 0 24 24"><polyline points="3 12 8 12 12 4 16 20 20 12 23 12"></polyline></svg>
+    </button>
+    <button class="bb" id="t1" onclick="switchTab(1)">
+      <svg viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M7 16l4-4 4 4 4-6"/></svg>
+    </button>
+  </div>
+</div>
+
+<script>
+'use strict';
+
+const SK = 'neet_pro_33d_master_v4_clean'; 
+const TOTAL = 33; 
+const TARGET_DATE = new Date(2026, 5, 20, 0, 0, 0).getTime(); 
+
+const FORCED_START = new Date(2026, 4, 19, 0, 0, 0).getTime();
+let dsStr = localStorage.getItem(SK + '_start_date');
+if (!dsStr || parseInt(dsStr) !== FORCED_START) {
+    dsStr = FORCED_START.toString();
+    localStorage.setItem(SK + '_start_date', dsStr);
+}
+const DS = new Date(parseInt(dsStr)); 
+
+const MN = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const DL = ['M','T','W','T','F','S','S'];
+
+// 1. SYLLABUS ARRAYS
+const phySyllabus = [
+  "Units & Measurements, Vectors", "Motion in a Straight Line", "Motion in a Plane", "Laws of Motion & Friction", "Work, Energy & Power", "System of Particles & Rotational Motion", "Gravitation",
+  "Mechanical Properties of Solids", "Mechanical Properties of Fluids", "Thermal Properties of Matter", "Thermodynamics", "Kinetic Theory of Gases", "Oscillations (SHM)", "Waves",
+  "Electric Charges & Fields", "Electrostatic Potential & Capacitance", "Current Electricity I", "Current Electricity II", "Moving Charges & Magnetism", "Magnetism & Matter", "Electromagnetic Induction",
+  "Alternating Current", "Electromagnetic Waves", "Ray Optics", "Wave Optics", "Dual Nature of Radiation", "Atoms", "Nuclei",
+  "Semiconductors: Materials", "Semiconductors: Devices", "Class 11 Mechanics Rev", "Class 12 Electromagnetism Rev", "Modern Physics & Optics Rev"
+];
+
+const cheSyllabus = [
+  "Some Basic Concepts (Mole)", "Structure of Atom", "Classification & Periodicity", "Chemical Bonding", "Thermodynamics", "Chemical Equilibrium", "Ionic Equilibrium",
+  "Redox Reactions", "Solutions", "Electrochemistry", "Chemical Kinetics", "Surface Chemistry", "Metallurgy", "p-Block (G13 & G14)",
+  "p-Block (G15 to G18)", "d and f Block", "Coordination Compounds", "GOC (Principles)", "Hydrocarbons (Alkanes, Alkenes)", "Hydrocarbons (Alkynes, Arenes)", "Haloalkanes and Haloarenes",
+  "Alcohols, Phenols and Ethers", "Aldehydes and Ketones", "Carboxylic Acids", "Amines", "Biomolecules", "Polymers & Everyday Chem", "Qualitative Analysis",
+  "Inorganic Revision", "Physical Revision", "Organic Revision", "Mock Test Mistakes Review", "Full Syllabus Chem Grand Rev"
+];
+
+const bioSyllabus = [
+  "Living World & Classification", "Plant Kingdom", "Animal Kingdom", "Morphology of Plants", "Anatomy of Plants", "Structural Org in Animals", "Cell: Unit of Life",
+  "Biomolecules", "Cell Cycle and Division", "Photosynthesis in Plants", "Respiration in Plants", "Plant Growth", "Breathing and Exchange", "Body Fluids & Circulation",
+  "Excretory Products", "Locomotion and Movement", "Neural Control", "Chemical Coordination", "Sexual Repro in Plants", "Human Reproduction", "Reproductive Health",
+  "Principles of Inheritance", "Molecular Basis", "Evolution", "Human Health and Disease", "Microbes in Welfare", "Biotech: Principles", "Biotech: Applications",
+  "Organisms and Populations", "Ecosystem", "Biodiversity", "Environmental Issues", "Complete Biology Grand Rev"
+];
+
+// 2. MATH & CONSTANTS
+const mathPro = [
+  "Log2 = 0.301, Log3 = 0.477", "Log5 = 0.699, Log7 = 0.845", "sin(37&deg;) = 3/5, cos(37&deg;) = 4/5", "sin(53&deg;) = 4/5, cos(53&deg;) = 3/5",
+  "&pi;&sup2; &approx; 9.86 &approx; g,  1/&pi; &approx; 0.318", "&radic;2 = 1.414, &radic;3 = 1.732", "1 eV = 1.6 &times; 10&strns;19; J",
+  "1 amu = 1.66 &times; 10&strns;27; kg = 931.5 MeV", "1 atm = 1.013 &times; 10&sup5; Pa = 760 mm Hg", "R = 8.314 J/mol&middot;K &approx; 25/3",
+  "R = 0.0821 L&middot;atm/mol&middot;K &approx; 1/12", "1 calorie = 4.184 J", "h = 6.626 &times; 10&strns;34; J&middot;s",
+  "hc &approx; 1240 eV&middot;nm &approx; 12400 eV&middot;&Aring;", "G = 6.67 &times; 10&strns;11; N&middot;m&sup2;/kg&sup2;", "1/4&pi;&epsilon;&#x2080; = 9 &times; 10&sup9;",
+  "&epsilon;&#x2080; = 8.85 &times; 10&strns;12; C&sup2;/N&middot;m&sup2;", "&mu;&#x2080; = 4&pi; &times; 10&strns;7; T&middot;m/A", "c = 3 &times; 10&sup8; m/s",
+  "N_A = 6.022 &times; 10&sup2;&sup3; mol&strns;1;", "Faraday (F) &approx; 96500 C/mol", "1 Tesla = 10&sup4; Gauss",
+  "Density of water = 1000 kg/m&sup3;", "Specific heat of water = 4200 J/kg&middot;K", "Latent heat of fusion (ice) = 80 cal/g",
+  "Latent heat of vap = 540 cal/g", "Rydberg const = 1.097 &times; 10&sup7; m&strns;1;", "Bohr radius (a&#x2080;) = 0.529 &Aring;",
+  "Volume 1 mol gas STP = 22.4 L", "1 Angstrom (&Aring;) = 10&strns;10; m", "Stefan-Boltzmann = 5.67 &times; 10&strns;8;", 
+  "Wien's const (b) = 2.89 &times; 10&strns;3;", "Mech. equiv of heat = 4.18 J/cal"
+];
+
+// 3. EXPLICIT PHYSICS GRAPHS WITH LOCATIONS
+const phyGraphs = [
+  "x-t and v-t graphs (NCERT XI, Ch 3, Pg 43)", "a-t graphs (NCERT XI, Ch 3, Pg 45)", "Friction vs Applied Force (NCERT XI, Ch 5, Pg 101)", "WPE: Potential Energy curve (NCERT XI, Ch 6, Pg 122)",
+  "Rotation: MOI of standard bodies (NCERT XI, Ch 7, Pg 165)", "Gravitation: g vs r graph (NCERT XI, Ch 8, Pg 194)", "Solids: Stress-Strain Curve (NCERT XI, Ch 9, Pg 238)", "Fluids: Velocity profile (NCERT XI, Ch 10, Pg 259)",
+  "Thermal: Water anomalous expansion (NCERT XI, Ch 11, Pg 284)", "Thermo: P-V Indicator diagrams (NCERT XI, Ch 12, Pg 311)", "Thermo: Isothermal vs Adiabatic (NCERT XI, Ch 12, Pg 312)",
+  "KTG: Maxwell-Boltzmann distribution (NCERT XI, Ch 13, Pg 333)", "SHM: x, v, a vs time graphs (NCERT XI, Ch 14, Pg 347)", "SHM: KE and PE vs distance (NCERT XI, Ch 14, Pg 350)",
+  "Waves: Standing waves harmonics (NCERT XI, Ch 15, Pg 379)", "Electrostats: E & V vs r for shells (NCERT XII, Ch 1, Pg 34)", "Capacitance: Q vs V graph (NCERT XII, Ch 2, Pg 73)",
+  "Current: V-I characteristics (NCERT XII, Ch 3, Pg 94)", "Magnetism: B vs r graph (NCERT XII, Ch 4, Pg 149)", "Magnetism: Hysteresis Loop (NCERT XII, Ch 5, Pg 195)", "EMI: Magnetic Flux vs time (NCERT XII, Ch 6, Pg 208)",
+  "AC: Resonance curve (NCERT XII, Ch 7, Pg 248)", "AC: Phasor diagrams (NCERT XII, Ch 7, Pg 237)", "EM Waves: EM Spectrum (NCERT XII, Ch 8, Pg 280)", "Ray Optics: Spherical mirrors (NCERT XII, Ch 9, Pg 315)",
+  "Ray Optics: Prism deviation graph (NCERT XII, Ch 9, Pg 331)", "Wave Optics: Interference pattern (NCERT XII, Ch 10, Pg 365)", "Wave Optics: Diffraction pattern (NCERT XII, Ch 10, Pg 368)",
+  "Dual Nature: Photoelectric graphs (NCERT XII, Ch 11, Pg 391)", "Dual Nature: De Broglie graphs (NCERT XII, Ch 11, Pg 400)", "Atoms: Energy level of H (NCERT XII, Ch 12, Pg 425)",
+  "Nuclei: Binding Energy Curve (NCERT XII, Ch 13, Pg 444)", "Semiconductors: P-N Junction V-I (NCERT XII, Ch 14, Pg 479)"
+];
+
+const ELEMS = ["1 H (1.0)","2 He (4.0)","3 Li (6.9)","4 Be (9.0)","5 B (10.8)","6 C (12.0)","7 N (14.0)","8 O (16.0)","9 F (19.0)","10 Ne (20.2)","11 Na (23.0)","12 Mg (24.3)","13 Al (27.0)","14 Si (28.1)","15 P (31.0)","16 S (32.1)","17 Cl (35.5)","18 Ar (39.9)","19 K (39.1)","20 Ca (40.1)","21 Sc (45.0)","22 Ti (47.9)","23 V (50.9)","24 Cr (52.0)","25 Mn (54.9)","26 Fe (55.8)","27 Co (58.9)","28 Ni (58.7)","29 Cu (63.5)","30 Zn (65.4)","31 Ga (69.7)","32 Ge (72.6)","33 As (74.9)","34 Se (79.0)","35 Br (79.9)","36 Kr (83.8)","37 Rb (85.5)","38 Sr (87.6)","39 Y (88.9)","40 Zr (91.2)","41 Nb (92.9)","42 Mo (95.9)","43 Tc (98)","44 Ru (101.1)","45 Rh (102.9)","46 Pd (106.4)","47 Ag (107.9)","48 Cd (112.4)","49 In (114.8)","50 Sn (118.7)","51 Sb (121.8)","52 Te (127.6)","53 I (126.9)","54 Xe (131.3)","55 Cs (132.9)","56 Ba (137.3)","57 La (138.9)","58 Ce (140.1)","59 Pr (140.9)","60 Nd (144.2)","61 Pm (145)","62 Sm (150.4)","63 Eu (152.0)","64 Gd (157.3)","65 Tb (158.9)","66 Dy (162.5)","67 Ho (164.9)","68 Er (167.3)","69 Tm (168.9)","70 Yb (173.0)","71 Lu (175.0)","72 Hf (178.5)","73 Ta (180.9)","74 W (183.8)","75 Re (186.2)","76 Os (190.2)","77 Ir (192.2)","78 Pt (195.1)","79 Au (197.0)","80 Hg (200.6)","81 Tl (204.4)","82 Pb (207.2)","83 Bi (209.0)","84 Po (209)","85 At (210)","86 Rn (222)","87 Fr (223)","88 Ra (226)","89 Ac (227)","90 Th (232.0)","91 Pa (231.0)","92 U (238.0)","93 Np (237)","94 Pu (244)","95 Am (243)","96 Cm (247)","97 Bk (247)","98 Cf (251)","99 Es (252)","100 Fm (257)","101 Md (258)","102 No (259)","103 Lr (262)","104 Rf (267)","105 Db (268)","106 Sg (271)","107 Bh (272)","108 Hs (270)","109 Mt (276)","110 Ds (281)","111 Rg (280)","112 Cn (285)","113 Nh (284)","114 Fl (289)","115 Mc (288)","116 Lv (293)","117 Ts (294)","118 Og (294)"];
+
+// 4. CHEM REACTIONS (START DAY 8)
+const chePro = [
+  "Phys Chem: Molarity = n / V(L)", "Phys Chem: Molality = n / W(kg)", "Phys Chem: N = M &times; n-factor", "Phys Chem: Ideal Gas PV = nRT", 
+  "Phys Chem: Faraday W = ZIt", "Phys Chem: &Delta;G = &Delta;H - T&Delta;S", "Phys Chem: K_p = K_c(RT)^&Delta;n",
+  "Wurtz Rxn: 2RX + 2Na (dry ether) &rarr; R-R", "Fittig Rxn: 2Ph-X + 2Na (dry ether) &rarr; Ph-Ph", 
+  "Aldol: 2(RCH2CHO) + dil.NaOH &rarr; &beta;-hydroxy aldehyde", "Cross Aldol: HCHO + CH3CHO &rarr; Mixed Products", 
+  "Cannizzaro (No &alpha;-H): 2HCHO + conc.KOH &rarr; HCOOK + CH3OH", "Ozonolysis: Alkene + O3/Zn,H2O &rarr; Carbonyls",
+  "Friedel-Crafts Alk: Ph-H + RX/AlCl3 &rarr; Ph-R", "Friedel-Crafts Acyl: Ph-H + RCOCl/AlCl3 &rarr; Ph-COR", 
+  "Reimer-Tiemann: Phenol + CHCl3/NaOH &rarr; Salicylaldehyde", "Kolbe's: Phenol + CO2/NaOH &rarr; Salicylic Acid", 
+  "Hoffmann Bromamide: RCONH2 + Br2/4KOH &rarr; RNH2", "Gabriel Phthalimide: Synthesizes ONLY 1&deg; Aliphatic Amines", 
+  "Carbylamine (1&deg; amine test): RNH2 + CHCl3 + 3KOH &rarr; R-NC", "Sandmeyer: Ph-N2Cl + CuCl/HCl &rarr; Ph-Cl", 
+  "Gattermann: Ph-N2Cl + Cu/HCl &rarr; Ph-Cl", "Stephen Red: RCN + SnCl2/HCl &rarr; RCHO",
+  "Clemmensen: Carbonyl + Zn-Hg/HCl &rarr; Alkane", "Wolff-Kishner: Carbonyl + NH2NH2/KOH &rarr; Alkane", 
+  "Rosenmund: RCOCl + H2/Pd-BaSO4 &rarr; RCHO", "Etard Rxn: Toluene + CrO2Cl2 &rarr; Benzaldehyde", 
+  "Haloform (Methyl Ketone): RCOCH3 + NaOX &rarr; CHX3 + RCOONa", "Grignard: RMgX + HCHO &rarr; 1&deg; Alcohol", 
+  "Lucas Test: 3&deg; Alc (turbidity instant), 2&deg; (5 mins), 1&deg; (Heat)", "Hinsberg (PhSO2Cl): 1&deg; amine soluble in alkali, 2&deg; insoluble", 
+  "Tollen's/Fehling's: Positive for Aldehydes ONLY", "Iodoform Test: Positive for CH3-CH(OH)- or CH3-CO- groups"
+];
+
+// 5. EXPLICIT CHEM TRENDS (Actual > / < values)
+const cheTrendsList = [
+  "Atomic Radius (G1): Cs > Rb > K > Na > Li", "Atomic Radius (G17): I > Br > Cl > F", "Ionization Enthalpy (P2): Ne > F > O > N > C > Be > B > Li", 
+  "Electron Gain Enthalpy: Cl > F > Br > I", "Electronegativity: F > O > N &approx; Cl > Br > I", 
+  "Hydration Enthalpy: Li+ > Na+ > K+ > Rb+ > Cs+", "M.P of Alkali: Li > Na > K > Rb > Cs", 
+  "Thermal Stability (CO3): BaCO3 > SrCO3 > CaCO3 > MgCO3", "Inert Pair Effect Stability: Pb(+2) > Pb(+4)", 
+  "Catenation Tendency: C >> Si > Ge &approx; Sn", "Basicity G15 Hydrides: NH3 > PH3 > AsH3 > SbH3", 
+  "Acidic G16 Oxides: SO3 > SeO3 > TeO3", "Oxidizing Power: F2 > Cl2 > Br2 > I2",
+  "Acidic Hydrides: HI > HBr > HCl > HF", "Atomic Size 3d: Sc > Ti > V > Cr > Mn &approx; Fe &approx; Co &approx; Ni < Cu < Zn", 
+  "Stability ox states: Mn(+2) half-filled (d5) is most stable", "Electrode Potential E&deg;(M2+/M): Cu is positive (+0.34V), rest negative", 
+  "Magnetic Moment: &mu; = &radic;(n(n+2)) BM", "Lanthanoid Contraction: Size steady decrease Ce to Lu", 
+  "Zr & Hf have almost identical radii due to L.C.", "Spectrochemical: I- < Br- < SCN- < Cl- < F- < OH- < C2O4 < H2O < NH3 < en < CN- < CO",
+  "Synergic bonding: Sigma from Ligand to Metal, Pi from Metal to Ligand", "Acidic nature: Phenol > Water > Alcohols", 
+  "Basic Amines (Aqueous, Methyl): 2&deg; > 1&deg; > 3&deg; > NH3", "Basic Amines (Aqueous, Ethyl): 2&deg; > 3&deg; > 1&deg; > NH3", 
+  "SN1 Reactivity: 3&deg; > 2&deg; > 1&deg; (Carbocation stability)", "SN2 Reactivity: 1&deg; > 2&deg; > 3&deg; (Steric hindrance)", 
+  "Carbocation Stability: Benzyl/Allyl > 3&deg; > 2&deg; > 1&deg;", "EAS Directing: -OH, -NH2, -R (o/p); -NO2, -COOH, -CHO (meta)", 
+  "B.P. of Alkanes: Straight chain > Branched (Surface area)", "Reducing Sugars: All monosaccharides + Maltose/Lactose. Sucrose is NON-reducing.", 
+  "Dipole Moment: CH3Cl > CH3F > CH3Br > CH3I", "Bond Dissociation: Cl2 > Br2 > F2 > I2"
+];
+
+// 6. BIO EXACT LOCATIONS
+const bioTables = [
+  "1.1 Taxonomic Categories (XI, Pg 11)", "3.1 Classes of Algae (XI, Pg 33)", "4.1 Animal Kingdom (XI, Pg 60)", "4.2 Chordates/Non-chordates (XI, Pg 55)", 
+  "8.1 Pro/Eukaryotic (XI, Pg 128)", "9.4 Avg Cell Comp (XI, Pg 147)", "9.5 Metabolites (XI, Pg 146)", "10.1 Mitosis/Meiosis (XI, Pg 164)",
+  "Respiratory Quotient (XI, Pg 236)", "Gastric Juices/Enzymes (XI, Pg 262)", "Endocrine Glands (XI, Pg 333)", "Blood Groups (XI, Pg 280)",
+  "Contraceptives (XII, Pg 60)", "STIs (XII, Pg 63)", "Mendelian/Chromosomal (XII, Pg 90)", "Genetic Code (XII, Pg 112)",
+  "DNA vs RNA (XII, Pg 96)", "Human Genome (XII, Pg 119)", "Active/Passive Immunity (XII, Pg 151)", "Human Diseases (XII, Pg 147)",
+  "Biomes (XII, Pg 220)", "Population Interactions (XII, Pg 232)", "Ecosystem Services (XII, Pg 254)", "Biodiversity Taxa (XII, Pg 260)",
+  "Air pollutants (XII, Pg 271)", "Water pollution BOD (XII, Pg 275)", "Greenhouse Gases (XII, Pg 281)", "C3 vs C4 plants (XI, Pg 218)",
+  "Plant Growth Regulators (XI, Pg 248)", "Cranial nerves (XI, Pg 316)", "Types of Joints (XI, Pg 312)", "Skeletal Muscle fibers (XI, Pg 304)",
+  "Restriction endonucleases (XII, Pg 195)"
+];
+
+const bioDiagrams = [
+  "T.S. of Dicot Root (XI, Pg 90)", "Animal Cell Endomembrane (XI, Pg 132)", "Structure of Chloroplast (XI, Pg 136)", "Structure of Mitochondria (XI, Pg 135)",
+  "Stages of Mitosis (XI, Pg 165)", "Prophase I of Meiosis (XI, Pg 168)", "C4 Pathway (Hatch-Slack) (XI, Pg 219)", "Z-Scheme Light Reaction (XI, Pg 213)",
+  "Human Heart Anatomy (XI, Pg 283)", "Structure of Nephron (XI, Pg 293)", "Structure of Synapse (XI, Pg 319)", "Anatomy of Eye (XI, Pg 323)",
+  "Anatomy of Ear (XI, Pg 325)", "Spermatogenesis (XII, Pg 47)", "Oogenesis (XII, Pg 49)", "Punnett Dihybrid (XII, Pg 79)",
+  "Lac Operon (XII, Pg 117)", "Structure of Nucleosome (XII, Pg 99)", "pBR322 vector (XII, Pg 199)", "Carbon Cycle (XII, Pg 253)",
+  "Phosphorus Cycle (XII, Pg 254)", "Species-Area Graph (XII, Pg 262)", "Age Pyramids (XII, Pg 227)", "Growth Curves (XII, Pg 230)",
+  "Biomagnification DDT (XII, Pg 276)", "Antibody Molecule (XII, Pg 151)", "Plasmodium Life Cycle (XII, Pg 148)", "Structure of HIV (XII, Pg 155)",
+  "Recombinant DNA Tech (XII, Pg 197)", "PCR Process (XII, Pg 202)", "Typical Flower (XI, Pg 73)", "Microsporangium (XII, Pg 21)",
+  "Anatropous Ovule (XII, Pg 25)"
+];
+
+const bioExamples = [
+  "Green Algae: Chlamydomonas, Volvox, Ulothrix", "Brown Algae: Ectocarpus, Dictyota, Laminaria", "Red Algae: Polysiphonia, Porphyra, Gracilaria",
+  "Bryophytes: Marchantia, Funaria, Sphagnum", "Pteridophytes: Psilotum, Selaginella, Equisetum", "Gymnosperms: Pinus, Cycas, Sequoia",
+  "Porifera: Sycon, Spongilla, Euspongia", "Coelenterata: Physalia, Adamsia, Meandrina", "Ctenophora: Pleurobrachia / Platy: Taenia",
+  "Aschelminthes: Ascaris / Annelida: Pheretima", "Arthropoda: Apis, Bombyx, Laccifer, Locusta", "Mollusca: Pila, Pinctada, Sepia, Octopus",
+  "Echinodermata: Asterias / Hemi: Balanoglossus", "Chondrichthyes: Scoliodon, Pristis", "Osteichthyes: Exocoetus, Hippocampus",
+  "Amphibia: Bufo, Rana / Reptilia: Chelone", "Aves: Corvus / Mammalia: Macropus", "Aestivation: Calotropis, China rose",
+  "Imbricate/Vexillary: Cassia, Pea", "Placentation: Pea, China rose, Tomato", "Parietal/Free Central: Mustard, Dianthus",
+  "Basal Placentation: Sunflower, Marigold", "Fabaceae Family: Pea, Gram, Indigofera", "Solanaceae Family: Tomato, Potato, Belladonna",
+  "Liliaceae Family: Tulip, Gloriosa, Colchicum", "Epithelium: Squamous (Alveoli), Cuboidal", "Connective Tissue: Areolar, Adipose",
+  "Bacterial Diseases: Typhoid, Pneumonia", "Viral/Protozoan: Cold, Malaria", "Fungal Diseases: Ringworm (Microsporum)",
+  "Weedicides/Bio-control: 2,4-D, Bt", "Ex-situ Cons: Zoos, Botanical Gardens", "In-situ Cons: Biosphere Reserves"
+];
+
+const bioScientists = [
+  { name: "Ernst Mayr", work: "Proposed biological species concept." }, { name: "Schleiden & Schwann", work: "Formulated the Cell Theory." },
+  { name: "Rudolf Virchow", work: "Stated 'Omnis cellula e cellula'." }, { name: "Singer & Nicolson", work: "Proposed the Fluid Mosaic Model." },
+  { name: "Robert Brown", work: "First discovered the nucleus." }, { name: "Camillo Golgi", work: "Discovered the Golgi apparatus." },
+  { name: "George Palade", work: "First observed Ribosomes." }, { name: "Julius von Sachs", work: "Evidence for production of glucose." },
+  { name: "T.W. Engelmann", work: "Described the first action spectrum." }, { name: "Melvin Calvin", work: "Discovered the C3 pathway mapping." },
+  { name: "Hans Krebs", work: "Discovered the Citric Acid Cycle." }, { name: "Gregor Mendel", work: "Proposed the Laws of Inheritance." },
+  { name: "Hugo de Vries", work: "Proposed the Mutation Theory." }, { name: "Sutton & Boveri", work: "Chromosomal Theory of Inheritance." },
+  { name: "T.H. Morgan", work: "Discovered Linkage & Recombination." }, { name: "Alfred Sturtevant", work: "Created the first genetic maps." },
+  { name: "Henking", work: "Discovered the 'X body'." }, { name: "Friedrich Miescher", work: "Identified DNA (Nuclein)." },
+  { name: "Griffith", work: "Transforming Principle experiment." }, { name: "Hershey & Chase", work: "Proved DNA is genetic material." },
+  { name: "Watson & Crick", work: "Proposed the Double Helix model." }, { name: "Meselson & Stahl", work: "Semi-conservative DNA rep." },
+  { name: "George Gamow", work: "Genetic code of 3 nucleotides." }, { name: "Marshall Nirenberg", work: "Cell-free system for protein synth." },
+  { name: "Jacob & Monod", work: "Transcriptionally regulated system." }, { name: "Alec Jeffreys", work: "Developed DNA fingerprinting." },
+  { name: "Stanley Miller", work: "Organic compounds from inorganic." }, { name: "Louis Pasteur", work: "Disproved spontaneous generation." },
+  { name: "Alexander Fleming", work: "Discovered Penicillin." }, { name: "Karl Landsteiner", work: "Discovered the ABO blood system." },
+  { name: "Kary Mullis", work: "Invented the PCR technique." }, { name: "Paul Ehrlich", work: "Pioneered immunology." },
+  { name: "Robert Constanza", work: "Priced nature's services." }
+];
+
+const PLAN = [];
+let elStart = 1;
+
+for(let i=0; i<TOTAL; i++) {
+  
+  // 1. MATH/HACKS
+  let num = i+2;
+  let mathTable = [];
+  for(let m=1; m<=10; m++) mathTable.push(`${num}×${m}=${num*m}`);
+  
+  let mathTask = `<div class="data-box">
+    <div class="syllabus-target" style="border-color:var(--pu);">
+       <div class="syllabus-lbl" style="color:var(--pu);">🎯 DAILY NUMERICAL WARMUP</div>
+       <div class="syllabus-name">Mental Calculation & Constants</div>
+    </div>
+    <div class="data-lbl" style="color:var(--pu);">🧮 Calculations Focus</div>
+    <div class="data-val" style="margin-bottom:12px; font-size:0.75rem; font-family:JetBrains Mono,monospace; line-height:1.6;">
+      <strong>Table of ${num}:</strong><br>${mathTable.join(', ')}
+    </div>
+    <div class="data-val" style="margin-bottom:16px; font-size:0.8rem; font-family:JetBrains Mono,monospace;">
+      <strong>Square:</strong> ${num}² = ${num**2} <br>
+      <strong>Cube:</strong> ${num}³ = ${num**3}
+    </div>
+    <hr class="split">
+    <div class="data-lbl" style="color:var(--or);">⚡ Pro Physics/Chem Constant</div>
+    <div class="data-val" style="margin-bottom:0; font-size:0.8rem; font-family:JetBrains Mono,monospace;">${mathPro[i].replace(/strns/g, '#x207')}</div>
+  </div>`;
+  
+  // 2. PHYSICS
+  let phyTask = `<div class="data-box">
+    <div class="syllabus-target" style="border-color:var(--or);">
+       <div class="syllabus-lbl" style="color:var(--or);">🎯 SYLLABUS TARGET</div>
+       <div class="syllabus-name">${phySyllabus[i]}</div>
+    </div>
+    <div class="data-lbl" style="color:var(--cyan);">📊 Exact Graph Location</div>
+    <div class="data-val" style="margin-bottom:0;">${phyGraphs[i]}</div>
+  </div>`;
+  
+  // 3. CHEMISTRY
+  let elCount = (i+1) <= 10 ? 4 : 3;
+  if(i === TOTAL-1) elCount = 118 - elStart + 1; 
+  let elList = [];
+  for(let e=elStart; e < elStart+elCount; e++) {
+    if(e <= 118) elList.push(ELEMS[e-1]);
+  }
+  elStart += elCount;
+  
+  let cheTask = `<div class="data-box">
+    <div class="syllabus-target" style="border-color:var(--cyan);">
+       <div class="syllabus-lbl" style="color:var(--cyan);">🎯 SYLLABUS TARGET</div>
+       <div class="syllabus-name">${cheSyllabus[i]}</div>
+    </div>
+    <div class="data-lbl" style="color:var(--cyan);">🔥 Core Reaction / Formula</div>
+    <div class="data-val" style="margin-bottom:16px; font-family:JetBrains Mono,monospace; font-size:0.8rem;">${chePro[i]}</div>
+    <div class="data-lbl" style="color:var(--pink);">📈 Exact Master Trend</div>
+    <div class="data-val" style="margin-bottom:16px; font-weight:800; font-family:JetBrains Mono,monospace; font-size:0.8rem;">${cheTrendsList[i]}</div>
+    <hr class="split">
+    <div class="data-lbl" style="color:var(--gold);">🧪 Elements (No. / Sym / Mass)</div>
+    <div class="data-val" style="margin-bottom:0; font-family:JetBrains Mono,monospace; font-size:0.8rem; line-height:1.6;">${elList.join('<br>')}</div>
+  </div>`;
+  
+  // 4. BIOLOGY
+  let bioTask = `<div class="data-box">
+    <div class="syllabus-target" style="border-color:var(--green);">
+       <div class="syllabus-lbl" style="color:var(--green);">🎯 SYLLABUS TARGET</div>
+       <div class="syllabus-name">${bioSyllabus[i]}</div>
+    </div>
+    <div class="data-lbl" style="color:var(--green);">🌱 NCERT Examples</div>
+    <div class="data-val" style="margin-bottom:16px; font-weight:700;">${bioExamples[i]}</div>
+    <hr class="split">
+    <div class="data-lbl">📖 Table Focus</div>
+    <div class="data-val" style="margin-bottom:12px;">${bioTables[i]}</div>
+    <div class="data-lbl" style="color:var(--or);">🖼️ Diagram Focus</div>
+    <div class="data-val" style="margin-bottom:12px;">${bioDiagrams[i]}</div>
+    <div class="data-lbl" style="color:var(--pink);">🔬 Scientist Fact Focus</div>
+    <div class="data-val" style="margin-bottom:0;"><strong>${bioScientists[i].name}:</strong> ${bioScientists[i].work}</div>
+  </div>`;
+
+  PLAN.push({ day: i+1, math: mathTask, phy: phyTask, che: cheTask, bio: bioTask });
+}
+
+const SUBJECTS = [
+  { k:'math', label:'Warmup', icon:'🧠', color:'#b058e8', field:'math' },
+  { k:'phy',  label:'Physics', icon:'⚡', color:'#ff8800', field:'phy' },
+  { k:'che',  label:'Chemistry', icon:'⚗️', color:'#00d0f4', field:'che' },
+  { k:'bio',  label:'Biology', icon:'🧬', color:'#00d26a', field:'bio' },
+];
+
+function taskKey(dayIdx, subjKey) { return 'd' + dayIdx + '_' + subjKey; }
+
+var DB = {};
+try { DB = JSON.parse(localStorage.getItem(SK) || '{}'); } catch(e) {}
+function save() { try { localStorage.setItem(SK, JSON.stringify(DB)); } catch(e) {} }
+
+var dI = 0;
+var pre = false;
+
+function init() {
+  var now = new Date(); now.setHours(0,0,0,0);
+  var s2 = new Date(DS); s2.setHours(0,0,0,0);
+  var raw = Math.round((now - s2) / 86400000);
+  pre = raw < 0; 
+  dI = Math.max(0, Math.min(raw, TOTAL - 1));
+  drawWeekRings();
+}
+
+function getDayTasks(idx) {
+  if (idx < 0 || idx >= TOTAL) return [];
+  var p = PLAN[idx];
+  return SUBJECTS.map(function(s) {
+    return { key: taskKey(idx, s.k), subj: s.k, tag: s.label, icon: s.icon, color: s.color, text: p[s.field] };
+  });
+}
+
+function isDayComplete(idx) {
+  var tasks = getDayTasks(idx);
+  return tasks.length > 0 && tasks.every(function(t) { return !!DB[t.key]; });
+}
+
+function calcStreak() {
+  var n = 0;
+  for (var i = dI - 1; i >= 0; i--) { if (isDayComplete(i)) n++; else break; }
+  if (isDayComplete(dI)) n++;
+  return n;
+}
+
+function updateHero(done, total) {
+  var pct = total > 0 ? (done / total) : 0;
+  var circ = 339.29; 
+  var offset = circ - (pct * circ);
+  
+  var ringSvg = document.getElementById('todayRingSvg');
+  if(ringSvg) {
+      ringSvg.style.strokeDashoffset = offset;
+  }
+  
+  var n = calcStreak();
+  var sVal = document.getElementById('streakVal');
+  if (sVal) {
+      sVal.textContent = n;
+  }
+}
+
+function drawWeekRings() {
+  var el = document.getElementById('weekNodesEl');
+  if (!el) return;
+  el.innerHTML = '';
+  
+  var rt = new Date(); rt.setHours(0,0,0,0);
+  var dayOfWeek = rt.getDay(); 
+  var currentDayIndex = dayOfWeek === 0 ? 6 : dayOfWeek - 1; 
+  
+  var diffToMonday = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
+  var sow = new Date(rt); sow.setDate(rt.getDate() + diffToMonday);
+  var sn = new Date(DS); sn.setHours(0,0,0,0);
+  
+  for (var i = 0; i < 7; i++) {
+    var d = new Date(sow); d.setDate(sow.getDate() + i);
+    var act = d.getTime() === rt.getTime();
+    var diff = Math.round((d - sn) / 86400000);
+    var dn = diff >= 0 && diff < TOTAL && isDayComplete(diff);
+    
+    var angle = (i * (360/7)) - 90;
+    var rad = angle * Math.PI / 180;
+    var R = 54;
+    var x = 70 + R * Math.cos(rad);
+    var y = 70 + R * Math.sin(rad);
+    
+    var dx = Math.cos(rad) * 24; 
+    var dy = Math.sin(rad) * 24;
+    
+    var node = document.createElement('div');
+    node.className = 'day-node' + (act?' active':'') + (dn?' done':'');
+    node.style.left = x + 'px';
+    node.style.top = y + 'px';
+    
+    node.innerHTML = `
+        <span class="date-val">${d.getDate()}</span>
+        <span class="day-out" style="transform: translate(${dx}px, ${dy}px);">${DL[i]}</span>
+    `;
+    el.appendChild(node);
+  }
+
+  var circ = 339.29; 
+  var fillLength = (currentDayIndex / 7) * circ;
+  if (fillLength === 0) fillLength = 0.01; 
+  var wkProgSvg = document.getElementById('wkProgSvg');
+  if(wkProgSvg) {
+      wkProgSvg.style.strokeDashoffset = circ - fillLength;
+  }
+}
+
+function renderToday() {
+  var wrap = document.getElementById('tw'); wrap.innerHTML = '';
+
+  var tasks = getDayTasks(dI);
+  var done = 0; tasks.forEach(function(t) { if (DB[t.key]) done++; });
+
+  if (pre) {
+    var msg = document.createElement('div');
+    msg.className = 'glass-card';
+    msg.style.cssText = 'text-align:center;padding:24px 20px;margin-bottom:24px;';
+    msg.innerHTML = '<strong style="color:var(--cyan);font-size:1.1rem;font-family:JetBrains Mono,monospace;">CHALLENGE STARTS TOMORROW</strong><div style="font-size:0.75rem; color:var(--mu); margin-top:8px;">Review your master syllabus for Day 1 below.</div>';
+    wrap.appendChild(msg);
+  }
+
+  var sh = document.createElement('div'); sh.className = 'sh';
+  sh.textContent = 'DAY ' + (dI + 1) + ' MISSIONS';
+  wrap.appendChild(sh);
+
+  tasks.forEach(function(t, i) { wrap.appendChild(makeAccordionCard(t, !!DB[t.key], i)); });
+
+  updateHero(done, tasks.length);
+  document.getElementById('dmsg').style.display = (done === tasks.length && tasks.length > 0) ? 'block' : 'none';
+  drawWeekRings();
+}
+
+function makeAccordionCard(t, dk, idx) {
+  var c = document.createElement('div');
+  c.className = 'workout-card theme-' + t.subj + (dk ? ' done' : '');
+  c.id = 'card_' + t.key;
+  c.style.animationDelay = (idx * 0.05) + 's';
+  
+  c.innerHTML = `
+    <div class="wc-header" onclick="toggleExpand('${t.key}')">
+        <div class="wc-header-left">
+            <span class="wc-tag-badge">${t.icon} ${t.tag}</span>
+        </div>
+        <div class="pro-checkbox" onclick="event.stopPropagation(); toggleTask('${t.key}')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+        </div>
+    </div>
+    <div class="wc-body" id="body_${t.key}">
+        ${t.text}
+    </div>
+  `;
+  return c;
+}
+
+function toggleExpand(key) {
+    var card = document.getElementById('card_' + key);
+    if (card) card.classList.toggle('open');
+}
+
+var _nft = null;
+function toggleTask(key) {
+  var card = document.getElementById('card_' + key);
+  if (!card) return;
+  var was = !!DB[key];
+  if (was) { delete DB[key]; } else {
+    DB[key] = true;
+    if (navigator.vibrate) try { navigator.vibrate(14); } catch(e) {}
+    if (typeof confetti === 'function') confetti({ particleCount:50, spread:70, startVelocity:25, origin:{y:.86}, colors:['#ff2a5f','#facc15','#00d26a','#00d0f4'], disableForReducedMotion:true });
+  }
+  save();
+  card.classList.toggle('done', !was);
+  if (!was) card.classList.remove('open'); 
+
+  var tasks = getDayTasks(dI), d2 = 0;
+  tasks.forEach(function(t) { if (DB[t.key]) d2++; });
+  updateHero(d2, tasks.length);
+  document.getElementById('dmsg').style.display = (d2 === tasks.length && tasks.length > 0) ? 'block' : 'none';
+
+  clearTimeout(_nft);
+  _nft = setTimeout(function() {
+    var allCards = Array.from(document.querySelectorAll('.workout-card'));
+    var next = allCards.find(function(c) { return !c.classList.contains('done'); });
+    if (next) {
+       var yOffset = -80; 
+       var scrollEl = document.getElementById('mainAppScroll');
+       var y = next.offsetTop + yOffset;
+       if(scrollEl.scrollTo) {
+           try{ scrollEl.scrollTo({top: y, behavior: 'smooth'}); }
+           catch(e){ scrollEl.scrollTop = y; }
+       } else {
+           scrollEl.scrollTop = y;
+       }
+    }
+  }, 400);
+}
+
+function renderProg() {
+  var CIRC = 226.19;
+  var totalDone = 0;
+  for (var i = 0; i < TOTAL; i++) { if (isDayComplete(i)) totalDone++; }
+  var ovPct = Math.round(totalDone / TOTAL * 100);
+
+  var subjStats = SUBJECTS.map(function(s) {
+    var cnt = 0;
+    for (var i = 0; i < TOTAL; i++) { if (DB[taskKey(i, s.k)]) cnt++; }
+    return { s: s, cnt: cnt, pct: Math.round(cnt / TOTAL * 100) };
+  });
+
+  var pctFill = '#f4f4f8', subFill = '#8a8a9d';
+
+  var ringsHTML = subjStats.map(function(d) {
+    return '<div class="subj-ring-card">' +
+      '<svg class="prog-ring-svg" width="80" height="80" viewBox="0 0 80 80">' +
+        '<circle class="prog-ring-track" cx="40" cy="40" r="36"/>' +
+        '<circle class="prog-ring-arc" id="parc_' + d.s.k + '" cx="40" cy="40" r="36" stroke="' + d.s.color + '"/>' +
+        '<text class="prog-ring-pct" x="40" y="34" fill="' + pctFill + '">' + d.pct + '%</text>' +
+        '<text class="prog-ring-sub" x="40" y="50" fill="' + subFill + '">' + d.cnt + '/' + TOTAL + ' d</text>' +
+      '</svg>' +
+      '<div style="display:flex;flex-direction:column;align-items:center;gap:3px;">' +
+        '<span class="subj-ring-icon">' + d.s.icon + '</span>' +
+        '<span class="subj-ring-name">' + d.s.label + '</span>' +
+      '</div>' +
+    '</div>';
+  }).join('');
+
+  var rt = new Date(); rt.setHours(0,0,0,0);
+  var planHTML = PLAN.map(function(p, i) {
+    var dayDate = new Date(DS); dayDate.setDate(DS.getDate() + i);
+    var isToday = dayDate.getTime() === rt.getTime();
+    var isFuture = dayDate > rt;
+    var complete = isDayComplete(i);
+    var cls = 'plan-day-card' + (complete ? ' completed' : '') + (isToday ? ' today-card' : '');
+    var dateStr = dayDate.getDate() + ' ' + MN[dayDate.getMonth()];
+    var statusStr = complete ? '✓ Done' : (isToday ? '📍 Today' : (isFuture ? dateStr : dateStr));
+
+    return '<div class="' + cls + '" id="pday_' + i + '">' +
+      '<div class="plan-day-header" onclick="togglePlanDay(' + i + ')">' +
+        '<div class="plan-day-num">' + p.day + '</div>' +
+        '<div style="flex:1;">' +
+          '<div class="plan-day-title">Day ' + p.day + '</div>' +
+          '<div class="plan-day-meta">' + dateStr + ' · ' + statusStr + '</div>' +
+        '</div>' +
+        '<svg class="plan-day-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>' +
+      '</div>' +
+      '<div class="plan-day-body" onclick="event.stopPropagation()">' +
+        '<div class="plan-subject-row"><span class="plan-subj-badge badge-math">Warm</span><span class="plan-subj-text">' + p.math + '</span></div>' +
+        '<div class="plan-subject-row"><span class="plan-subj-badge badge-phy">Physics</span><span class="plan-subj-text">' + p.phy + '</span></div>' +
+        '<div class="plan-subject-row"><span class="plan-subj-badge badge-che">Chem</span><span class="plan-subj-text">' + p.che + '</span></div>' +
+        '<div class="plan-subject-row"><span class="plan-subj-badge badge-bio">Biology</span><span class="plan-subj-text">' + p.bio + '</span></div>' +
+      '</div>' +
+    '</div>';
+  }).join('');
+
+  document.getElementById('vP').innerHTML =
+    '<div class="glass-card" style="padding:20px;">' +
+      '<div class="prog-hero-top">' +
+        '<div class="prog-hero-pct">' + ovPct + '%</div>' +
+        '<div class="prog-hero-meta">' +
+          '<div class="prog-hero-days">' + totalDone + ' / ' + TOTAL + '</div>' +
+          '<div class="prog-hero-lbl">Completed</div>' +
+        '</div>' +
+      '</div>' +
+      '<div class="prog-bar-wrap"><div class="prog-bar-fill" id="ovBar"></div></div>' +
+    '</div>' +
+    '<div class="sh" style="margin-top:0;">Subject Master</div>' +
+    '<div class="subj-rings">' + ringsHTML + '</div>' +
+    '<div class="sh">33-Day Pro Syllabus Flow</div>' +
+    '<div class="plan-section">' + planHTML + '</div>';
+
+  requestAnimationFrame(function() { requestAnimationFrame(function() {
+    var ob = document.getElementById('ovBar'); if (ob) ob.style.width = ovPct + '%';
+    subjStats.forEach(function(d) {
+      var arc = document.getElementById('parc_' + d.s.k);
+      if (arc) arc.style.strokeDashoffset = CIRC * (1 - d.pct / 100);
+    });
+    var todayCard = document.querySelector('.plan-day-card.today-card');
+    if (todayCard) {
+      todayCard.classList.add('open');
+      setTimeout(function() { todayCard.scrollIntoView({ behavior:'smooth', block:'center' }); }, 400);
+    }
+  }); });
+}
+
+function togglePlanDay(i) {
+  var card = document.getElementById('pday_' + i);
+  if (card) card.classList.toggle('open');
+}
+
+function switchTab(i) {
+  ['vT','vP'].forEach(function(id){document.getElementById(id).classList.remove('active');});
+  ['t0','t1'].forEach(function(id){document.getElementById(id).classList.remove('active');});
+  
+  var scrollEl = document.getElementById('mainAppScroll');
+  if(scrollEl.scrollTo) {
+     try{ scrollEl.scrollTo({ top: 0, behavior: 'smooth' }); }
+     catch(e){ scrollEl.scrollTop = 0; }
+  } else {
+     scrollEl.scrollTop = 0;
+  }
+
+  if (i===0) { document.getElementById('vT').classList.add('active'); document.getElementById('t0').classList.add('active'); renderToday(); }
+  else if (i===1) { document.getElementById('vP').classList.add('active'); document.getElementById('t1').classList.add('active'); renderProg(); }
+}
+
+function updateCountdown() {
+  var dist = TARGET_DATE - Date.now();
+  var cdDays = document.getElementById('cdDays'); if (!cdDays) return;
+  if (dist < 0) { cdDays.innerHTML = "EXAM!"; return; }
+  cdDays.innerHTML = Math.ceil(dist / 86400000) + 'D';
+}
+
+document.addEventListener('visibilitychange', function() {
+  if (document.visibilityState === 'visible') { init(); if (document.getElementById('vT').classList.contains('active')) renderToday(); }
+});
+
+updateCountdown();
+setInterval(updateCountdown, 60000); 
+init();
+switchTab(0);
+</script>
+</body>
+</html>
