@@ -1,0 +1,1106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no,viewport-fit=cover">
+<title>NEET 6-Day Final Master Pro</title>
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #050507;
+  --tx: #f4f4f8;
+  --mu: #8a8a9d;
+  --glass-bg: rgba(20, 20, 28, 0.65);
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --panel: #111116;
+  --tb: rgba(255, 255, 255, 0.08);
+  --shadow-lg: 0 10px 40px rgba(0, 0, 0, 0.7);
+  
+  --gold: #facc15;
+  --pink: #ff2a5f;
+  --cyan: #00d0f4;
+  --green: #00d26a;
+  --pu: #b058e8;
+  --or: #ff8800;
+  --safe: env(safe-area-inset-bottom);
+}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+html,body{width:100vw;height:100dvh;overflow:hidden;font-family:'Syne',sans-serif;-webkit-font-smoothing:antialiased;background-color:var(--bg);color:var(--tx);user-select:none;}
+::-webkit-scrollbar{display:none;}*{scrollbar-width:none;}
+
+.bg{position:fixed;inset:0;z-index:0;overflow:hidden;pointer-events:none; background: #050507;}
+.bg-geometric {
+  position: absolute; inset: 0; z-index: 1; pointer-events: none; opacity: 0.6;
+  background-size: 40px 40px;
+  background-image: 
+    linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+}
+.bg::before,.bg::after,.bg-blob-3{content:'';position:absolute;border-radius:50%;filter:blur(100px);animation:floatBg 30s infinite alternate cubic-bezier(.4,0,.2,1); opacity:0.12;}
+.bg::before{width:80vw;height:80vw;background:var(--cyan);top:-10%;left:-20%;}
+.bg::after{width:90vw;height:90vw;background:var(--or);bottom:-10%;right:-20%;animation-delay:-5s;}
+.bg-blob-3{width:70vw;height:70vw;background:var(--pu);top:30%;left:20%;animation-duration:40s;}
+@keyframes floatBg{0%{transform:translate(0,0) scale(1);}100%{transform:translate(20vw,20vh) scale(1.3);}}
+
+.app{position:relative;z-index:2;width:100%;max-width:440px;height:100dvh;margin:0 auto;display:block;overflow-y:auto;overflow-x:hidden;scroll-behavior:smooth;-webkit-overflow-scrolling:touch;}
+@media(min-width:441px){.app{border-left:1px solid var(--tb);border-right:1px solid var(--tb);box-shadow:var(--shadow-lg);}}
+
+.vc{display:block;padding:max(16px, env(safe-area-inset-top)) 10px calc(90px + var(--safe));}
+.view{display:none;animation:vIn .4s cubic-bezier(.16,1,.3,1) forwards; opacity:0; transform:translateY(15px);}
+.view.active{display:block;}
+@keyframes vIn{to{opacity:1;transform:none;}}
+@keyframes vSlide{from{opacity:0;transform:translateX(20px);}to{opacity:1;transform:translateX(0);}}
+
+.glass-card{background:var(--glass-bg);backdrop-filter:blur(30px);-webkit-backdrop-filter:blur(30px);border:1px solid var(--glass-border);box-shadow:var(--shadow-lg);margin-bottom:16px;}
+
+.pro-dashboard { padding: 24px 10px; display: flex; flex-direction: row; align-items: center; justify-content: center; gap: 20px; border-radius: 100px; }
+.ring-col { display: flex; flex-direction: column; align-items: center; justify-content: center; flex: 1; max-width: 150px;}
+.dash-svg { position: absolute; inset: 0; width: 100%; height: 100%; transform: rotate(-90deg); overflow: visible; }
+.ring-track { fill: none; stroke: var(--tb); stroke-width: 8; }
+.ring-prog { fill: none; stroke-width: 8; stroke-linecap: round; transition: stroke-dashoffset 0.8s cubic-bezier(.16,1,.3,1); }
+.center-display { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 5; text-align: center;}
+.cd-val { font-size: 2.2rem; font-family: 'JetBrains Mono', monospace; font-weight: 800; line-height: 1; letter-spacing: -1.5px;}
+
+.val-gradient-week { background: linear-gradient(135deg, #e0f2fe, #ffffff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; color: transparent; }
+.val-gradient-today { background: linear-gradient(90deg, #fef3c7, #ffffff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; color: transparent; }
+
+.day-node { position: absolute; width: 26px; height: 26px; border-radius: 50%; background: var(--panel); border: 2px solid var(--tb); display: flex; flex-direction: column; align-items: center; justify-content: center; transform: translate(-50%, -50%); z-index: 10; transition: 0.3s; box-shadow: 0 4px 10px rgba(0,0,0,0.5); backdrop-filter: blur(5px); }
+.day-node .date-val { font-family: 'JetBrains Mono', monospace; font-size: 0.6rem; font-weight: 800; color: var(--mu); }
+.day-node .day-out { position: absolute; font-family: 'Syne', sans-serif; font-size: 0.65rem; font-weight: 800; color: var(--mu); }
+.day-node.active { background: var(--tx); border-color: var(--cyan); transform: translate(-50%, -50%) scale(1.15); z-index: 11; }
+.day-node.active .date-val { color: var(--bg); }
+.day-node.active .day-out { color: var(--cyan); }
+.day-node.done { background: var(--green); border-color: var(--green); }
+.day-node.done .date-val { color: #fff; }
+
+.sh { font-size: 0.8rem; font-weight: 800; color: var(--tx); margin: 24px 0 14px; letter-spacing: 1.5px; text-transform: uppercase; padding-left: 6px; display: flex; align-items: center; gap: 8px;}
+.sh::before { content: ''; display: block; width: 5px; height: 16px; background: var(--cyan); border-radius: 4px; }
+
+.workout-card { display: flex; flex-direction: column; align-items: stretch; border-radius: 20px; padding: 16px 12px; margin-bottom: 14px; position: relative; transition: all .2s ease; border-left: 6px solid transparent; background: var(--panel); border: 1px solid var(--tb); border-left-width: 6px; box-shadow: var(--shadow-lg); overflow: hidden;}
+.workout-card::before { content:''; position:absolute; inset:0; background: linear-gradient(135deg, rgba(255,255,255,0.03), transparent); pointer-events: none; }
+.workout-card:hover { transform: translateY(-2px); box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
+.workout-card.theme-math { border-left-color: var(--pu); }
+.workout-card.theme-phy { border-left-color: var(--or); }
+.workout-card.theme-che { border-left-color: var(--cyan); }
+.workout-card.theme-bio { border-left-color: var(--green); }
+.workout-card.done { opacity: .5; filter: grayscale(50%); border-left-color: var(--green)!important; background: var(--bg); }
+
+.wc-header { display: flex; align-items: center; justify-content: space-between; width: 100%; cursor: pointer; position: relative; z-index: 2;}
+.wc-header-left { display: flex; align-items: center; gap: 10px; }
+.wc-tag-badge { font-size: 0.8rem; font-weight: 800; letter-spacing: 0.5px; text-transform: uppercase; background: var(--bg); border: 1px solid var(--tb); color: var(--tx); padding: 8px 16px; border-radius: 12px; }
+.wc-body { display: none; padding-top: 12px; margin-top: 14px; border-top: 1px solid var(--tb); animation: vIn 0.2s ease-out; position: relative; z-index: 2;}
+.workout-card.open .wc-body { display: block; }
+
+.pro-checkbox { flex-shrink: 0; width: 32px; height: 32px; border-radius: 50%; border: 2px solid var(--mu); background: var(--bg); display: flex; align-items: center; justify-content: center; transition: all .3s cubic-bezier(.16,1,.3,1); cursor:pointer;}
+.pro-checkbox svg { width: 16px; height: 16px; stroke-width: 4; stroke: #fff; transform: scale(0); transition: .3s cubic-bezier(.34,1.56,.64,1); }
+.workout-card.done .pro-checkbox { background: var(--green); border-color: var(--green); }
+.workout-card.done .pro-checkbox svg { transform: scale(1); }
+
+/* --- NEW STRUCTURED DATA FORMATTING CSS --- */
+.data-box { background: rgba(0,0,0,0.3); padding: 16px; border-radius: 14px; border: 1px solid var(--tb); }
+.syllabus-target { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 12px; border-radius: 10px; margin-bottom: 20px; border-left: 4px solid currentColor; }
+.syllabus-lbl { font-size: 0.6rem; text-transform: uppercase; font-weight: 800; letter-spacing: 1.5px; margin-bottom: 4px; }
+.syllabus-name { font-size: 1rem; font-weight: 700; color: #fff; }
+
+.concept-card { background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.05); border-radius: 12px; padding: 14px; margin-bottom: 12px; }
+.concept-head { font-size: 0.85rem; font-weight: 800; color: var(--gold); margin-bottom: 8px; display: flex; align-items: center; gap: 8px;}
+.concept-head::before { content: ''; display: block; width: 6px; height: 6px; background: currentColor; border-radius: 50%; }
+.concept-body { font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: var(--tx); line-height: 1.6; }
+.concept-body b { color: #fff; font-family: 'Syne', sans-serif;}
+
+.f-box { background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.08); padding: 12px; border-radius: 8px; font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; color: var(--gold); line-height: 1.8; margin-top: 6px; box-shadow: inset 0 4px 10px rgba(0,0,0,0.3); }
+
+/* Keep Vault Styles */
+.hl-topic { display: block; color: #fff; font-size: 0.95rem; font-weight: 800; margin-bottom: 8px; letter-spacing: 0.5px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 6px; }
+.txt-list { padding-left: 20px; margin-top: 6px; color: var(--tx); font-size: 0.85rem; line-height: 1.6; list-style-type: square;}
+.txt-list li { margin-bottom: 6px; }
+.txt-list li b { color: #fff; }
+
+#dmsg{display:none;text-align:center;padding:30px; border-radius: 24px;}
+.dtl{font-size:1.4rem;font-weight:800;margin:12px 0 6px;}
+.ds{font-size:.9rem;color:var(--mu);font-weight:600;}
+
+.bnav { position: fixed; bottom: 16px; left: 50%; transform: translateX(-50%); width: auto; min-width: 200px; background: rgba(20, 20, 28, 0.85); border: 1px solid rgba(255, 255, 255, 0.1); display: flex; padding: 6px; gap: 8px; border-radius: 100px; box-shadow: 0 10px 40px rgba(0,0,0,0.8); z-index: 100; backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); justify-content: center; }
+.bb { width: 44px; height: 44px; background: transparent; border: none; display: flex; align-items: center; justify-content: center; color: var(--mu); cursor: pointer; transition: all .3s cubic-bezier(.16,1,.3,1); border-radius: 50%; font-size: 1.2rem;}
+.bb.active { background: linear-gradient(135deg, var(--cyan), var(--pu)); color: #fff; transform: scale(1.05); box-shadow: 0 4px 15px rgba(0,208,244,0.3); }
+.bb svg { width: 20px; height: 20px; stroke: currentColor; stroke-width: 2.5; fill: none; transition: .2s; }
+
+.prog-hero-top{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:16px;}
+.prog-hero-pct{font-family:'JetBrains Mono',monospace;font-size:2.5rem;font-weight:800;line-height:1;letter-spacing:-1px;background:linear-gradient(90deg,var(--cyan),var(--green));-webkit-background-clip:text;color:transparent;}
+.prog-hero-meta{text-align:right;}
+.prog-hero-days{font-family:'JetBrains Mono',monospace;font-size:.9rem;font-weight:800;}
+.prog-hero-lbl{font-size:.5rem;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--mu);margin-top:4px;}
+.prog-bar-wrap{height:8px;background:var(--tb);border-radius:8px;overflow:hidden;}
+.prog-bar-fill{height:100%;border-radius:8px;background:linear-gradient(90deg,var(--cyan),var(--green));width:0%;transition:width 1s cubic-bezier(.16,1,.3,1);}
+
+.subj-rings{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px;}
+.subj-ring-card{display:flex;flex-direction:column;align-items:center;gap:8px;padding:18px 12px;border-radius:20px;background:var(--panel);border:1px solid var(--tb);box-shadow:var(--shadow-lg);}
+.prog-ring-svg{overflow:visible;}
+.prog-ring-track{fill:none;stroke:var(--bg);stroke-width:6;}
+.prog-ring-arc{fill:none;stroke-linecap:round;stroke-width:6;stroke-dasharray:226.19;stroke-dashoffset:226.19;transform:rotate(-90deg);transform-origin:40px 40px;transition:stroke-dashoffset 1s cubic-bezier(.16,1,.3,1);}
+.prog-ring-pct{font-family:'JetBrains Mono',monospace;font-size:1.1rem;font-weight:800;text-anchor:middle;dominant-baseline:central;fill:var(--tx);letter-spacing:-.5px;}
+.prog-ring-sub{font-family:'Syne',sans-serif;font-size:.35rem;font-weight:800;text-anchor:middle;dominant-baseline:central;letter-spacing:.5px;fill:var(--mu);}
+.subj-ring-name{font-size:.65rem;font-weight:800;color:var(--tx);text-transform:uppercase;letter-spacing:1px;}
+.subj-ring-icon{font-size:1.4rem;}
+
+.plan-section{margin-top:4px;}
+.plan-day-card{border-radius:16px;margin-bottom:12px;background:var(--panel);border:1px solid var(--tb);overflow:hidden;transition:.2s;}
+.plan-day-card.completed{border-color:rgba(0,210,106,.3);background:rgba(0,210,106,.05);}
+.plan-day-card.today-card{border:2px solid var(--cyan);box-shadow:0 0 10px rgba(0,208,244,.15);}
+.plan-day-header{display:flex;align-items:center;gap:12px;padding:16px;cursor:pointer;}
+.plan-day-num{font-family:'JetBrains Mono',monospace;font-size:.75rem;font-weight:800;background:var(--tx);color:var(--bg);width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.plan-day-card.completed .plan-day-num{background:var(--green); color:#fff;}
+.plan-day-card.today-card .plan-day-num{background:var(--cyan);color:#fff;}
+.plan-day-title{flex:1;font-size:.85rem;font-weight:800;color:var(--tx);}
+.plan-day-meta{font-size:.6rem;color:var(--mu);font-weight:700;margin-top:4px;}
+.plan-day-chevron{color:var(--mu);transition:transform .3s;flex-shrink:0;}
+.plan-day-card.open .plan-day-chevron{transform:rotate(180deg);}
+.plan-day-body{display:none;padding:0 16px 16px;}
+.plan-day-card.open .plan-day-body{display:block;}
+.plan-subject-row{display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--tb);}
+.plan-subject-row:last-child{border-bottom:none;}
+.plan-subj-badge{flex-shrink:0;font-size:.5rem;font-weight:800;padding:6px 10px;border-radius:6px;text-transform:uppercase;margin-top:1px;}
+.badge-math{color:var(--pu);background:rgba(176,88,232,.15);}
+.badge-phy{color:var(--or);background:rgba(255,136,0,.15);}
+.badge-che{color:var(--cyan);background:rgba(0,208,244,.15);}
+.badge-bio{color:var(--green);background:rgba(0,210,106,.15);}
+.plan-subj-text{font-size:.75rem;color:var(--tx);font-weight:600;line-height:1.4;flex:1;}
+
+/* --- VAULT: PRO BUBBLES --- */
+.bubble-wrap { display: flex; justify-content: center; gap: 28px; margin: 50px 0 30px; flex-wrap: wrap;}
+.subj-bubble { 
+  width: 140px; height: 140px; border-radius: 50%; 
+  background: linear-gradient(145deg, rgba(255,255,255,0.06), rgba(0,0,0,0.3)); 
+  border: 1px solid rgba(255,255,255,0.12); 
+  backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  cursor: pointer; transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  animation: floatBubble 4s ease-in-out infinite alternate;
+  position: relative; overflow: hidden;
+}
+.subj-bubble::before {
+  content: ''; position: absolute; inset: 0; border-radius: 50%;
+  box-shadow: inset 0 0 30px rgba(255,255,255,0.03); pointer-events: none;
+}
+.subj-bubble:hover { transform: scale(1.08) translateY(-5px); filter: brightness(1.2); }
+.subj-bubble.b-phy { box-shadow: 0 15px 35px rgba(255,136,0,0.15); animation-delay: 0s;}
+.subj-bubble.b-che { box-shadow: 0 15px 35px rgba(0,208,244,0.15); animation-delay: 1.5s;}
+.subj-bubble.b-bio { box-shadow: 0 15px 35px rgba(0,210,106,0.15); animation-delay: 0.7s;}
+
+.subj-bubble.b-phy .bubble-text { color: var(--or); }
+.subj-bubble.b-che .bubble-text { color: var(--cyan); }
+.subj-bubble.b-bio .bubble-text { color: var(--green); }
+
+@keyframes floatBubble {
+  0% { transform: translateY(0px); }
+  100% { transform: translateY(-12px); }
+}
+
+.bubble-icon { font-size: 3.2rem; margin-bottom: 8px; text-shadow: 0 4px 15px rgba(0,0,0,0.5); line-height: 1; z-index: 2; }
+.bubble-text { font-size: 0.7rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; text-align: center; width: 90%; white-space: nowrap; z-index: 2; }
+
+/* Sub-page List Styling */
+#vL-sub { animation: vSlide 0.3s cubic-bezier(.16,1,.3,1) forwards; }
+.sub-header { display: flex; align-items: center; gap: 16px; margin-bottom: 24px; padding: 0 4px;}
+.back-btn { 
+  background: rgba(255,255,255,0.08); border: 1px solid var(--tb); color: var(--tx); 
+  padding: 10px 18px; border-radius: 100px; font-weight: 700; font-size: 0.8rem; cursor: pointer;
+  display: flex; align-items: center; gap: 6px; backdrop-filter: blur(10px); transition: 0.2s;
+}
+.back-btn:hover { background: rgba(255,255,255,0.15); }
+.sub-title { font-size: 1.4rem; font-weight: 800; letter-spacing: 1px; color: var(--tx); }
+
+.cat-list { display: none; flex-direction: column; gap: 12px; }
+.cat-list.active { display: flex; }
+.cat-btn { 
+  background: var(--glass-bg); border: 1px solid var(--tb); color: var(--tx);
+  padding: 18px 20px; border-radius: 20px; font-weight: 700; font-size: 1rem;
+  display: flex; justify-content: space-between; align-items: center; cursor: pointer;
+  box-shadow: var(--shadow-lg); transition: all 0.2s; backdrop-filter: blur(20px);
+}
+.cat-btn:hover { background: rgba(255,255,255,0.05); transform: translateY(-2px); border-color: rgba(255,255,255,0.15); }
+.cat-btn span { color: var(--mu); font-size: 0.8rem; font-family: 'JetBrains Mono', monospace;}
+
+/* --- LANDSCAPE MODAL --- */
+#lsModal {
+  position: fixed; inset: 0; z-index: 10000; display: none;
+  background: var(--bg);
+  background-image:
+    linear-gradient(to right, rgba(255,255,255,0.03) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255,255,255,0.03) 1px, transparent 1px);
+  background-size: 40px 40px;
+  overflow-y: auto; overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+}
+#lsModal.active { display: block; animation: vIn 0.3s forwards; }
+
+.ls-rotate-hint {
+  display: none; position: fixed; inset: 0; z-index: 10002;
+  background: rgba(5,5,7,0.96);
+  flex-direction: column; align-items: center; justify-content: center;
+  gap: 16px; text-align: center; padding: 24px;
+}
+.ls-rotate-hint.show { display: flex; }
+.ls-rotate-icon {
+  font-size: 3rem; animation: rotateHint 1.5s ease-in-out infinite alternate;
+}
+@keyframes rotateHint {
+  0%   { transform: rotate(0deg);   }
+  100% { transform: rotate(90deg);  }
+}
+.ls-rotate-txt { font-size: 1rem; font-weight: 800; color: var(--tx); letter-spacing: 1px; }
+.ls-rotate-sub { font-size: 0.8rem; color: var(--mu); font-weight: 600; }
+
+.ls-close-btn {
+  position: fixed; top: 16px; right: 20px; z-index: 10001;
+  width: 38px; height: 38px; border-radius: 50%;
+  background: rgba(10,10,15,0.85); border: 1px solid rgba(255,255,255,0.15);
+  color: #fff; display: flex; align-items: center; justify-content: center;
+  font-size: 1.2rem; cursor: pointer;
+  backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+  box-shadow: 0 4px 15px rgba(0,0,0,0.5); transition: 0.2s;
+}
+.ls-close-btn:hover { background: rgba(255,255,255,0.1); transform: scale(1.1); }
+
+.ls-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 14px; padding: 64px 16px 32px;
+}
+.ls-card {
+  background: rgba(20,20,28,0.75); border: 1px solid var(--glass-border);
+  border-left: 4px solid var(--cyan); padding: 14px; border-radius: 12px;
+  font-size: 0.88rem; line-height: 1.55; color: var(--tx);
+  backdrop-filter: blur(10px);
+}
+.ls-card strong { color: var(--gold); }
+</style>
+</head>
+<body>
+<div class="bg">
+  <div class="bg-geometric"></div>
+  <div class="bg-blob-3"></div>
+</div>
+<div class="app" id="mainAppScroll">
+
+  <div class="vc">
+    <div class="view active" id="vT">
+      <div class="pro-dashboard glass-card">
+        <div class="ring-col">
+          <div style="width:140px; height:140px; position:relative; margin: 0 auto;">
+            <svg viewBox="0 0 140 140" class="dash-svg">
+              <defs>
+                <linearGradient id="wkGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%"><animate attributeName="stop-color" values="#facc15; #ff2a5f; #ff8800; #facc15" dur="3s" repeatCount="indefinite" /></stop>
+                  <stop offset="100%"><animate attributeName="stop-color" values="#ff8800; #b058e8; #facc15; #ff8800" dur="3s" repeatCount="indefinite" /></stop>
+                </linearGradient>
+              </defs>
+              <circle cx="70" cy="70" r="54" class="ring-track"/>
+              <circle cx="70" cy="70" r="54" class="ring-prog" id="wkProgSvg" stroke="url(#wkGrad)" stroke-dasharray="339.29" stroke-dashoffset="339.29"/>
+            </svg>
+            <div id="weekNodesEl"></div>
+            <div class="center-display">
+              <div class="cd-val val-gradient-week" id="streakVal">0</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="ring-col">
+          <div style="width:140px; height:140px; position:relative; margin: 0 auto;">
+            <svg viewBox="0 0 140 140" class="dash-svg">
+              <defs>
+                <linearGradient id="todayGrad" x1="0%" y1="100%" x2="100%" y2="0%">
+                  <stop offset="0%"><animate attributeName="stop-color" values="#00d0f4; #00d26a; #b058e8; #00d0f4" dur="3s" repeatCount="indefinite" /></stop>
+                  <stop offset="100%"><animate attributeName="stop-color" values="#b058e8; #00d0f4; #00d26a; #b058e8" dur="3s" repeatCount="indefinite" /></stop>
+                </linearGradient>
+              </defs>
+              <circle cx="70" cy="70" r="54" class="ring-track" />
+              <circle cx="70" cy="70" r="54" class="ring-prog" id="todayRingSvg" stroke="url(#todayGrad)" stroke-dasharray="339.29" stroke-dashoffset="339.29"/>
+            </svg>
+            <div class="center-display">
+              <div class="cd-val val-gradient-today" id="cdDays">-- D</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="dmsg" class="dmsg glass-card">
+        <div style="font-size:2.5rem; margin-bottom:10px;">🏆</div>
+        <div class="dtl">Day Cleared.</div>
+        <div class="ds">You just secured high-probability NEET marks. Keep pushing.</div>
+      </div>
+      
+      <div id="tw"></div>
+    </div>
+
+    <div class="view" id="vP"></div>
+
+    <div class="view" id="vL">
+        
+       <div id="vL-main">
+           <div class="sh" style="text-align: center; justify-content: center; margin-bottom: 20px; font-size: 1.1rem; letter-spacing: 2px;">6-Day High-Yield Vault</div>
+           <div class="bubble-wrap">
+              <div class="subj-bubble b-phy" onclick="showCat('phy', 'Physics Vault')">
+                 <div class="bubble-icon">⚡</div><div class="bubble-text">Physics</div>
+              </div>
+              <div class="subj-bubble b-che" onclick="showCat('che', 'Chemistry Vault')">
+                 <div class="bubble-icon">⚗️</div><div class="bubble-text">Chemistry</div>
+              </div>
+              <div class="subj-bubble b-bio" onclick="showCat('bio', 'Biology Vault')">
+                 <div class="bubble-icon">🧬</div><div class="bubble-text">Biology</div>
+              </div>
+           </div>
+       </div>
+
+       <div id="vL-sub" style="display:none;">
+           <div class="sub-header">
+              <button class="back-btn" onclick="closeCat()">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                  Back
+              </button>
+              <div class="sub-title" id="subTitle">Subject</div>
+           </div>
+
+           <div id="cat-phy" class="cat-list">
+              <div class="cat-btn" onclick="openLib(libData.phyGraphs, '#ff8800')">Sure Shot Graphs <span>Explore ➔</span></div>
+              <div class="cat-btn" onclick="openLib(libData.phyDimensions, '#ff8800')">Top Dimensions <span>Explore ➔</span></div>
+              <div class="cat-btn" onclick="openLib(libData.phyTheory, '#ff8800')">Theory Exclusives <span>Explore ➔</span></div>
+              <div class="cat-btn" onclick="openLib(libData.phyFormula, '#ff8800')">Golden Formulas <span>Explore ➔</span></div>
+           </div>
+
+           <div id="cat-che" class="cat-list">
+              <div class="cat-btn" onclick="openLib(libData.chePro, '#00d0f4')">Core Org Reactions <span>Explore ➔</span></div>
+              <div class="cat-btn" onclick="openLib(libData.cheCatalyst, '#00d0f4')">Catalyst Actions <span>Explore ➔</span></div>
+              <div class="cat-btn" onclick="openLib(libData.cheTrends, '#00d0f4')">Master Trends <span>Explore ➔</span></div>
+              <div class="cat-btn" onclick="openLib(libData.cheColor, '#00d0f4')">Colors & Ppt <span>Explore ➔</span></div>
+              <div class="cat-btn" onclick="openLib(libData.cheShape, '#00d0f4')">Shapes & Hyb <span>Explore ➔</span></div>
+              <div class="cat-btn" onclick="openLib(libData.cheMnemonics, '#00d0f4')">Decoded Mnemonics <span>Explore ➔</span></div>
+           </div>
+
+           <div id="cat-bio" class="cat-list">
+              <div class="cat-btn" onclick="openLib(libData.bioTables, '#00d26a')">Crucial Tables <span>Explore ➔</span></div>
+              <div class="cat-btn" onclick="openLib(libData.bioDiagrams, '#00d26a')">Golden Diagrams <span>Explore ➔</span></div>
+              <div class="cat-btn" onclick="openLib(libData.bioDates, '#00d26a')">Years & Dates <span>Explore ➔</span></div>
+              <div class="cat-btn" onclick="openLib(libData.bioValues, '#00d26a')">Exact Values <span>Explore ➔</span></div>
+              <div class="cat-btn" onclick="openLib(libData.bioAbbr, '#00d26a')">Abbreviations <span>Explore ➔</span></div>
+              <div class="cat-btn" onclick="openLib(libData.bioExamples, '#00d26a')">NCERT Examples <span>Explore ➔</span></div>
+              <div class="cat-btn" onclick="openLib(libData.bioScientists, '#00d26a')">Scientists Match <span>Explore ➔</span></div>
+           </div>
+       </div>
+
+    </div>
+
+  </div>
+
+  <div class="bnav">
+    <button class="bb active" id="t0" onclick="switchTab(0)">
+      <svg viewBox="0 0 24 24"><polyline points="3 12 8 12 12 4 16 20 20 12 23 12"></polyline></svg>
+    </button>
+    <button class="bb" id="t1" onclick="switchTab(1)">
+      <svg viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M7 16l4-4 4 4 4-6"/></svg>
+    </button>
+    <button class="bb" id="t2" onclick="switchTab(2)">📜</button>
+  </div>
+</div>
+
+<div class="ls-rotate-hint" id="lsRotateHint">
+  <div class="ls-rotate-icon">📱</div>
+  <div class="ls-rotate-txt">Rotate to Landscape</div>
+  <div class="ls-rotate-sub">For the best reading experience,<br>turn your device sideways.</div>
+  <button class="back-btn" style="margin-top:8px;" onclick="closeLib()">Cancel</button>
+</div>
+
+<div id="lsModal">
+  <button class="ls-close-btn" onclick="closeLib()">✕</button>
+  <div class="ls-grid" id="lsGrid"></div>
+</div>
+
+<script>
+'use strict';
+
+// --- EXACT 6-DAY COMPRESSION FOR NEET JUNE 21 ---
+const _now = new Date();
+const _today = new Date(_now.getFullYear(), _now.getMonth(), _now.getDate());
+_today.setHours(0, 0, 0, 0);
+
+// Set Target to June 21, 2026
+const TARGET_DATE = new Date(2026, 5, 21, 0, 0, 0).getTime(); 
+const SK = 'neet_pro_june21_6day_v9_clustered'; 
+const TOTAL = 6; 
+
+let dsStr = localStorage.getItem(SK + '_start_date');
+if (!dsStr) {
+    dsStr = _today.getTime().toString();
+    localStorage.setItem(SK + '_start_date', dsStr);
+}
+const DS = new Date(parseInt(dsStr)); 
+
+const MN = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const DL = ['M','T','W','T','F','S','S'];
+
+// --- THE NEW CONCEPT CLUSTER ENGINE ---
+// Built specifically so that Graphs, Formulas, and Theory sit together logically.
+
+const SPRINT_DATA = [
+  {
+    day: 1,
+    mathConst: "<b>h</b> = 6.63&times;10<sup>-34</sup> J&middot;s<br><b>hc</b> &approx; 1240 eV&middot;nm<br><b>1 eV</b> = 1.6&times;10<sup>-19</sup> J",
+    phyTitle: "Modern Physics & Semiconductors",
+    phyClusters: [
+      { title: "Photoelectric Effect", body: "<b>Graph:</b> V<sub>s</sub> vs Freq (Linear, Slope = h/e)<br><b>Equation:</b> K<sub>max</sub> = hc/&lambda; - &Phi;" },
+      { title: "Bohr Model", body: "<b>Radius:</b> r &prop; n<sup>2</sup> / Z<br><b>Energy:</b> E = -13.6 (Z<sup>2</sup>/n<sup>2</sup>) eV<br><b>Velocity:</b> v &prop; Z / n" },
+      { title: "Semiconductors", body: "<b>Universal Gates:</b> NAND & NOR.<br><b>p-type:</b> Acceptor impurity (Holes majority)." }
+    ],
+    cheTitle: "Coordination & d/f Block",
+    cheClusters: [
+      { title: "Ligands & Splitting", body: "<b>Strong Field:</b> CN<sup>-</sup>, CO (Causes pairing).<br><b>Weak Field:</b> Halogens (No pairing)." },
+      { title: "Colors & Trends", body: "<b>Prussian Blue:</b> [Fe(CN)<sub>6</sub>]<sup>4-</sup> with Fe<sup>3+</sup>.<br><b>3d Size:</b> Sc > Ti > V > Cr > Mn &approx; Fe &approx; Co &approx; Ni < Cu < Zn" },
+      { title: "Lanthanides", body: "<b>Mnemonic:</b> Sir Par Nadiya Prem Ki Samai... (Ce, Pr, Nd, Pm, Sm).<br><b>Stable state:</b> +3 is most common." }
+    ],
+    bioTitle: "Genetics & Molecular Bio",
+    bioClusters: [
+      { title: "Genetic Code", body: "<b>Start:</b> AUG (Methionine).<br><b>Stop:</b> UAA, UAG, UGA.<br><b>Nature:</b> 64 codons, degenerate, universal." },
+      { title: "Lac Operon", body: "<b>Repressor:</b> Binds operator, blocks RNA pol.<br><b>Inducer:</b> Lactose binds repressor.<br><b>Genes:</b> z (&beta;-gal), y (permease), a (transacetylase)." },
+      { title: "Key Scientists", body: "<b>Hershey & Chase:</b> P<sup>32</sup>/S<sup>35</sup> proved DNA is genetic material.<br><b>Meselson & Stahl:</b> N<sup>15</sup> proved semi-conservative replication." }
+    ]
+  },
+  {
+    day: 2,
+    mathConst: "<b>c</b> = 3&times;10<sup>8</sup> m/s<br><b>1 / &pi;</b> &approx; 0.318<br><b>&pi;<sup>2</sup></b> &approx; 9.86 &approx; g",
+    phyTitle: "Optics (Ray & Wave)",
+    phyClusters: [
+      { title: "Wave Optics (YDSE)", body: "<b>Fringe Width:</b> &beta; = &lambda;D/d<br><b>Maxima:</b> Path diff = n&lambda;<br><b>Minima:</b> Path diff = (2n-1)&lambda;/2" },
+      { title: "Ray Optics", body: "<b>Lens Maker:</b> 1/f = (&mu;-1)[1/R<sub>1</sub> - 1/R<sub>2</sub>]<br><b>TIR:</b> Denser to rarer, i > i<sub>c</sub>." },
+      { title: "Optical Instruments", body: "<b>Microscope RP:</b> 2&mu; sin&theta; / 1.22&lambda;<br><b>Telescope RP:</b> D / 1.22&lambda;" }
+    ],
+    cheTitle: "Bonding & Periodic Table",
+    cheClusters: [
+      { title: "Hybridization Shapes", body: "<b>PCl<sub>5</sub>:</b> sp<sup>3</sup>d (Trigonal Bipyramidal, 0 L.P.)<br><b>SF<sub>6</sub>:</b> sp<sup>3</sup>d<sup>2</sup> (Octahedral, 0 L.P.)<br><b>XeF<sub>4</sub>:</b> sp<sup>3</sup>d<sup>2</sup> (Square Planar, 2 L.P.)" },
+      { title: "Dipole Moments", body: "<b>Symmetrical = 0:</b> CO<sub>2</sub>, BF<sub>3</sub>, CCl<sub>4</sub>.<br><b>Order:</b> CH<sub>3</sub>Cl > CH<sub>3</sub>F > CH<sub>3</sub>Br." },
+      { title: "Periodic Trends", body: "<b>Electronegativity:</b> F > O > N &approx; Cl > Br > I<br><b>Acidic Hydrides:</b> HI > HBr > HCl > HF" }
+    ],
+    bioTitle: "Human Physiology Core",
+    bioClusters: [
+      { title: "Heart Anatomy", body: "<b>SAN (Pacemaker):</b> Right upper corner of Right Atrium.<br><b>ECG:</b> P=Atrial depol, QRS=Ventricular depol, T=Repol." },
+      { title: "Respiratory Volumes", body: "<b>TV:</b> 500mL<br><b>IRV:</b> 2500-3000mL<br><b>ERV:</b> 1000-1100mL<br><b>RV:</b> 1100-1200mL" },
+      { title: "Excretory System", body: "<b>GFR:</b> 125 mL/min (180 L/day).<br><b>Urine output:</b> Approx 1.5 L/day." }
+    ]
+  },
+  {
+    day: 3,
+    mathConst: "<b>&epsilon;<sub>0</sub></b> = 8.85&times;10<sup>-12</sup><br><b>1 / (4&pi;&epsilon;<sub>0</sub>)</b> = 9&times;10<sup>9</sup><br><b>&mu;<sub>0</sub></b> = 4&pi;&times;10<sup>-7</sup>",
+    phyTitle: "Electrodynamics",
+    phyClusters: [
+      { title: "Electrostatics", body: "<b>E vs r (Solid Sphere):</b> Linear inside, 1/r<sup>2</sup> outside.<br><b>Capacitor Energy:</b> U = &frac12;CV<sup>2</sup> = Q<sup>2</sup>/2C" },
+      { title: "Current Electricity", body: "<b>Drift Vel:</b> v<sub>d</sub> = eE&tau; / m<br><b>L-C-R Time [T]:</b> &radic;(LC), L/R, RC." },
+      { title: "Magnetism", body: "<b>Biot-Savart:</b> dB = &mu;<sub>0</sub>I(dl &times; r) / 4&pi;r<sup>3</sup><br><b>Wire B-field:</b> &mu;<sub>0</sub>I / 2&pi;r" }
+    ],
+    cheTitle: "Organic: GOC & Stability",
+    cheClusters: [
+      { title: "Stability Rules", body: "<b>Carbocation:</b> Benzyl/Allyl > 3&deg; > 2&deg; > 1&deg; > Methyl.<br><b>Effects:</b> Resonance dominates Inductive." },
+      { title: "SN1 vs SN2", body: "<b>S<sub>N</sub>1:</b> 3&deg;>2&deg;>1&deg; (Forms Carbocation, Racemization).<br><b>S<sub>N</sub>2:</b> 1&deg;>2&deg;>3&deg; (Transition state, Inversion)." },
+      { title: "Directing Groups", body: "<b>Meta Directors:</b> -NO<sub>2</sub>, -CN, -CHO, -COOH.<br><b>Action:</b> They deactivate the benzene ring for EAS." }
+    ],
+    bioTitle: "Plant Physiology Core",
+    bioClusters: [
+      { title: "Photosynthesis Acronyms", body: "<b>RuBisCO:</b> Primary CO<sub>2</sub> acceptor in C3 (5C RuBP).<br><b>PEPcase:</b> Primary CO<sub>2</sub> acceptor in C4 (3C PEP)." },
+      { title: "Respiratory Quotient (RQ)", body: "<b>Carbohydrates:</b> 1.0<br><b>Proteins:</b> 0.9<br><b>Fats/Tripalmitin:</b> 0.7" },
+      { title: "Plant Growth Regulators", body: "<b>Auxins:</b> Promote apical dominance.<br><b>Ethylene:</b> Gaseous PGR, highly effective for fruit ripening." }
+    ]
+  },
+  {
+    day: 4,
+    mathConst: "<b>R</b> = 8.314 J / mol&middot;K<br><b>R</b> = 0.0821 L&middot;atm<br><b>&sigma;</b> = 5.67&times;10<sup>-8</sup>",
+    phyTitle: "Thermodynamics & KTG",
+    phyClusters: [
+      { title: "Thermodynamics Laws", body: "<b>1st Law:</b> &Delta;Q = &Delta;U + &Delta;W<br><b>Carnot Eff:</b> &eta; = 1 - (T<sub>2</sub> / T<sub>1</sub>)" },
+      { title: "P-V Graphs", body: "<b>Adiabatic vs Isothermal:</b> Adiabatic curve is steeper by a factor of &gamma; (C<sub>p</sub>/C<sub>v</sub>)." },
+      { title: "Kinetic Theory (KTG)", body: "<b>v<sub>rms</sub>:</b> &radic;(3RT/M)<br><b>Degrees of Freedom:</b> Monoatomic=3, Diatomic=5." }
+    ],
+    cheTitle: "Organic: Named Rxns",
+    cheClusters: [
+      { title: "Aldol vs Cannizzaro", body: "<b>Aldol:</b> Needs &alpha;-H. Forms &beta;-hydroxy aldehyde.<br><b>Cannizzaro:</b> No &alpha;-H (e.g., HCHO). Self-ox/red." },
+      { title: "Key Reagents", body: "<b>Clemmensen:</b> Zn-Hg / HCl (Acidic).<br><b>Wolff-Kishner:</b> NH<sub>2</sub>NH<sub>2</sub> / KOH (Basic).<br><i>Both reduce C=O to CH<sub>2</sub>.</i>" },
+      { title: "Iodoform Test", body: "<b>Result:</b> CHI<sub>3</sub> (Yellow precipitate).<br><b>Given by:</b> Methyl ketones (CH<sub>3</sub>-CO-R) and Acetaldehyde." }
+    ],
+    bioTitle: "Ecology & Environment",
+    bioClusters: [
+      { title: "Population Interactions", body: "<b>Mutualism:</b> (+, +) e.g., Lichens.<br><b>Competition:</b> (-, -)<br><b>Predation/Parasitism:</b> (+, -)" },
+      { title: "Ecosystem Pyramids", body: "<b>Energy Law:</b> 10% transfer between trophic levels.<br><b>Pyramid of Energy:</b> ALWAYS upright." },
+      { title: "Biodiversity Theories", body: "<b>Robert May:</b> Estimated global species at 7 Million.<br><b>Paul Ehrlich:</b> Rivet Popper hypothesis." }
+    ]
+  },
+  {
+    day: 5,
+    mathConst: "<b>Log 2</b> = 0.301<br><b>Log 3</b> = 0.477<br><b>&radic;2</b> = 1.414, <b>&radic;3</b> = 1.732",
+    phyTitle: "Mechanics 1 (Kinematics)",
+    phyClusters: [
+      { title: "Kinematics Graphs", body: "<b>v-t Graph Area:</b> Displacement.<br><b>v-t Graph Slope:</b> Acceleration." },
+      { title: "Friction Rules", body: "<b>Static Friction:</b> Self-adjusting.<br><b>Condition:</b> &mu;<sub>s</sub> > &mu;<sub>k</sub>.<br><b>Repose:</b> Angle of repose = Angle of friction." },
+      { title: "Work & Energy", body: "<b>Work-Energy Theorem:</b> W<sub>net</sub> = &Delta;K<br><b>Dimensions:</b> [M L<sup>2</sup> T<sup>-2</sup>] (Same for Torque)." }
+    ],
+    cheTitle: "Physical: Electrochem",
+    cheClusters: [
+      { title: "Nernst Equation", body: "<b>Eq:</b> E = E&deg; - (0.0591/n)log(Q)<br><b>Gibbs Free Energy:</b> &Delta;G&deg; = -nFE&deg;" },
+      { title: "Chemical Kinetics", body: "<b>1st Order Half-life:</b> t<sub>1/2</sub> = 0.693 / k<br><b>Arrhenius Eq:</b> k = Ae<sup>-E<sub>a</sub>/RT</sup>" },
+      { title: "Catalysts", body: "<b>V<sub>2</sub>O<sub>5</sub>:</b> Contact Process (SO<sub>2</sub> to SO<sub>3</sub>).<br><b>Ziegler-Natta:</b> TiCl<sub>4</sub> + Al(C<sub>2</sub>H<sub>5</sub>)<sub>3</sub> (HDPE)." }
+    ],
+    bioTitle: "Reproduction",
+    bioClusters: [
+      { title: "Human Reproduction", body: "<b>Menstrual Cycle:</b> Day 14 LH surge triggers ovulation.<br><b>Corpus Luteum:</b> Secretes Progesterone to maintain endometrium." },
+      { title: "Assisted Tech (ARTs)", body: "<b>IVF:</b> In Vitro Fertilization.<br><b>ZIFT:</b> Zygote Intra Fallopian Transfer (Up to 8 cells).<br><b>IUT:</b> Intra Uterine Transfer (>8 cells)." },
+      { title: "Plant Reproduction", body: "<b>Double Fertilization:</b> Unique to angiosperms.<br><b>Process:</b> Syngamy (zygote) + Triple fusion (Primary Endosperm Nucleus)." }
+    ]
+  },
+  {
+    day: 6,
+    mathConst: "<b>sin(37&deg;)</b> = 3/5<br><b>cos(37&deg;)</b> = 4/5<br><b>1 amu</b> = 931.5 MeV",
+    phyTitle: "Mechanics 2 (Grav/SHM)",
+    phyClusters: [
+      { title: "SHM & Waves", body: "<b>K.E. Graph:</b> Inverted Parabola.<br><b>P.E. Graph:</b> Upward Parabola.<br><b>Doppler:</b> f' = f(v &plusmn; v<sub>o</sub>)/(v &mp; v<sub>s</sub>)" },
+      { title: "Rotational Motion", body: "<b>MOI Formulas:</b><br>Ring/Hollow Cyl = MR<sup>2</sup><br>Disk/Solid Cyl = MR<sup>2</sup>/2<br>Solid Sphere = 2/5 MR<sup>2</sup>" },
+      { title: "Gravitation", body: "<b>Escape Velocity:</b> v<sub>e</sub> = &radic;(2gR)<br><b>Geostationary Sat:</b> T = 24 hrs, Height &approx; 36,000 km." }
+    ],
+    cheTitle: "Physical: Solutions",
+    cheClusters: [
+      { title: "Colligative Properties", body: "<b>Vant Hoff factor (i):</b><br>i > 1 (Dissociation)<br>i < 1 (Association)<br><i>Properties depend ONLY on particle count.</i>" },
+      { title: "Solid State", body: "<b>FCC Packing:</b> 4 atoms, 74% efficiency.<br><b>BCC Packing:</b> 2 atoms, 68% efficiency." },
+      { title: "Flame Test Colors", body: "<b>Li:</b> Crimson Red<br><b>Na:</b> Yellow<br><b>K:</b> Violet / Lilac<br><b>Ba:</b> Apple Green" }
+    ],
+    bioTitle: "Cell & Biotech",
+    bioClusters: [
+      { title: "Cell Cycle (Prophase I)", body: "<b>Zygotene:</b> Synapsis forms bivalents.<br><b>Pachytene:</b> Crossing over occurs.<br><b>Diplotene:</b> Chiasmata formation (X-shaped)." },
+      { title: "Biotech Tools", body: "<b>PCR:</b> Polymerase Chain Reaction (Requires Taq pol).<br><b>pBR322:</b> Vector with Ampicillin & Tetracycline resistance genes." },
+      { title: "Microbes in Welfare", body: "<b>Aspergillus niger:</b> Citric acid.<br><b>Acetobacter aceti:</b> Acetic acid.<br><b>Monascus purpureus:</b> Statins (Cholesterol lowering)." }
+    ]
+  }
+];
+
+// --- RENDER VAULT GLOBALS (Kept standalone for Vault Dictionary View) ---
+const phyGraphs = [
+  "<strong class='hl-topic'>Photoelectric Effect</strong><ul class='txt-list'><li><b>V<sub>s</sub> vs Freq (v):</b> Straight line.</li><li><b>Slope:</b> h/e</li><li><b>x-intercept:</b> Threshold freq (v<sub>0</sub>)</li></ul>",
+  "<strong class='hl-topic'>Interference vs Diffraction</strong><ul class='txt-list'><li><b>YDSE:</b> Equal intensity maxima.</li><li><b>Diffraction:</b> Central maximum is 2x wider and intensely bright.</li></ul>",
+  "<strong class='hl-topic'>Electrostatics & Magnetism</strong><ul class='txt-list'><li><b>E vs r (Solid Sphere):</b> Linear inside, 1/r<sup>2</sup> outside.</li><li><b>Hysteresis:</b> Loop area = Energy Loss.</li></ul>",
+  "<strong class='hl-topic'>Thermodynamics</strong><ul class='txt-list'><li><b>P-V Diagram:</b> Adiabatic curve is steeper than Isothermal.</li><li><b>Slope Diff:</b> &gamma; times steeper.</li></ul>",
+  "<strong class='hl-topic'>Kinematics</strong><ul class='txt-list'><li><b>v-t Graph Area:</b> Displacement.</li><li><b>v-t Graph Slope:</b> Acceleration.</li></ul>",
+  "<strong class='hl-topic'>SHM Energy</strong><ul class='txt-list'><li><b>Kinetic Energy:</b> Inverted Parabola.</li><li><b>Potential Energy:</b> Upward Parabola.</li></ul>"
+];
+const phyDimensions = [
+  "<strong class='hl-topic'>Modern Physics Match</strong><ul class='txt-list'><li><b>Planck's Const (h):</b> [M L<sup>2</sup> T<sup>-1</sup>]</li><li><b>Angular Momentum (L):</b> [M L<sup>2</sup> T<sup>-1</sup>]</li></ul>",
+  "<strong class='hl-topic'>Optics Dimensions</strong><ul class='txt-list'><li><b>Power of Lens:</b> [L<sup>-1</sup>]</li><li><b>Refractive Index:</b> Dimensionless [M<sup>0</sup> L<sup>0</sup> T<sup>0</sup>]</li></ul>",
+  "<strong class='hl-topic'>L-C-R Time Constants</strong><ul class='txt-list'><li><b>Time [T]:</b> &radic;(LC), L/R, RC</li><li><b>Frequency [T<sup>-1</sup>]:</b> 1/&radic;(LC), R/L, 1/RC</li></ul>",
+  "<strong class='hl-topic'>Thermodynamics Match</strong><ul class='txt-list'><li><b>Boltzmann Const (k):</b> [M L<sup>2</sup> T<sup>-2</sup> K<sup>-1</sup>]</li><li><b>Stefan's Const (&sigma;):</b> [M L<sup>0</sup> T<sup>-3</sup> K<sup>-4</sup>]</li></ul>",
+  "<strong class='hl-topic'>Mechanics 1 Match</strong><ul class='txt-list'><li><b>Grav Const (G):</b> [M<sup>-1</sup> L<sup>3</sup> T<sup>-2</sup>]</li><li><b>Energy/Work/Torque:</b> [M L<sup>2</sup> T<sup>-2</sup>]</li></ul>",
+  "<strong class='hl-topic'>Mechanics 2 Match</strong><ul class='txt-list'><li><b>Viscosity (&eta;):</b> [M L<sup>-1</sup> T<sup>-1</sup>]</li><li><b>Surface Tension:</b> [M L<sup>0</sup> T<sup>-2</sup>]</li></ul>"
+];
+const phyTheory = [
+  "<strong class='hl-topic'>Semiconductors & Logic</strong><ul class='txt-list'><li><b>Universal Gates:</b> NAND and NOR.</li><li><b>p-type:</b> Acceptor impurity (Holes majority).</li><li><b>n-type:</b> Donor impurity (Electrons majority).</li></ul>",
+  "<strong class='hl-topic'>Total Internal Ref (TIR)</strong><ul class='txt-list'><li><b>Conditions:</b> Denser to rarer medium &amp; i > i<sub>c</sub>.</li><li><b>Applications:</b> Optical fibers, Mirage, Diamond sparkling.</li></ul>",
+  "<strong class='hl-topic'>Magnetism Materials</strong><ul class='txt-list'><li><b>Diamagnetic:</b> Weakly repelled (e.g., H<sub>2</sub>O, Bi).</li><li><b>Paramagnetic:</b> Weakly attracted (e.g., Al, Na).</li><li><b>Ferromagnetic:</b> Strongly attracted (e.g., Fe, Ni).</li></ul>",
+  "<strong class='hl-topic'>EM Spectrum (Energy Order)</strong><ul class='txt-list'><li><b>Lowest E:</b> Radio Waves</li><li><b>&rarr;</b> Microwaves &rarr; Infrared</li><li><b>&rarr;</b> Visible &rarr; Ultraviolet</li><li><b>Highest E:</b> X-Rays &rarr; Gamma Rays</li></ul>",
+  "<strong class='hl-topic'>Friction & Mechanics</strong><ul class='txt-list'><li>Static friction is self-adjusting.</li><li><b>&mu;<sub>s</sub> > &mu;<sub>k</sub></b> (Static > Kinetic).</li><li>Angle of repose = Angle of friction.</li></ul>",
+  "<strong class='hl-topic'>Satellites & Gravity</strong><ul class='txt-list'><li><b>Geostationary:</b> T = 24 hrs, Height &approx; 36,000 km.</li><li><b>Polar Satellite:</b> Used for remote sensing.</li></ul>"
+];
+const phyFormula = [
+  "<strong class='hl-topic'>Bohr Model Properties</strong><div class='f-box'><b>Radius:</b> r<sub>n</sub> &prop; n<sup>2</sup> / Z<br><b>Energy:</b> E<sub>n</sub> = -13.6 (Z<sup>2</sup> / n<sup>2</sup>) eV<br><b>Velocity:</b> v<sub>n</sub> &prop; Z / n</div>",
+  "<strong class='hl-topic'>Lens Maker's Formula</strong><div class='f-box'><b>1 / f</b> = (&mu; - 1) [1 / R<sub>1</sub> - 1 / R<sub>2</sub>]<br><b>Power:</b> P = 1 / f</div>",
+  "<strong class='hl-topic'>Capacitors in Circuits</strong><div class='f-box'><b>Capacity:</b> C = &epsilon;<sub>0</sub>A / d<br><b>Energy:</b> U = &frac12;CV<sup>2</sup> = Q<sup>2</sup> / 2C<br><b>Series:</b> 1/C<sub>eq</sub> = 1/C<sub>1</sub> + 1/C<sub>2</sub></div>",
+  "<strong class='hl-topic'>Thermodynamics Laws</strong><div class='f-box'><b>1st Law:</b> &Delta;Q = &Delta;U + &Delta;W<br><b>Carnot Eff:</b> &eta; = 1 - (T<sub>2</sub> / T<sub>1</sub>)<br><b>v<sub>rms</sub>:</b> &radic;(3RT / M)</div>",
+  "<strong class='hl-topic'>Projectile Motion</strong><div class='f-box'><b>Time of Flight:</b> T = 2u&middot;sin&theta; / g<br><b>Max Height:</b> H = u<sup>2</sup>sin<sup>2</sup>&theta; / 2g<br><b>Range:</b> R = u<sup>2</sup>sin(2&theta;) / g</div>",
+  "<strong class='hl-topic'>Waves & Doppler Effect</strong><div class='f-box'><b>Doppler:</b> f' = f(v &plusmn; v<sub>o</sub>)/(v &mp; v<sub>s</sub>)<br><b>Beat Freq:</b> f<sub>beat</sub> = |f<sub>1</sub> - f<sub>2</sub>|<br><b>Escape Vel:</b> v<sub>e</sub> = &radic;(2gR)</div>"
+];
+const chePro = [
+  "<strong class='hl-topic'>Coordination Compounds</strong><ul class='txt-list'><li><b>Strong Field Ligands:</b> CN<sup>-</sup>, CO (Pairing occurs).</li><li><b>Weak Field Ligands:</b> Halogens (No pairing).</li><li><b>Synergic Bonding:</b> Metal &rarr; Carbonyl.</li></ul>",
+  "<strong class='hl-topic'>Dipole Moments</strong><ul class='txt-list'><li><b>Symmetrical:</b> CO<sub>2</sub>, BF<sub>3</sub>, CCl<sub>4</sub> (&mu; = 0).</li><li><b>Order:</b> CH<sub>3</sub>Cl > CH<sub>3</sub>F > CH<sub>3</sub>Br.</li></ul>",
+  "<strong class='hl-topic'>Aldol vs Cannizzaro</strong><ul class='txt-list'><li><b>Aldol:</b> Needs &alpha;-H. Forms &beta;-hydroxy aldehyde.</li><li><b>Cannizzaro:</b> No &alpha;-H (e.g., HCHO). Self-ox/red.</li></ul>",
+  "<strong class='hl-topic'>SN1 vs SN2 Mechanism</strong><ul class='txt-list'><li><b>S<sub>N</sub>1:</b> 3&deg; > 2&deg; > 1&deg; (Forms Carbocation, Racemization).</li><li><b>S<sub>N</sub>2:</b> 1&deg; > 2&deg; > 3&deg; (Transition state, Inversion).</li></ul>",
+  "<strong class='hl-topic'>Nernst Equation</strong><div class='f-box'>E<sub>cell</sub> = E&deg;<sub>cell</sub> - (0.0591/n) log(Q)<br><b>&Delta;G&deg;:</b> -nFE&deg;<sub>cell</sub></div>",
+  "<strong class='hl-topic'>Colligative Properties</strong><ul class='txt-list'><li>Depend ONLY on number of particles.</li><li><b>Vant Hoff (i):</b> i > 1 (Dissociation), i < 1 (Association).</li></ul>"
+];
+const cheCatalyst = [
+  "<strong class='hl-topic'>V<sub>2</sub>O<sub>5</sub> (Vanadium Pentoxide)</strong><div class='f-box'><b>Process:</b> Contact Process.<br><b>Action:</b> Oxidizes SO<sub>2</sub> to SO<sub>3</sub>.</div>",
+  "<strong class='hl-topic'>Ziegler-Natta Catalyst</strong><div class='f-box'><b>Formula:</b> TiCl<sub>4</sub> + Al(C<sub>2</sub>H<sub>5</sub>)<sub>3</sub><br><b>Action:</b> Polymerization of ethene to High-Density Polyethylene (HDPE).</div>",
+  "<strong class='hl-topic'>Lindlar's vs Birch</strong><ul class='txt-list'><li><b>Lindlar's (Pd/BaSO<sub>4</sub>):</b> Alkynes strictly to <b>CIS</b>-Alkenes.</li><li><b>Birch (Na/liq. NH<sub>3</sub>):</b> Alkynes strictly to <b>TRANS</b>-Alkenes.</li></ul>",
+  "<strong class='hl-topic'>Lucas Reagent</strong><div class='f-box'><b>Formula:</b> Anhydrous ZnCl<sub>2</sub> + conc. HCl<br><b>Test:</b> Distinguishes Alcohols. 3&deg;(turbidity instant), 2&deg;(5 mins).</div>",
+  "<strong class='hl-topic'>Clemmensen vs Wolff-Kishner</strong><ul class='txt-list'><li><b>Clemmensen:</b> Zn-Hg / HCl (Acidic).</li><li><b>Wolff-Kishner:</b> NH<sub>2</sub>NH<sub>2</sub> / KOH (Basic).</li><li><b>Action:</b> Both reduce Carbonyls (C=O) directly to Alkanes (-CH<sub>2</sub>-).</li></ul>",
+  "<strong class='hl-topic'>Rosenmund Reagent</strong><div class='f-box'><b>Formula:</b> H<sub>2</sub> / Pd-BaSO<sub>4</sub><br><b>Action:</b> Reduces Acid Chlorides (RCOCl) specifically to Aldehydes (RCHO).</div>"
+];
+const cheTrendsList = [
+  "<strong class='hl-topic'>Atomic Size (3d Series)</strong><div class='f-box'>Sc > Ti > V > Cr > Mn &approx; Fe &approx; Co &approx; Ni < Cu < Zn</div>",
+  "<strong class='hl-topic'>Electronegativity Order</strong><div class='f-box'>F (4.0) > O (3.5) > N (3.0) &approx; Cl (3.0) > Br (2.8) > I (2.5)</div>",
+  "<strong class='hl-topic'>Acidic Strength Order</strong><ul class='txt-list'><li><b>Phenols:</b> Phenol > H<sub>2</sub>O > Alcohols (Except Methanol)</li><li><b>Halogens:</b> HI > HBr > HCl > HF</li></ul>",
+  "<strong class='hl-topic'>Basic Strength of Amines (Aq)</strong><ul class='txt-list'><li><b>Ethyl group:</b> 2&deg; > 3&deg; > 1&deg; > NH<sub>3</sub></li><li><b>Methyl group:</b> 2&deg; > 1&deg; > 3&deg; > NH<sub>3</sub></li></ul>",
+  "<strong class='hl-topic'>Spectrochemical Series</strong><div class='f-box'>I<sup>-</sup> < Br<sup>-</sup> < SCN<sup>-</sup> < Cl<sup>-</sup> < F<sup>-</sup> < OH<sup>-</sup> < H<sub>2</sub>O < NH<sub>3</sub> < CN<sup>-</sup> < CO</div>",
+  "<strong class='hl-topic'>Carbocation Stability</strong><div class='f-box'>Benzyl/Allyl > 3&deg; > 2&deg; > 1&deg; > Methyl</div>"
+];
+const cheColor = [
+  "<strong class='hl-topic'>Transition Metal Ions (Aq)</strong><ul class='txt-list'><li><b>Cu<sup>2+</sup>:</b> Blue</li><li><b>Ni<sup>2+</sup>:</b> Green</li><li><b>Co<sup>2+</sup>:</b> Pink</li><li><b>Mn<sup>2+</sup>:</b> Light Pink</li></ul>",
+  "<strong class='hl-topic'>Silver Halides (AgX)</strong><ul class='txt-list'><li><b>AgCl:</b> White ppt (Soluble in NH<sub>3</sub>)</li><li><b>AgBr:</b> Pale Yellow ppt</li><li><b>AgI:</b> Yellow ppt (Insoluble in NH<sub>3</sub>)</li></ul>",
+  "<strong class='hl-topic'>Iodoform Test</strong><div class='f-box'><b>CHI<sub>3</sub>:</b> Bright Yellow Precipitate.<br><b>Given by:</b> Methyl ketones (CH<sub>3</sub>-CO-R) and Acetaldehyde.</div>",
+  "<strong class='hl-topic'>Prussian Blue Complex</strong><div class='f-box'>Formation of [Fe(CN)<sub>6</sub>]<sup>4-</sup> reacting with Fe<sup>3+</sup> yields a deep <b>Prussian Blue</b> precipitate.</div>",
+  "<strong class='hl-topic'>Flame Test Colors</strong><ul class='txt-list'><li><b>Li:</b> Crimson Red</li><li><b>Na:</b> Yellow</li><li><b>K:</b> Violet / Lilac</li><li><b>Ba:</b> Apple Green</li></ul>",
+  "<strong class='hl-topic'>Strong Oxidizers</strong><ul class='txt-list'><li><b>MnO<sub>4</sub><sup>-</sup> (Permanganate):</b> Intense Purple (+7 state).</li><li><b>Cr<sub>2</sub>O<sub>7</sub><sup>2-</sup> (Dichromate):</b> Orange (+6 state).</li></ul>"
+];
+const cheShape = [
+  "<strong class='hl-topic'>Complex Hybridizations</strong><ul class='txt-list'><li><b>[Ni(CN)<sub>4</sub>]<sup>2-</sup>:</b> dsp<sup>2</sup> (Square Planar)</li><li><b>[NiCl<sub>4</sub>]<sup>2-</sup>:</b> sp<sup>3</sup> (Tetrahedral)</li></ul>",
+  "<strong class='hl-topic'>Carbon Allotropes</strong><ul class='txt-list'><li><b>Diamond:</b> sp<sup>3</sup> (Tetrahedral 3D network).</li><li><b>Graphite:</b> sp<sup>2</sup> (Hexagonal planar sheets).</li><li><b>CO<sub>2</sub>:</b> sp (Linear geometry).</li></ul>",
+  "<strong class='hl-topic'>Nitrogen Oxides</strong><ul class='txt-list'><li><b>NO<sub>2</sub>:</b> Bent shape (Odd electron).</li><li><b>N<sub>2</sub>O:</b> Linear shape.</li><li><b>NO<sub>3</sub><sup>-</sup>:</b> Trigonal Planar.</li></ul>",
+  "<strong class='hl-topic'>Xenon Fluorides</strong><ul class='txt-list'><li><b>XeF<sub>2</sub>:</b> sp<sup>3</sup>d (Linear, 3 L.P.)</li><li><b>XeF<sub>4</sub>:</b> sp<sup>3</sup>d<sup>2</sup> (Square Planar, 2 L.P.)</li></ul>",
+  "<strong class='hl-topic'>Halogen Compounds</strong><ul class='txt-list'><li><b>ClF<sub>3</sub>:</b> sp<sup>3</sup>d (T-shaped, 2 L.P.)</li><li><b>BrF<sub>5</sub>:</b> sp<sup>3</sup>d<sup>2</sup> (Square Pyramidal, 1 L.P.)</li></ul>",
+  "<strong class='hl-topic'>Phosphorus & Sulfur</strong><ul class='txt-list'><li><b>PCl<sub>5</sub>:</b> sp<sup>3</sup>d (Trigonal Bipyramidal, 0 L.P.)</li><li><b>SF<sub>4</sub>:</b> sp<sup>3</sup>d (See-saw, 1 L.P.)</li></ul>"
+];
+const cheMnemonics = [
+  "<strong class='hl-topic'>3d Transition Metals</strong><div class='f-box'><b>S</b>cience <b>T</b>eacher <b>V</b>ineeta <b>Cr</b>iplani <b>M</b>a<b>n</b>ge <b>Fe</b>e <b>Co</b>i <b>Ni</b>hi <b>Cu</b>ch <b>Z</b>a<b>n</b>ta<br><br><i>(Sc, Ti, V, Cr, Mn, Fe, Co, Ni, Cu, Zn)</i></div>",
+  "<strong class='hl-topic'>Reactivity Series</strong><div class='f-box'><b>P</b>lease <b>S</b>top <b>C</b>alling <b>M</b>e <b>A</b> <b>C</b>areless <b>Z</b>ebra <b>I</b>nstead <b>T</b>ry <b>L</b>earning <b>H</b>ow <b>C</b>opper <b>S</b>aves <b>G</b>old<br><br><i>(K, Na, Ca, Mg, Al, C, Zn, Fe, Sn, Pb, H, Cu, Ag, Au)</i></div>",
+  "<strong class='hl-topic'>Essential Amino Acids</strong><div class='f-box'><b>PVT TIM HALL</b><br><br>Phenylalanine, Valine, Threonine, Tryptophan, Isoleucine, Methionine, Histidine, Arginine, Leucine, Lysine</div>",
+  "<strong class='hl-topic'>Lanthanides (+3 Stable)</strong><div class='f-box'><b>S</b>ir <b>P</b>ar <b>N</b>adiya <b>P</b>rem <b>K</b>i <b>S</b>amai...<br><br><i>(Ce, Pr, Nd, Pm, Sm, Eu...)</i> - Helpful for f-block identification.</div>",
+  "<strong class='hl-topic'>Meta Directing Groups</strong><ul class='txt-list'><li><b>Groups:</b> -NO<sub>2</sub>, -CN, -CHO, -COR, -COOH</li><li><b>Effect:</b> They deactivate the Benzene ring towards Electrophilic Substitution.</li></ul>",
+  "<strong class='hl-topic'>Vitamins Solubility</strong><ul class='txt-list'><li><b>Fat Soluble:</b> K, E, D, A (Remember: 'KEDA' or 'Keeda')</li><li><b>Water Soluble:</b> B, C (Must be supplied in diet regularly).</li></ul>"
+];
+const bioTables = [
+  "<strong class='hl-topic'>Genetic Code Properties</strong><ul class='txt-list'><li><b>Total Codons:</b> 64 (61 code for amino acids).</li><li><b>Start:</b> AUG (Codes for Methionine).</li><li><b>Stop Codons:</b> UAA, UAG, UGA.</li><li><b>Nature:</b> Degenerate and nearly universal.</li></ul>",
+  "<strong class='hl-topic'>Respiratory Quotient (RQ)</strong><ul class='txt-list'><li><b>Formula:</b> Vol CO<sub>2</sub> evolved / Vol O<sub>2</sub> consumed.</li><li><b>Carbohydrates:</b> 1.0</li><li><b>Proteins:</b> 0.9</li><li><b>Fats/Tripalmitin:</b> 0.7</li></ul>",
+  "<strong class='hl-topic'>Taxonomic Categories</strong><ul class='txt-list'><li><b>Man:</b> Primata (Order), Mammalia (Class).</li><li><b>Housefly:</b> Diptera (Order), Insecta (Class).</li><li><b>Mango:</b> Sapindales (Order), Dicotyledonae (Class).</li></ul>",
+  "<strong class='hl-topic'>Population Interactions</strong><ul class='txt-list'><li><b>Mutualism:</b> (+, +) e.g., Lichens.</li><li><b>Competition:</b> (-, -)</li><li><b>Predation/Parasitism:</b> (+, -)</li><li><b>Commensalism:</b> (+, 0) e.g., Orchid on mango branch.</li></ul>",
+  "<strong class='hl-topic'>Microbes in Welfare</strong><ul class='txt-list'><li><b>Aspergillus niger:</b> Citric acid.</li><li><b>Acetobacter aceti:</b> Acetic acid.</li><li><b>Monascus purpureus:</b> Statins (Cholesterol lowering).</li></ul>",
+  "<strong class='hl-topic'>Common Human Diseases</strong><ul class='txt-list'><li><b>Typhoid:</b> Salmonella typhi (Widal test).</li><li><b>Pneumonia:</b> Streptococcus pneumoniae.</li><li><b>Malaria:</b> Plasmodium (Requires female Anopheles).</li></ul>"
+];
+const bioDiagrams = [
+  "<strong class='hl-topic'>Lac Operon Regulation</strong><ul class='txt-list'><li><b>Repressor Protein:</b> Binds to Operator region, blocking RNA polymerase.</li><li><b>Inducer (Lactose):</b> Binds repressor, freeing the operator.</li><li><b>Genes:</b> z (&beta;-gal), y (permease), a (transacetylase).</li></ul>",
+  "<strong class='hl-topic'>Human Heart Anatomy</strong><ul class='txt-list'><li><b>SAN (Pacemaker):</b> Right upper corner of Right Atrium.</li><li><b>AVN:</b> Lower left corner of Right Atrium.</li><li><b>Valves:</b> Tricuspid (Right), Bicuspid/Mitral (Left).</li></ul>",
+  "<strong class='hl-topic'>Meiosis Prophase I Stages</strong><ul class='txt-list'><li><b>Zygotene:</b> Synapsis forms bivalents.</li><li><b>Pachytene:</b> Crossing over occurs (Recombinase enzyme).</li><li><b>Diplotene:</b> Chiasmata formation (X-shaped structures).</li></ul>",
+  "<strong class='hl-topic'>pBR322 Vector Map</strong><ul class='txt-list'><li><b>Ampicillin Res:</b> Contains PvuI, PstI restriction sites.</li><li><b>Tetracycline Res:</b> Contains BamHI, SalI sites.</li><li><b>ori:</b> Origin of replication.</li></ul>",
+  "<strong class='hl-topic'>Skeletal Muscle Sarcomere</strong><ul class='txt-list'><li><b>A band:</b> Dark band (Contains Myosin + overlapping Actin).</li><li><b>I band:</b> Light band (Contains only Actin).</li><li><b>Z line:</b> Elastic fiber bisecting the I band.</li></ul>",
+  "<strong class='hl-topic'>Ovary & Menstrual Cycle</strong><ul class='txt-list'><li><b>Day 14:</b> LH surge causes Graafian follicle to rupture (Ovulation).</li><li><b>Corpus Luteum:</b> Secretes Progesterone to maintain endometrium.</li></ul>"
+];
+const bioDates = [
+  "<strong class='hl-topic'>Environmental Acts (India)</strong><ul class='txt-list'><li><b>1972:</b> Wildlife Protection Act</li><li><b>1974:</b> Water (Prevention & Control of Pollution) Act</li><li><b>1981:</b> Air Pollution Act</li><li><b>1986:</b> Environment (Protection) Act</li></ul>",
+  "<strong class='hl-topic'>Genetics Timeline</strong><ul class='txt-list'><li><b>1856-1863:</b> Mendel's hybridization experiments.</li><li><b>1869:</b> Friedrich Miescher discovered 'Nuclein' (DNA).</li><li><b>1902:</b> Chromosomal theory of inheritance (Sutton & Boveri).</li></ul>",
+  "<strong class='hl-topic'>Biotechnology Milestones</strong><ul class='txt-list'><li><b>1972:</b> First recombinant DNA constructed.</li><li><b>1983:</b> Eli Lilly produced human insulin (Humulin).</li><li><b>1990:</b> First clinical gene therapy given to a 4-yr old.</li></ul>",
+  "<strong class='hl-topic'>Global Protocols</strong><ul class='txt-list'><li><b>1987 (Montreal):</b> Signed to control Ozone Depleting Substances (effective 1989).</li><li><b>1992 (Rio):</b> The Earth Summit (Biodiversity).</li><li><b>1997:</b> Kyoto Protocol (Greenhouse gases).</li></ul>",
+  "<strong class='hl-topic'>Human Population & Health</strong><ul class='txt-list'><li><b>1951:</b> Family planning programs initiated in India.</li><li><b>1971:</b> Medical Termination of Pregnancy (MTP) legalized.</li><li><b>2000:</b> World population reached 6 Billion.</li></ul>",
+  "<strong class='hl-topic'>Evolutionary History</strong><ul class='txt-list'><li><b>4.5 bya:</b> Earth formed.</li><li><b>2000 mya:</b> First cellular forms of life.</li><li><b>65 mya:</b> Dinosaurs suddenly disappeared.</li></ul>"
+];
+const bioValues = [
+  "<strong class='hl-topic'>DNA Measurements</strong><ul class='txt-list'><li><b>Human Genome:</b> 3.3 &times; 10<sup>9</sup> bp (haploid).</li><li><b>Length:</b> Approx 2.2 meters per mammalian cell.</li><li><b>Pitch of Helix:</b> 3.4 nm.</li><li><b>Distance btwn bp:</b> 0.34 nm.</li></ul>",
+  "<strong class='hl-topic'>Respiratory Capacities</strong><ul class='txt-list'><li><b>Tidal Vol (TV):</b> 500 mL</li><li><b>IRV:</b> 2500 - 3000 mL</li><li><b>ERV:</b> 1000 - 1100 mL</li><li><b>Residual Vol (RV):</b> 1100 - 1200 mL</li></ul>",
+  "<strong class='hl-topic'>Blood Composition</strong><ul class='txt-list'><li><b>RBC Count:</b> 5 - 5.5 million / mm<sup>3</sup></li><li><b>WBC Count:</b> 6000 - 8000 / mm<sup>3</sup></li><li><b>Platelets:</b> 1.5 - 3.5 lakh / mm<sup>3</sup></li><li><b>Stroke Volume:</b> ~70 mL per beat.</li></ul>",
+  "<strong class='hl-topic'>Excretory System</strong><ul class='txt-list'><li><b>GFR:</b> 125 mL/min (180 Liters/day).</li><li><b>Urine output:</b> Approx 1.5 Liters/day.</li><li><b>Kidney Size:</b> 10-12 cm length, 120-170g weight.</li></ul>",
+  "<strong class='hl-topic'>Microscopic Sizes</strong><ul class='txt-list'><li><b>Mycoplasma:</b> 0.3 &mu;m in length.</li><li><b>Typical Bacteria:</b> 1-2 &mu;m (or 3-5 &mu;m).</li><li><b>Human RBC:</b> 7.0 &mu;m in diameter.</li></ul>",
+  "<strong class='hl-topic'>Enzyme Optimum pH</strong><ul class='txt-list'><li><b>Pepsin (Stomach):</b> Highly acidic (pH 1.8).</li><li><b>Salivary Amylase:</b> Slightly acidic (pH 6.8).</li><li><b>Pancreatic Juices:</b> Alkaline (pH ~7.8).</li></ul>"
+];
+const bioAbbr = [
+  "<strong class='hl-topic'>Photosynthesis Acronyms</strong><ul class='txt-list'><li><b>RuBisCO:</b> Ribulose bisphosphate carboxylase oxygenase (Primary CO<sub>2</sub> acceptor in C3).</li><li><b>PEP:</b> Phosphoenolpyruvate (Primary CO<sub>2</sub> acceptor in C4).</li></ul>",
+  "<strong class='hl-topic'>Reproductive Tech (ARTs)</strong><ul class='txt-list'><li><b>IVF:</b> In Vitro Fertilization.</li><li><b>ZIFT:</b> Zygote Intra Fallopian Transfer (Up to 8 blastomeres).</li><li><b>IUT:</b> Intra Uterine Transfer (More than 8 blastomeres).</li></ul>",
+  "<strong class='hl-topic'>Health & Immunology</strong><ul class='txt-list'><li><b>NACO:</b> National AIDS Control Organisation.</li><li><b>ELISA:</b> Enzyme Linked Immunosorbent Assay (HIV detection).</li><li><b>CMI:</b> Cell-Mediated Immunity (Handled by T-cells).</li></ul>",
+  "<strong class='hl-topic'>Biotechnology Techniques</strong><ul class='txt-list'><li><b>PCR:</b> Polymerase Chain Reaction (Requires Taq polymerase).</li><li><b>GMO:</b> Genetically Modified Organism.</li><li><b>GEAC:</b> Genetic Engineering Approval Committee.</li></ul>",
+  "<strong class='hl-topic'>Environmental Acronyms</strong><ul class='txt-list'><li><b>BOD:</b> Biochemical Oxygen Demand (High BOD = High pollution).</li><li><b>DU:</b> Dobson Unit (Measures Ozone layer thickness).</li><li><b>IUCN:</b> Int. Union for Conservation of Nature.</li></ul>",
+  "<strong class='hl-topic'>Lymphoid Tissue</strong><ul class='txt-list'><li><b>MALT:</b> Mucosa-Associated Lymphoid Tissue.</li><li><i>Fact:</i> MALT constitutes about 50% of the lymphoid tissue in human body.</li></ul>"
+];
+const bioExamples = [
+  "<strong class='hl-topic'>Plant Kingdom Algae</strong><ul class='txt-list'><li><b>Green Algae:</b> Chlamydomonas, Volvox, Spirogyra.</li><li><b>Brown Algae:</b> Dictyota, Laminaria, Fucus.</li><li><b>Red Algae:</b> Polysiphonia, Porphyra, Gelidium, Gracilaria.</li></ul>",
+  "<strong class='hl-topic'>Animal Kingdom Chordates</strong><ul class='txt-list'><li><b>Chondrichthyes (Cartilage):</b> Scoliodon (Dog fish), Pristis (Saw fish). Mouth is ventral.</li><li><b>Osteichthyes (Bony):</b> Hippocampus (Sea horse), Labeo (Rohu). Mouth is terminal.</li></ul>",
+  "<strong class='hl-topic'>Floral Placentation</strong><ul class='txt-list'><li><b>Marginal:</b> Pea.</li><li><b>Axile:</b> Tomato, Lemon, China rose.</li><li><b>Parietal:</b> Mustard, Argemone.</li><li><b>Basal:</b> Sunflower, Marigold.</li></ul>",
+  "<strong class='hl-topic'>Evolution Evidences</strong><ul class='txt-list'><li><b>Homologous (Divergent):</b> Whale flipper, Bat wing, Human hand (Same structure, diff function).</li><li><b>Analogous (Convergent):</b> Butterfly wing, Bird wing, Octopus eye, Mammal eye.</li></ul>",
+  "<strong class='hl-topic'>Biocontrol Agents</strong><ul class='txt-list'><li><b>Trichoderma:</b> Free-living fungi, effective against plant pathogens in root ecosystems.</li><li><b>Baculoviruses (Nucleopolyhedrovirus):</b> Narrow-spectrum insecticidal applications.</li></ul>",
+  "<strong class='hl-topic'>Organism Adaptations</strong><ul class='txt-list'><li><b>Desert Plants:</b> CAM pathway, thick cuticle, sunken stomata.</li><li><b>Cold Mammals:</b> Allen's Rule (Short ears and limbs to minimize heat loss).</li></ul>"
+];
+const bioScientists = [
+  { name: "Watson & Crick", work: "Proposed the Double Helix DNA Model based on X-ray diffraction. Erwan Chargaff noted A=T, G=C." },
+  { name: "Mendel & T.H. Morgan", work: "Mendel proposed Laws of Inheritance. Morgan proved Linkage & Recombination using Drosophila." },
+  { name: "Hershey & Chase", work: "Gave unequivocal proof that DNA is the genetic material using Bacteriophages (P<sup>32</sup>, S<sup>35</sup>)." },
+  { name: "Meselson & Stahl", work: "Proved semi-conservative DNA replication using heavy Nitrogen (N<sup>15</sup>) and E. coli." },
+  { name: "Robert May & Paul Ehrlich", work: "May estimated global species at 7 Million. Ehrlich proposed the Rivet Popper hypothesis." },
+  { name: "MacArthur & Gause", work: "MacArthur showed Resource Partitioning (Warblers). Gause proved Competitive Exclusion principle." }
+];
+
+const ELEMS = ["1 H (1.0)","2 He (4.0)","3 Li (6.9)","4 Be (9.0)","5 B (10.8)","6 C (12.0)","7 N (14.0)","8 O (16.0)","9 F (19.0)","10 Ne (20.2)","11 Na (23.0)","12 Mg (24.3)","13 Al (27.0)","14 Si (28.1)","15 P (31.0)","16 S (32.1)","17 Cl (35.5)","18 Ar (39.9)","19 K (39.1)","20 Ca (40.1)","21 Sc (45.0)","22 Ti (47.9)","23 V (50.9)","24 Cr (52.0)","25 Mn (54.9)","26 Fe (55.8)","27 Co (58.9)","28 Ni (58.7)","29 Cu (63.5)","30 Zn (65.4)","31 Ga (69.7)","32 Ge (72.6)","33 As (74.9)","34 Se (79.0)","35 Br (79.9)","36 Kr (83.8)","37 Rb (85.5)","38 Sr (87.6)","39 Y (88.9)","40 Zr (91.2)","41 Nb (92.9)","42 Mo (95.9)","43 Tc (98)","44 Ru (101.1)","45 Rh (102.9)","46 Pd (106.4)","47 Ag (107.9)","48 Cd (112.4)","49 In (114.8)","50 Sn (118.7)","51 Sb (121.8)","52 Te (127.6)","53 I (126.9)","54 Xe (131.3)","55 Cs (132.9)","56 Ba (137.3)","57 La (138.9)","58 Ce (140.1)","59 Pr (140.9)","60 Nd (144.2)","61 Pm (145)","62 Sm (150.4)","63 Eu (152.0)","64 Gd (157.3)","65 Tb (158.9)","66 Dy (162.5)","67 Ho (164.9)","68 Er (167.3)","69 Tm (168.9)","70 Yb (173.0)","71 Lu (175.0)","72 Hf (178.5)","73 Ta (180.9)","74 W (183.8)","75 Re (186.2)","76 Os (190.2)","77 Ir (192.2)","78 Pt (195.1)","79 Au (197.0)","80 Hg (200.6)","81 Tl (204.4)","82 Pb (207.2)","83 Bi (209.0)","84 Po (209)","85 At (210)","86 Rn (222)","87 Fr (223)","88 Ra (226)","89 Ac (227)","90 Th (232.0)","91 Pa (231.0)","92 U (238.0)","93 Np (237)","94 Pu (244)","95 Am (243)","96 Cm (247)","97 Bk (247)","98 Cf (251)","99 Es (252)","100 Fm (257)","101 Md (258)","102 No (259)","103 Lr (262)","104 Rf (267)","105 Db (268)","106 Sg (271)","107 Bh (272)","108 Hs (270)","109 Mt (276)","110 Ds (281)","111 Rg (280)","112 Cn (285)","113 Nh (284)","114 Fl (289)","115 Mc (288)","116 Lv (293)","117 Ts (294)","118 Og (294)"];
+
+const bioSciStrings = bioScientists.map(s => `<strong class='hl-topic'>${s.name}</strong><div class='f-box' style='color:var(--tx);font-family:Syne,sans-serif;'>${s.work}</div>`);
+const libData = {
+   phyGraphs, phyDimensions, phyTheory, phyFormula,
+   chePro, cheCatalyst, cheTrends: cheTrendsList, cheColor, cheShape, cheMnemonics,
+   bioTables, bioDiagrams, bioDates, bioValues, bioAbbr, bioExamples, bioScientists: bioSciStrings
+};
+
+// --- BUILD THE PLAN FROM CLUSTERS ---
+const PLAN = [];
+let elStart = 0;
+
+function renderClusters(clusters) {
+  return clusters.map(c => `
+    <div class="concept-card">
+      <div class="concept-head">${c.title}</div>
+      <div class="concept-body">${c.body}</div>
+    </div>
+  `).join('');
+}
+
+for(let i=0; i<TOTAL; i++) {
+  let d = SPRINT_DATA[i];
+  
+  let num1 = (i * 2) + 12; 
+  let num2 = (i * 2) + 13;
+  let t1 = [], t2 = [];
+  for(let m=1; m<=10; m++) { t1.push(`${num1}&times;${m}=${num1*m}`); t2.push(`${num2}&times;${m}=${num2*m}`); }
+  
+  let mathTask = `
+    <div class="data-box">
+      <div class="syllabus-target" style="border-color:var(--pu);">
+        <div class="syllabus-lbl" style="color:var(--pu);">🎯 DAILY NUMERICAL WARMUP</div>
+        <div class="syllabus-name">Speed Calc & Constants</div>
+      </div>
+      <div class="concept-card">
+        <div class="concept-head" style="color:var(--pu);">Calculations Focus</div>
+        <div class="concept-body">
+          <b>Table of ${num1}:</b><br>${t1.join(', ')}<br><br>
+          <b>Table of ${num2}:</b><br>${t2.join(', ')}<br><br>
+          <b>Squares:</b> ${num1}<sup>2</sup>=${num1**2}, ${num2}<sup>2</sup>=${num2**2}<br>
+          <b>Cubes:</b> ${num1}<sup>3</sup>=${num1**3}, ${num2}<sup>3</sup>=${num2**3}
+        </div>
+      </div>
+      <div class="concept-card">
+        <div class="concept-head" style="color:var(--or);">Golden Constants</div>
+        <div class="concept-body f-box" style="margin-top:0;">${d.mathConst}</div>
+      </div>
+    </div>
+  `;
+  
+  let phyTask = `
+    <div class="data-box">
+      <div class="syllabus-target" style="border-color:var(--or);">
+        <div class="syllabus-lbl" style="color:var(--or);">🎯 SYLLABUS TARGET</div>
+        <div class="syllabus-name">${d.phyTitle}</div>
+      </div>
+      ${renderClusters(d.phyClusters)}
+    </div>
+  `;
+  
+  let elEnd = Math.round((i+1) * (118 / TOTAL));
+  let elList = ELEMS.slice(elStart, elEnd); elStart = elEnd;
+  
+  let cheTask = `
+    <div class="data-box">
+      <div class="syllabus-target" style="border-color:var(--cyan);">
+        <div class="syllabus-lbl" style="color:var(--cyan);">🎯 SYLLABUS TARGET</div>
+        <div class="syllabus-name">${d.cheTitle}</div>
+      </div>
+      ${renderClusters(d.cheClusters)}
+      <div class="concept-card">
+        <div class="concept-head" style="color:var(--gold);">Elements Fast-Track (Atomic No/Mass)</div>
+        <div class="concept-body f-box" style="margin-top:0; font-size:0.75rem;">${elList.join('<br>')}</div>
+      </div>
+    </div>
+  `;
+  
+  let bioTask = `
+    <div class="data-box">
+      <div class="syllabus-target" style="border-color:var(--green);">
+        <div class="syllabus-lbl" style="color:var(--green);">🎯 SYLLABUS TARGET</div>
+        <div class="syllabus-name">${d.bioTitle}</div>
+      </div>
+      ${renderClusters(d.bioClusters)}
+    </div>
+  `;
+
+  PLAN.push({ day: i+1, math: mathTask, phy: phyTask, che: cheTask, bio: bioTask });
+}
+
+const SUBJECTS = [
+  { k:'math', label:'Warmup', icon:'🧠', color:'#b058e8', field:'math' },
+  { k:'phy',  label:'Physics', icon:'⚡', color:'#ff8800', field:'phy' },
+  { k:'che',  label:'Chemistry', icon:'⚗️', color:'#00d0f4', field:'che' },
+  { k:'bio',  label:'Biology', icon:'🧬', color:'#00d26a', field:'bio' },
+];
+
+function taskKey(dayIdx, subjKey) { return 'd' + dayIdx + '_' + subjKey; }
+
+var DB = {};
+try { DB = JSON.parse(localStorage.getItem(SK) || '{}'); } catch(e) {}
+function save() { try { localStorage.setItem(SK, JSON.stringify(DB)); } catch(e) {} }
+
+var dI = 0; var pre = false;
+
+function init() {
+  var now = new Date(); now.setHours(0,0,0,0);
+  var s2 = new Date(DS); s2.setHours(0,0,0,0);
+  var raw = Math.round((now - s2) / 86400000);
+  pre = raw < 0; 
+  dI = Math.max(0, Math.min(raw, TOTAL - 1));
+  drawWeekRings();
+}
+
+function getDayTasks(idx) {
+  if (idx < 0 || idx >= TOTAL) return [];
+  var p = PLAN[idx];
+  return SUBJECTS.map(function(s) {
+    return { key: taskKey(idx, s.k), subj: s.k, tag: s.label, icon: s.icon, color: s.color, text: p[s.field] };
+  });
+}
+
+function isDayComplete(idx) {
+  var tasks = getDayTasks(idx);
+  return tasks.length > 0 && tasks.every(function(t) { return !!DB[t.key]; });
+}
+
+function calcStreak() {
+  var n = 0;
+  for (var i = dI - 1; i >= 0; i--) { if (isDayComplete(i)) n++; else break; }
+  if (isDayComplete(dI)) n++;
+  return n;
+}
+
+function updateHero(done, total) {
+  var pct = total > 0 ? (done / total) : 0;
+  var circ = 339.29; 
+  var offset = circ - (pct * circ);
+  var ringSvg = document.getElementById('todayRingSvg');
+  if(ringSvg) ringSvg.style.strokeDashoffset = offset;
+  var sVal = document.getElementById('streakVal');
+  if (sVal) sVal.textContent = calcStreak();
+}
+
+function drawWeekRings() {
+  var el = document.getElementById('weekNodesEl'); if (!el) return;
+  el.innerHTML = '';
+  var rt = new Date(); rt.setHours(0,0,0,0);
+  var dayOfWeek = rt.getDay(); 
+  var currentDayIndex = dayOfWeek === 0 ? 6 : dayOfWeek - 1; 
+  var diffToMonday = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
+  var sow = new Date(rt); sow.setDate(rt.getDate() + diffToMonday);
+  var sn = new Date(DS); sn.setHours(0,0,0,0);
+  
+  for (var i = 0; i < 7; i++) {
+    var d = new Date(sow); d.setDate(sow.getDate() + i);
+    var act = d.getTime() === rt.getTime();
+    var diff = Math.round((d - sn) / 86400000);
+    var dn = diff >= 0 && diff < TOTAL && isDayComplete(diff);
+    var rad = ((i * (360/7)) - 90) * Math.PI / 180;
+    var x = 70 + 54 * Math.cos(rad); var y = 70 + 54 * Math.sin(rad);
+    var dx = Math.cos(rad) * 24; var dy = Math.sin(rad) * 24;
+    var node = document.createElement('div');
+    node.className = 'day-node' + (act?' active':'') + (dn?' done':'');
+    node.style.left = x + 'px'; node.style.top = y + 'px';
+    node.innerHTML = `<span class="date-val">${d.getDate()}</span><span class="day-out" style="transform: translate(${dx}px, ${dy}px);">${DL[i]}</span>`;
+    el.appendChild(node);
+  }
+
+  var circ = 339.29; 
+  var fillLength = (currentDayIndex / 7) * circ;
+  if (fillLength === 0) fillLength = 0.01; 
+  var wkProgSvg = document.getElementById('wkProgSvg');
+  if(wkProgSvg) wkProgSvg.style.strokeDashoffset = circ - fillLength;
+}
+
+function renderToday() {
+  var wrap = document.getElementById('tw'); wrap.innerHTML = '';
+  var tasks = getDayTasks(dI);
+  var done = 0; tasks.forEach(function(t) { if (DB[t.key]) done++; });
+  if (pre) {
+    var msg = document.createElement('div'); msg.className = 'glass-card'; msg.style.cssText = 'text-align:center;padding:24px 20px;margin-bottom:24px;border-radius:24px;';
+    msg.innerHTML = '<strong style="color:var(--cyan);font-size:1.1rem;font-family:JetBrains Mono,monospace;">STANDBY FOR DAY 1</strong><div style="font-size:0.75rem; color:var(--mu); margin-top:8px;">Review your perfectly clustered 6-Day Final Syllabus.</div>';
+    wrap.appendChild(msg);
+  }
+  var sh = document.createElement('div'); sh.className = 'sh'; sh.textContent = 'DAY ' + (dI + 1) + ' SPRINT MISSIONS'; wrap.appendChild(sh);
+  tasks.forEach(function(t, i) { wrap.appendChild(makeAccordionCard(t, !!DB[t.key], i)); });
+  updateHero(done, tasks.length);
+  document.getElementById('dmsg').style.display = (done === tasks.length && tasks.length > 0) ? 'block' : 'none';
+  drawWeekRings();
+}
+
+function makeAccordionCard(t, dk, idx) {
+  var c = document.createElement('div');
+  c.className = 'workout-card theme-' + t.subj + (dk ? ' done' : '');
+  c.id = 'card_' + t.key; c.style.animationDelay = (idx * 0.05) + 's';
+  c.innerHTML = `
+    <div class="wc-header" onclick="toggleExpand('${t.key}')">
+        <div class="wc-header-left"><span class="wc-tag-badge">${t.icon} ${t.tag}</span></div>
+        <div class="pro-checkbox" onclick="event.stopPropagation(); toggleTask('${t.key}')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+        </div>
+    </div>
+    <div class="wc-body" id="body_${t.key}">${t.text}</div>
+  `;
+  return c;
+}
+
+function toggleExpand(key) {
+    var card = document.getElementById('card_' + key);
+    if (card) card.classList.toggle('open');
+}
+
+var _nft = null;
+function toggleTask(key) {
+  var card = document.getElementById('card_' + key); if (!card) return;
+  var was = !!DB[key];
+  if (was) { delete DB[key]; } else {
+    DB[key] = true;
+    if (navigator.vibrate) try { navigator.vibrate(14); } catch(e) {}
+    if (typeof confetti === 'function') confetti({ particleCount:50, spread:70, startVelocity:25, origin:{y:.86}, colors:['#ff2a5f','#facc15','#00d26a','#00d0f4'], disableForReducedMotion:true });
+  }
+  save();
+  card.classList.toggle('done', !was); if (!was) card.classList.remove('open'); 
+  var tasks = getDayTasks(dI), d2 = 0; tasks.forEach(function(t) { if (DB[t.key]) d2++; });
+  updateHero(d2, tasks.length);
+  document.getElementById('dmsg').style.display = (d2 === tasks.length && tasks.length > 0) ? 'block' : 'none';
+
+  clearTimeout(_nft);
+  _nft = setTimeout(function() {
+    var allCards = Array.from(document.querySelectorAll('.workout-card'));
+    var next = allCards.find(function(c) { return !c.classList.contains('done'); });
+    if (next) {
+       var scrollEl = document.getElementById('mainAppScroll'); var y = next.offsetTop - 80; 
+       if(scrollEl.scrollTo) { try{ scrollEl.scrollTo({top: y, behavior: 'smooth'}); }catch(e){ scrollEl.scrollTop = y; } } else scrollEl.scrollTop = y;
+    }
+  }, 400);
+}
+
+function renderProg() {
+  var CIRC = 226.19; var totalDone = 0;
+  for (var i = 0; i < TOTAL; i++) { if (isDayComplete(i)) totalDone++; }
+  var ovPct = Math.round(totalDone / TOTAL * 100);
+
+  var subjStats = SUBJECTS.map(function(s) {
+    var cnt = 0; for (var i = 0; i < TOTAL; i++) { if (DB[taskKey(i, s.k)]) cnt++; }
+    return { s: s, cnt: cnt, pct: Math.round(cnt / TOTAL * 100) };
+  });
+
+  var ringsHTML = subjStats.map(function(d) {
+    return '<div class="subj-ring-card"><svg class="prog-ring-svg" width="80" height="80" viewBox="0 0 80 80"><circle class="prog-ring-track" cx="40" cy="40" r="36"/><circle class="prog-ring-arc" id="parc_' + d.s.k + '" cx="40" cy="40" r="36" stroke="' + d.s.color + '"/><text class="prog-ring-pct" x="40" y="34" fill="#f4f4f8">' + d.pct + '%</text><text class="prog-ring-sub" x="40" y="50" fill="#8a8a9d">' + d.cnt + '/' + TOTAL + ' d</text></svg><div style="display:flex;flex-direction:column;align-items:center;gap:3px;"><span class="subj-ring-icon">' + d.s.icon + '</span><span class="subj-ring-name">' + d.s.label + '</span></div></div>';
+  }).join('');
+
+  var rt = new Date(); rt.setHours(0,0,0,0);
+  var planHTML = PLAN.map(function(p, i) {
+    var dayDate = new Date(DS); dayDate.setDate(DS.getDate() + i);
+    var isToday = dayDate.getTime() === rt.getTime();
+    var complete = isDayComplete(i);
+    var cls = 'plan-day-card' + (complete ? ' completed' : '') + (isToday ? ' today-card' : '');
+    var dateStr = dayDate.getDate() + ' ' + MN[dayDate.getMonth()];
+    var statusStr = complete ? '✓ Done' : (isToday ? '📍 Today' : dateStr);
+    return '<div class="' + cls + '" id="pday_' + i + '"><div class="plan-day-header" onclick="togglePlanDay(' + i + ')"><div class="plan-day-num">' + p.day + '</div><div style="flex:1;"><div class="plan-day-title">Day ' + p.day + '</div><div class="plan-day-meta">' + dateStr + ' · ' + statusStr + '</div></div><svg class="plan-day-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div><div class="plan-day-body" onclick="event.stopPropagation()"><div class="plan-subject-row"><span class="plan-subj-badge badge-math">Warm</span><span class="plan-subj-text">' + SPRINT_DATA[i].mathConst + '</span></div><div class="plan-subject-row"><span class="plan-subj-badge badge-phy">Physics</span><span class="plan-subj-text">' + SPRINT_DATA[i].phyTitle + '</span></div><div class="plan-subject-row"><span class="plan-subj-badge badge-che">Chem</span><span class="plan-subj-text">' + SPRINT_DATA[i].cheTitle + '</span></div><div class="plan-subject-row"><span class="plan-subj-badge badge-bio">Biology</span><span class="plan-subj-text">' + SPRINT_DATA[i].bioTitle + '</span></div></div></div>';
+  }).join('');
+
+  document.getElementById('vP').innerHTML = '<div class="glass-card" style="padding:20px; border-radius: 24px;"><div class="prog-hero-top"><div class="prog-hero-pct">' + ovPct + '%</div><div class="prog-hero-meta"><div class="prog-hero-days">' + totalDone + ' / ' + TOTAL + '</div><div class="prog-hero-lbl">Final Sprint</div></div></div><div class="prog-bar-wrap"><div class="prog-bar-fill" id="ovBar"></div></div></div><div class="sh" style="margin-top:0;">Subject Master</div><div class="subj-rings">' + ringsHTML + '</div><div class="sh">6-Day Sprint Syllabus</div><div class="plan-section">' + planHTML + '</div>';
+
+  requestAnimationFrame(function() { requestAnimationFrame(function() {
+    var ob = document.getElementById('ovBar'); if (ob) ob.style.width = ovPct + '%';
+    subjStats.forEach(function(d) {
+      var arc = document.getElementById('parc_' + d.s.k);
+      if (arc) arc.style.strokeDashoffset = CIRC * (1 - d.pct / 100);
+    });
+    var todayCard = document.querySelector('.plan-day-card.today-card');
+    if (todayCard) { todayCard.classList.add('open'); setTimeout(function() { todayCard.scrollIntoView({ behavior:'smooth', block:'center' }); }, 400); }
+  }); });
+}
+
+function togglePlanDay(i) {
+  var card = document.getElementById('pday_' + i);
+  if (card) card.classList.toggle('open');
+}
+
+// --- VAULT NAVIGATION LOGIC ---
+function showCat(k, title) {
+   document.getElementById('vL-main').style.display = 'none';
+   document.getElementById('vL-sub').style.display = 'block';
+   document.getElementById('subTitle').textContent = title;
+   
+   ['phy', 'che', 'bio'].forEach(id => {
+       document.getElementById('cat-' + id).classList.remove('active');
+   });
+   document.getElementById('cat-' + k).classList.add('active');
+}
+
+function closeCat() {
+   document.getElementById('vL-sub').style.display = 'none';
+   document.getElementById('vL-main').style.display = 'block';
+}
+
+function openLib(dataArr, color) {
+  const grid = document.getElementById('lsGrid');
+  grid.innerHTML = dataArr.map((item, i) => `
+    <div class="ls-card" style="border-left-color:${color};">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:0.6rem;color:var(--mu);margin-bottom:6px;">SURE SHOT ${(i+1).toString().padStart(2,'0')}</div>
+      ${item}
+    </div>
+  `).join('');
+
+  const isPortrait = window.matchMedia('(orientation: portrait)').matches;
+
+  if (screen.orientation && screen.orientation.lock) {
+    document.getElementById('lsModal').classList.add('active');
+    screen.orientation.lock('landscape').catch(() => {
+      if (isPortrait) showRotateHint();
+    });
+  } else {
+    if (isPortrait) {
+      showRotateHint();
+    } else {
+      document.getElementById('lsModal').classList.add('active');
+    }
+  }
+
+  window._lsOrientHandler = function() {
+    const nowPortrait = window.matchMedia('(orientation: portrait)').matches;
+    if (!nowPortrait) {
+      document.getElementById('lsRotateHint').classList.remove('show');
+      document.getElementById('lsModal').classList.add('active');
+    } else {
+      document.getElementById('lsModal').classList.remove('active');
+      document.getElementById('lsRotateHint').classList.add('show');
+    }
+  };
+  window.addEventListener('orientationchange', window._lsOrientHandler);
+  window.addEventListener('resize', window._lsOrientHandler);
+}
+
+function showRotateHint() {
+  document.getElementById('lsRotateHint').classList.add('show');
+}
+
+function closeLib() {
+  document.getElementById('lsModal').classList.remove('active');
+  document.getElementById('lsRotateHint').classList.remove('show');
+  if (screen.orientation && screen.orientation.unlock) {
+    try { screen.orientation.unlock(); } catch(e) {}
+  }
+  if (window._lsOrientHandler) {
+    window.removeEventListener('orientationchange', window._lsOrientHandler);
+    window.removeEventListener('resize', window._lsOrientHandler);
+    window._lsOrientHandler = null;
+  }
+}
+
+function switchTab(i) {
+  ['vT','vP','vL'].forEach(function(id){document.getElementById(id).classList.remove('active');});
+  ['t0','t1','t2'].forEach(function(id){document.getElementById(id).classList.remove('active');});
+  
+  var scrollEl = document.getElementById('mainAppScroll');
+  if(scrollEl.scrollTo) { try{ scrollEl.scrollTo({ top: 0, behavior: 'smooth' }); }catch(e){ scrollEl.scrollTop = 0; } } else scrollEl.scrollTop = 0;
+
+  if (i===0) { document.getElementById('vT').classList.add('active'); document.getElementById('t0').classList.add('active'); renderToday(); }
+  else if (i===1) { document.getElementById('vP').classList.add('active'); document.getElementById('t1').classList.add('active'); renderProg(); }
+  else if (i===2) { document.getElementById('vL').classList.add('active'); document.getElementById('t2').classList.add('active'); closeCat(); } 
+}
+
+function updateCountdown() {
+  var now = new Date();
+  var todayMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+  var dist = TARGET_DATE - todayMidnight;
+  var cdDays = document.getElementById('cdDays'); if (!cdDays) return;
+  if (dist < 0) { cdDays.innerHTML = "EXAM!"; return; }
+  cdDays.innerHTML = Math.round(dist / 86400000) + 'D';
+}
+
+document.addEventListener('visibilitychange', function() {
+  if (document.visibilityState === 'visible') { init(); if (document.getElementById('vT').classList.contains('active')) renderToday(); }
+});
+
+updateCountdown();
+setInterval(updateCountdown, 60000); 
+init();
+switchTab(0);
+</script>
+</body>
+</html>
